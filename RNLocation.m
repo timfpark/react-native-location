@@ -124,6 +124,16 @@ RCT_EXPORT_METHOD(startMonitoringForRegion:(NSDictionary *) dict)
     [self.locationManager startMonitoringForRegion:[self convertDictToBeaconRegion:dict]];
 }
 
+RCT_EXPORT_METHOD(setDesiredAccuracy:(double) accuracy)
+{
+    self.locationManager.desiredAccuracy = accuracy;
+}
+
+RCT_EXPORT_METHOD(setDistanceFilter:(double) distance)
+{
+    self.locationManager.distanceFilter = distance;
+}
+
 RCT_EXPORT_METHOD(startRangingBeaconsInRegion:(NSDictionary *) dict)
 {
     [self.locationManager startRangingBeaconsInRegion:[self convertDictToBeaconRegion:dict]];
