@@ -1,0 +1,13 @@
+{
+  "name": "BeaconList",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node_modules/react-native/packager/packager.sh",
+    "bundle": "react-native bundle --minify"
+  },
+  "dependencies": {
+    "react-native": "^0.4.1",
+    "react-native-ibeacon": "^0.1.1"
+  }
+}
