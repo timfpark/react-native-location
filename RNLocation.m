@@ -149,9 +149,19 @@ RCT_EXPORT_METHOD(stopRangingBeaconsInRegion:(NSDictionary *) dict)
     [self.locationManager stopRangingBeaconsInRegion:[self convertDictToBeaconRegion:dict]];
 }
 
+RCT_EXPORT_METHOD(startMonitoringSignificantLocationChanges)
+{
+    [self.locationManager startMonitoringSignificantLocationChanges];
+}
+
 RCT_EXPORT_METHOD(startUpdatingLocation)
 {
     [self.locationManager startUpdatingLocation];
+}
+
+RCT_EXPORT_METHOD(stopMonitoringSignificantLocationChanges)
+{
+    [self.locationManager stopMonitoringSignificantLocationChanges];
 }
 
 RCT_EXPORT_METHOD(stopUpdatingLocation)
