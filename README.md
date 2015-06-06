@@ -1,22 +1,22 @@
-# react-native-ibeacon
-[![Dependency Status](https://david-dm.org/geniuxconsulting/react-native-ibeacon.svg)](https://david-dm.org/geniuxconsulting/react-native-ibeacon)
+# react-native-location
 
-iBeacon support for React Native. The API is very similar to the CoreLocation Objective-C one with the only major difference that regions are plain JavaScript objects.
-Beacons don't work in the iOS simulator.
+Beacon and GPS location support for React Native. The API is very similar to the CoreLocation Objective-C one with the only major difference that regions are plain JavaScript objects.
+
+NOTE: Beacons don't work in the iOS simulator.
 
 ## Installation
-Install using npm with `npm install --save react-native-ibeacon`
+Install using npm with `npm install --save react-native-location`
 
-You then need to add the Objective C part to your XCode project. Drag `RNBeacon.xcodeproj` from the `node_modules/react-native-ibeacon` folder into your XCode project. Click on the your project in XCode, goto Build Phases then Link Binary With Libraries and add `libRNBeacon.a` and `CoreLocation.framework`.
+You then need to add the Objective C part to your XCode project. Drag `RNLocation.xcodeproj` from the `node_modules/react-native-location` folder into your XCode project. Click on the your project in XCode, goto Build Phases then Link Binary With Libraries and add `libRNLocation.a` and `CoreLocation.framework`.
 
-NOTE: Make sure you don't have the `RNBeacon` project open separately in XCode otherwise it won't work.
+NOTE: Make sure you don't have the `RNLocation` project open separately in XCode otherwise it won't work.
 
 ## Usage
 ```javascript
 var React = require('react-native');
 var {DeviceEventEmitter} = React;
 
-var Beacons = require('react-native-ibeacon');
+var Location = require('react-native-location');
 
 // Define a region which can be identifier + uuid, 
 // identifier + uuid + major or identifier + uuid + major + minor
@@ -27,12 +27,12 @@ var region = {
 };
 
 // Request for authorization while the app is open
-Beacons.requestWhenInUseAuthorization();
+Location.requestWhenInUseAuthorization();
 
-Beacons.startMonitoringForRegion(region);
-Beacons.startRangingBeaconsInRegion(region);
+Location.startMonitoringForRegion(region);
+Location.startRangingBeaconsInRegion(region);
 
-Beacons.startUpdatingLocation();
+Location.startUpdatingLocation();
 
 // Listen for beacon changes
 var subscription = DeviceEventEmitter.addListener(
@@ -70,7 +70,7 @@ Here, it's also recommended to set `NSLocationAlwaysUsageDescription` in your `I
 
 ## Methods
 
-To access the methods, you need import the `react-native-ibeacon` module. This is done through `var Beacons = require('react-native-ibeacon')`.
+To access the methods, you need import the `react-native-location` module. This is done through `var Beacons = require('react-native-location')`.
 
 ### Beacons.requestWhenInUseAuthorization
 ```javascript
