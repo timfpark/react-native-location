@@ -1,5 +1,5 @@
 /**
- * @providesModule RNBeacon
+ * @providesModule RNLocation
  * @flow
  */
 'use strict';

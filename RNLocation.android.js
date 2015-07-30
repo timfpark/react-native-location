@@ -1,7 +1,7 @@
 /**
- * Stub of RNBeacon for Android.
+ * Stub of RNLocation for Android.
  *
- * @providesModule RNBeacon
+ * @providesModule RNLocation
  * @flow
  */
 'use strict';
