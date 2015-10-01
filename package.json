@@ -1,14 +1,19 @@
 {
   "name": "react-native-location",
-  "version": "0.3.5",
+  "version": "0.11.4",
   "dependencies": {
-    "react-native": "^0.4.0"
+    "react-native": "^0.11.4"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/timfpark/react-native-location.git"
   },
   "license": "MIT",
-  "keywords": ["react-native", "react-component", "ios", "location", "beacons", "ble"],
+  "keywords": [
+    "react-native",
+    "react-component",
+    "ios",
+    "location"
+  ],
   "main": "RNLocation.ios.js"
 }
