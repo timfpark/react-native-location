@@ -40,16 +40,14 @@ RCT_EXPORT_MODULE()
 
 RCT_EXPORT_METHOD(requestAlwaysAuthorization)
 {
-    if ([self.locationManager respondsToSelector:@selector(requestAlwaysAuthorization)]) {
-        [self.locationManager requestAlwaysAuthorization];
-    }
+    NSLog(@"react-native-location: requestAlwaysAuthorization");
+    [self.locationManager requestAlwaysAuthorization];
 }
 
 RCT_EXPORT_METHOD(requestWhenInUseAuthorization)
 {
-    if ([self.locationManager respondsToSelector:@selector(requestWhenInUseAuthorization)]) {
-        [self.locationManager requestWhenInUseAuthorization];
-    }
+    NSLog(@"react-native-location: requestWhenInUseAuthorization");
+    [self.locationManager requestWhenInUseAuthorization];
 }
 
 RCT_EXPORT_METHOD(getAuthorizationStatus:(RCTResponseSenderBlock)callback)
@@ -69,6 +67,7 @@ RCT_EXPORT_METHOD(setDistanceFilter:(double) distance)
 
 RCT_EXPORT_METHOD(startMonitoringSignificantLocationChanges)
 {
+    NSLog(@"startMonitoringSignificantLocationChanges");
     [self.locationManager startMonitoringSignificantLocationChanges];
 }
 
@@ -91,18 +90,23 @@ RCT_EXPORT_METHOD(stopUpdatingLocation)
 {
     switch (authorizationStatus) {
         case kCLAuthorizationStatusAuthorizedAlways:
+            NSLog(@"Authorization Status: authorizedAlways");
             return @"authorizedAlways";
 
         case kCLAuthorizationStatusAuthorizedWhenInUse:
+            NSLog(@"Authorization Status: authorizedWhenInUse");
             return @"authorizedWhenInUse";
 
         case kCLAuthorizationStatusDenied:
+            NSLog(@"Authorization Status: denied");
             return @"denied";
 
         case kCLAuthorizationStatusNotDetermined:
+            NSLog(@"Authorization Status: notDetermined");
             return @"notDetermined";
 
         case kCLAuthorizationStatusRestricted:
+            NSLog(@"Authorization Status: restricted");
             return @"restricted";
     }
 }
@@ -129,9 +133,10 @@ RCT_EXPORT_METHOD(stopUpdatingLocation)
             @"heading": @(location.course),
             @"speed": @(location.speed),
         },
-        @"timestamp": @(CFAbsoluteTimeGetCurrent() * 1000.0) // in ms
+        @"timestamp": @([location.timestamp timeIntervalSince1970]) // in ms
     };
 
+    NSLog(@"%u: lat: %f, long: %f, altitude: %f", location.timestamp, location.coordinate.latitude, location.coordinate.longitude, location.altitude);
     [self.bridge.eventDispatcher sendDeviceEventWithName:@"locationUpdated" body:locationEvent];
 }
 
