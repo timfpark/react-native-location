@@ -136,7 +136,7 @@ RCT_EXPORT_METHOD(stopUpdatingLocation)
         @"timestamp": @([location.timestamp timeIntervalSince1970]) // in ms
     };
 
-    NSLog(@"%u: lat: %f, long: %f, altitude: %f", location.timestamp, location.coordinate.latitude, location.coordinate.longitude, location.altitude);
+    NSLog(@"%@: lat: %f, long: %f, altitude: %f", location.timestamp, location.coordinate.latitude, location.coordinate.longitude, location.altitude);
     [self.bridge.eventDispatcher sendDeviceEventWithName:@"locationUpdated" body:locationEvent];
 }
 
