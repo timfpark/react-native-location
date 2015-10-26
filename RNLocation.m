@@ -67,7 +67,7 @@ RCT_EXPORT_METHOD(setDistanceFilter:(double) distance)
 
 RCT_EXPORT_METHOD(startMonitoringSignificantLocationChanges)
 {
-    NSLog(@"startMonitoringSignificantLocationChanges");
+    NSLog(@"react-native-location: startMonitoringSignificantLocationChanges");
     [self.locationManager startMonitoringSignificantLocationChanges];
 }
 
@@ -133,7 +133,7 @@ RCT_EXPORT_METHOD(stopUpdatingLocation)
             @"heading": @(location.course),
             @"speed": @(location.speed),
         },
-        @"timestamp": @([location.timestamp timeIntervalSince1970]) // in ms
+        @"timestamp": @([location.timestamp timeIntervalSince1970] * 1000) // in ms
     };
 
     NSLog(@"%u: lat: %f, long: %f, altitude: %f", location.timestamp, location.coordinate.latitude, location.coordinate.longitude, location.altitude);
