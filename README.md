@@ -23,7 +23,20 @@ Location.setDistanceFilter(5.0);
 var subscription = DeviceEventEmitter.addListener(
     'locationUpdated',
     (location) => {
-        // do something with the location
+        /* Example location returned
+        { coords: 
+           {
+                speed: -1,
+                longitude: -0.1337,
+                latitude: 51.50998,
+                accuracy: 5,
+                heading: -1,
+                altitude: 0,
+                altitudeAccuracy: -1
+            },
+            timestamp: 1446007304457.029
+        }
+        */
     }
 );
 ```
