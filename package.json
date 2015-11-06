@@ -1,8 +1,8 @@
 {
   "name": "react-native-location",
-  "version": "0.13.0",
+  "version": "0.14.0",
   "dependencies": {
-    "react-native": "^0.13"
+    "react-native": "^0.14"
   },
   "repository": {
     "type": "git",
