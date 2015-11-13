@@ -9,12 +9,12 @@ You then need to add the Objective C part to your XCode project. Drag `RNLocatio
 
 NOTE: Make sure you don't have the `RNLocation` project open separately in XCode otherwise it won't work.
 
-## Usage
+## Location Usage
 ```javascript
 var React = require('react-native');
-var {DeviceEventEmitter} = React;
+var { DeviceEventEmitter } = React;
 
-var Location = require('react-native-location');
+var { RNLocation: Location } = require('NativeModules');
 
 Location.requestAlwaysAuthorization();
 Location.startUpdatingLocation();
@@ -24,17 +24,39 @@ var subscription = DeviceEventEmitter.addListener(
     'locationUpdated',
     (location) => {
         /* Example location returned
-        { coords: 
-           {
-                speed: -1,
-                longitude: -0.1337,
-                latitude: 51.50998,
-                accuracy: 5,
-                heading: -1,
-                altitude: 0,
-                altitudeAccuracy: -1
-            },
-            timestamp: 1446007304457.029
+        {
+          coords: {
+            speed: -1,
+            longitude: -0.1337,
+            latitude: 51.50998,
+            accuracy: 5,
+            heading: -1,
+            altitude: 0,
+            altitudeAccuracy: -1
+          },
+          timestamp: 1446007304457.029
+        }
+        */
+    }
+);
+```
+
+## Heading Usage
+
+```
+var React = require('react-native');
+var { DeviceEventEmitter } = React;
+
+var { RNLocation: Location } = require('NativeModules');
+Location.requestAlwaysAuthorization();
+Location.startUpdatingHeading();
+
+DeviceEventEmitter.addListener(
+    'headingUpdated',
+    (data) => {
+        /* Example data returned
+        {
+          heading: 57.2839832
         }
         */
     }
@@ -127,6 +149,19 @@ var subscription = DeviceEventEmitter.addListener(
 
 Start location updates.  Your application will be called back with location updates that meet any mininum distance requirements that you specify via the DeviceEventEmitter event 'locationUpdated'.
 
+### Location.startUpdatingHeading
+```javascript
+Location.startUpdatingHeading();
+var subscription = DeviceEventEmitter.addListener(
+    'headingUpdated',
+    (data) => {
+        // do something with the heading
+    }
+);
+```
+
+Start heading updates.  Your application will be called back with heading updates.
+
 ### Location.stopUpdatingLocation
 ```javascript
 Location.stopUpdatingLocation();
@@ -134,6 +169,12 @@ Location.stopUpdatingLocation();
 
 Stop receiving location events.
 
+### Location.stopUpdatingHeading
+```javascript
+Location.stopUpdatingHeading();
+```
+
+Stop receiving heading events.
 
 ### Location.stopMonitoringSignificantLocationChanges
 ```javascript
@@ -147,6 +188,9 @@ To listen to events we need to call `DeviceEventEmitter.addListener` (`var {Devi
 
 ### locationUpdated
 Received when a location update has been sensed by the system.  The event delivers one parameter, location, that is an object with location, elevation, and accuracy data.
+
+### headingUpdated
+Received when the heading changes.  The event delivers one parameter: an object with the current heading in degrees.
 
 ## License
 MIT, for more information see `LICENSE`
