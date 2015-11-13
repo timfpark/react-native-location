@@ -76,6 +76,11 @@ RCT_EXPORT_METHOD(startUpdatingLocation)
     [self.locationManager startUpdatingLocation];
 }
 
+RCT_EXPORT_METHOD(startUpdatingHeading)
+{
+    [self.locationManager startUpdatingHeading];
+}
+
 RCT_EXPORT_METHOD(stopMonitoringSignificantLocationChanges)
 {
     [self.locationManager stopMonitoringSignificantLocationChanges];
@@ -84,6 +89,11 @@ RCT_EXPORT_METHOD(stopMonitoringSignificantLocationChanges)
 RCT_EXPORT_METHOD(stopUpdatingLocation)
 {
     [self.locationManager stopUpdatingLocation];
+}
+
+RCT_EXPORT_METHOD(stopUpdatingHeading)
+{
+    [self.locationManager stopUpdatingHeading];
 }
 
 -(NSString *)nameForAuthorizationStatus:(CLAuthorizationStatus)authorizationStatus
@@ -121,6 +131,22 @@ RCT_EXPORT_METHOD(stopUpdatingLocation)
     NSLog(@"Location manager failed: %@", error);
 }
 
+- (void)locationManager:(CLLocationManager *)manager didUpdateHeading:(CLHeading *)newHeading {
+  if (newHeading.headingAccuracy < 0)
+    return;
+
+  // Use the true heading if it is valid.
+  CLLocationDirection heading = ((newHeading.trueHeading > 0) ?
+    newHeading.trueHeading : newHeading.magneticHeading);
+
+  NSDictionary *headingEvent = @{
+    @"heading": @(heading)
+  };
+
+  NSLog(@"heading: %f", heading);
+  [self.bridge.eventDispatcher sendDeviceEventWithName:@"headingUpdated" body:headingEvent];
+}
+
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations {
     CLLocation *location = [locations lastObject];
     NSDictionary *locationEvent = @{
@@ -130,7 +156,7 @@ RCT_EXPORT_METHOD(stopUpdatingLocation)
             @"altitude": @(location.altitude),
             @"accuracy": @(location.horizontalAccuracy),
             @"altitudeAccuracy": @(location.verticalAccuracy),
-            @"heading": @(location.course),
+            @"course": @(location.course),
             @"speed": @(location.speed),
         },
         @"timestamp": @([location.timestamp timeIntervalSince1970] * 1000) // in ms
