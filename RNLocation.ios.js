@@ -4,6 +4,6 @@
  */
 'use strict';
 
-var NativeRNLocation = require('NativeModules').RNLocation;
+var NativeModules = require('react-native').NativeModules
 
-module.exports = NativeRNLocation;
+module.exports = NativeModules.RNLocation;
