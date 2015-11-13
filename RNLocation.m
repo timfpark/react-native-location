@@ -130,7 +130,7 @@ RCT_EXPORT_METHOD(stopUpdatingLocation)
             @"altitude": @(location.altitude),
             @"accuracy": @(location.horizontalAccuracy),
             @"altitudeAccuracy": @(location.verticalAccuracy),
-            @"heading": @(location.course),
+            @"course": @(location.course),
             @"speed": @(location.speed),
         },
         @"timestamp": @([location.timestamp timeIntervalSince1970] * 1000) // in ms
