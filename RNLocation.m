@@ -65,6 +65,11 @@ RCT_EXPORT_METHOD(setDistanceFilter:(double) distance)
     self.locationManager.distanceFilter = distance;
 }
 
+RCT_EXPORT_METHOD(setAllowsBackgroundLocationUpdates:(BOOL) enabled)
+{
+    self.locationManager.allowsBackgroundLocationUpdates = enabled;
+}
+
 RCT_EXPORT_METHOD(startMonitoringSignificantLocationChanges)
 {
     NSLog(@"react-native-location: startMonitoringSignificantLocationChanges");
