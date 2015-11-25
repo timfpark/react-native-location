@@ -1,6 +1,6 @@
 {
   "name": "react-native-location",
-  "version": "0.14.0",
+  "version": "0.14.2",
   "dependencies": {
     "react-native": "^0.14"
   },
