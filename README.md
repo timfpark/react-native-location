@@ -133,20 +133,6 @@ var subscription = DeviceEventEmitter.addListener(
 );
 ```
 
-Start signifcant location updates (typically using network sources like Wifi/Cellular and with a minimum time gap of 5 minutes).  Your application will be called back with location updates via the DeviceEventEmitter event 'locationUpdated'.
-
-
-### Location.startUpdatingLocation
-```javascript
-Location.startUpdatingLocation();
-var subscription = DeviceEventEmitter.addListener(
-    'locationUpdated',
-    (location) => {
-        // do something with the location
-    }
-);
-```
-
 Start location updates.  Your application will be called back with location updates that meet any mininum distance requirements that you specify via the DeviceEventEmitter event 'locationUpdated'.
 
 ### Location.startUpdatingHeading
