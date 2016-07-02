@@ -11,20 +11,20 @@ First step for all three is NPM Install to your project:
 npm install --save react-native-location
 ```
 
-### RNPM Installation
+#### RNPM Installation
 For RNPM, first install RNPM globally and then simply run it with the 'link' command at the root of your project:
 ```
 npm install rnpm -g
-rnpm Link
+rnpm link
 ```
 
-### React-Native Link Installation
+#### React-Native Link Installation
 Since version 0.28 of React Native, rnpm has been merged into the codebase. So, as long as you are using the latest version of the CLI, then you can simply run link:
 ```
 react-native link
 ```
 
-### Manual Installation
+#### Manual Installation
 Finally, you can do a manual installation with XCode. Drag `ios/RNLocation.xcodeproj` from the `node_modules/react-native-location` folder into your XCode project. Click on the your project in XCode, goto Build Phases then Link Binary With Libraries and add `libRNLocation.a` and `CoreLocation.framework`.
 
 NOTE: Make sure you don't have the `RNLocation` project open separately in XCode otherwise it won't work.
