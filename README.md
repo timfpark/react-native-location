@@ -78,7 +78,7 @@ Location.requestAlwaysAuthorization();
 
 ## Methods
 
-To access the methods, you need import the `react-native-location` module. This is done through `var Beacons = require('react-native-location')`.
+To access the methods, you need import the `react-native-location` module. This is done through `var Location = require('react-native-location')`.
 
 ### Location.requestWhenInUseAuthorization
 ```javascript
