@@ -3,9 +3,29 @@
 Native GPS location support for React Native.
 
 ## Installation
-Install using npm with `npm install --save react-native-location`
+Three installation methods are provided here for compatibility and ease of use. All of them require installing the package using NPM. However, you can install the iOS specific bits using one of three methods: RNPM, React-Native Link (only v0.28), or manual linking in XCode.
 
-You then need to add the Objective C part to your XCode project. Drag `RNLocation.xcodeproj` from the `node_modules/react-native-location` folder into your XCode project. Click on the your project in XCode, goto Build Phases then Link Binary With Libraries and add `libRNLocation.a` and `CoreLocation.framework`.
+First step for all three is NPM Install to your project:
+
+```
+npm install --save react-native-location
+```
+
+#### RNPM Installation
+For RNPM, first install RNPM globally and then simply run it with the 'link' command at the root of your project:
+```
+npm install rnpm -g
+rnpm link
+```
+
+#### React-Native Link Installation
+Since version 0.28 of React Native, rnpm has been merged into the codebase. So, as long as you are using the latest version of the CLI, then you can simply run link:
+```
+react-native link
+```
+
+#### Manual Installation
+Finally, you can do a manual installation with XCode. Drag `ios/RNLocation.xcodeproj` from the `node_modules/react-native-location` folder into your XCode project. Click on the your project in XCode, goto Build Phases then Link Binary With Libraries and add `libRNLocation.a` and `CoreLocation.framework`.
 
 NOTE: Make sure you don't have the `RNLocation` project open separately in XCode otherwise it won't work.
 
