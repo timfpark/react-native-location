@@ -29,6 +29,23 @@ Finally, you can do a manual installation with XCode. Drag `ios/RNLocation.xcode
 
 NOTE: Make sure you don't have the `RNLocation` project open separately in XCode otherwise it won't work.
 
+## Example application
+
+In the [example](./example) folder is a React Native sample app which simply allows you to test out whether the library is working for you. You can also use this as a sample implementation to start from. The app requests always on permissions, takes reading every 5 distance and starts immediately. To utilize in the simulator, look on the `Debug -> Location` menu for optional sample trips that will show you updating location such as City Bicicle Ride, City Run and Freeway Drive.
+
+![Example App](./screenshots/example.gif)
+
+## PList Permissions
+
+In order to use permissions, your enclosing app needs to grant permissions in the `info.plist` file. React Native automatically sets up the PList config key for `NSLocationWhenInUseUsageDescription`. However, to use `NSLocationAlwaysUsageDescription` you will need to add that in your PList file. The string message in the key will show in the Alert box when your app requests permissions. To start, you can simply add these to your file and edit them (or remove them) later. Remember to only request the permissions you NEED within your app. See the detail on Background Mode later on.
+
+```xml
+<key>NSLocationWhenInUseUsageDescription</key>
+<string>This is the plist item for NSLocationWhenInUseUsageDescription</string>
+<key>NSLocationAlwaysUsageDescription</key>
+<string>This is the plist item for NSLocationAlwaysUsageDescription</string>
+```
+
 ## Location Usage
 ```javascript
 var React = require('react-native');
