@@ -104,14 +104,20 @@ It is recommended to set `NSWhenInUseUsageDescription` in your `Info.plist` file
 
 ## Background mode
 For background mode to work, a few things need to be configured:
+
 1. In the Xcode project, go to Capabilities, switch on "Background Modes" and check "Location updates".
-2. Using `requestAlwaysAuthorization` in place of `requestWhenInUseAuthorization`:
-
-```javascript
-Location.requestAlwaysAuthorization();
-```
-
+2. Using `requestAlwaysAuthorization` in place of `requestWhenInUseAuthorization`, like this:
+    
+    ```javascript
+    Location.requestAlwaysAuthorization();
+    ```
 3. Set `NSLocationAlwaysUsageDescription` in your `Info.plist` file.
+4. For iOS9, set [`allowsBackgroundLocationUpdates`](https://developer.apple.com/reference/corelocation/cllocationmanager/1620568-allowsbackgroundlocationupdates) to true, like this:
+    
+    ```javascript
+    Location.setAllowsBackgroundLocationUpdates(true);
+    ```
+
 
 ## Methods
 
