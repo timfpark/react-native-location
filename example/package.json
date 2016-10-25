@@ -7,11 +7,12 @@
     "sync-rnl": "rm -rf ./node_modules/react-native-location; sane '/usr/bin/rsync -v -a --exclude .git --exclude example --exclude node_modules ../ ./node_modules/react-native-location/' .. --glob='{**/*.json,**/*.js}'"
   },
   "dependencies": {
+    "moment": "^2.15.2",
     "react": "15.2.0",
     "react-native": "^0.28.0",
     "react-native-location": "file:../"
   },
   "devDependencies": {
-   "sane": "^1.3.4"
+    "sane": "^1.3.4"
   }
 }
