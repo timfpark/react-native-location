@@ -1,6 +1,6 @@
 # react-native-location
 
-Native GPS location support for React Native.
+Native iOS GPS location support for React Native.
 
 ## Installation
 Three installation methods are provided here for compatibility and ease of use. All of them require installing the package using NPM. However, you can install the iOS specific bits using one of three methods: RNPM, React-Native Link (only v0.28), or manual linking in XCode.
