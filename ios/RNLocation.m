@@ -16,7 +16,10 @@
 
 RCT_EXPORT_MODULE()
 
-@synthesize bridge = _bridge;
+- (NSArray<NSString *> *)supportedEvents
+{
+    return @[@"authorizationStatusDidChange", @"headingUpdated", @"locationUpdated"];
+}
 
 #pragma mark Initialization
 
@@ -129,7 +132,7 @@ RCT_EXPORT_METHOD(stopUpdatingHeading)
 -(void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
 {
     NSString *statusName = [self nameForAuthorizationStatus:status];
-    [self.bridge.eventDispatcher sendDeviceEventWithName:@"authorizationStatusDidChange" body:statusName];
+    [self sendEventWithName:@"authorizationStatusDidChange" body:statusName];
 }
 
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
@@ -149,7 +152,7 @@ RCT_EXPORT_METHOD(stopUpdatingHeading)
   };
 
   NSLog(@"heading: %f", heading);
-  [self.bridge.eventDispatcher sendDeviceEventWithName:@"headingUpdated" body:headingEvent];
+  [self sendEventWithName:@"headingUpdated" body:headingEvent];
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations {
@@ -168,7 +171,7 @@ RCT_EXPORT_METHOD(stopUpdatingHeading)
     };
 
     NSLog(@"%@: lat: %f, long: %f, altitude: %f", location.timestamp, location.coordinate.latitude, location.coordinate.longitude, location.altitude);
-    [self.bridge.eventDispatcher sendDeviceEventWithName:@"locationUpdated" body:locationEvent];
+    [self sendEventWithName:@"locationUpdated" body:locationEvent];
 }
 
 @end
