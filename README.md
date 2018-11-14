@@ -1,43 +1,29 @@
-# react-native-location
+# `react-native-location`
 
-Native GPS location support for React Native.
+Native GPS location support for React Native. Currently only supports iOS.
 
 ## Installation
-Three installation methods are provided here for compatibility and ease of use. All of them require installing the package using NPM. However, you can install the iOS specific bits using one of three methods: RNPM, React-Native Link (only v0.28), or manual linking in XCode.
-
-First step for all three is NPM Install to your project:
+Install the library using either npm:
 
 ```
 npm install --save react-native-location
 ```
 
-#### RNPM Installation
-For RNPM, first install RNPM globally and then simply run it with the 'link' command at the root of your project:
-```
-npm install rnpm -g
-rnpm link
-```
+or using Yarn:
 
-#### React-Native Link Installation
-Since version 0.28 of React Native, rnpm has been merged into the codebase. So, as long as you are using the latest version of the CLI, then you can simply run link:
 ```
-react-native link
+yarn add react-native-location
 ```
 
-#### Manual Installation
-Finally, you can do a manual installation with XCode. Drag `ios/RNLocation.xcodeproj` from the `node_modules/react-native-location` folder into your XCode project. Click on the your project in XCode, goto Build Phases then Link Binary With Libraries and add `libRNLocation.a` and `CoreLocation.framework`.
+You then need to link the native parts of the library:
 
-NOTE: Make sure you don't have the `RNLocation` project open separately in XCode otherwise it won't work.
+```
+react-native link react-native-location
+```
 
-## Example application
+Alternatively, you can do a manual installation with XCode. First, drag `node_modules/react-native-location/ios/RNLocation.xcodeproj` into your XCode project. Click on the your project in XCode (the name of your project at the top of the left panel), go to `Build Phases` then `Link Binary With Libraries` and add `libRNLocation.a` and `CoreLocation.framework`.
 
-In the [example](./example) folder is a React Native sample app which simply allows you to test out whether the library is working for you. You can also use this as a sample implementation to start from. The app requests always on permissions, takes reading every 5 distance and starts immediately. To utilize in the simulator, look on the `Debug -> Location` menu for optional sample trips that will show you updating location such as City Bicicle Ride, City Run and Freeway Drive.
-
-![Example App](./screenshots/example.gif)
-
-## PList Permissions
-
-In order to use permissions, your enclosing app needs to grant permissions in the `info.plist` file. React Native automatically sets up the PList config key for `NSLocationWhenInUseUsageDescription`. However, to use `NSLocationAlwaysUsageDescription` you will need to add that in your PList file. The string message in the key will show in the Alert box when your app requests permissions. To start, you can simply add these to your file and edit them (or remove them) later. Remember to only request the permissions you NEED within your app. See the detail on Background Mode later on.
+You then need to make sure you have the correct permissions inside your `info.plist` file. React Native automatically sets up the PList config key for `NSLocationWhenInUseUsageDescription`. However, to use `NSLocationAlwaysUsageDescription` you will need to add that in your PList file. The string message in the key will show in the Alert box when your app requests permissions. To start, you can simply add these to your file and edit them (or remove them) later. Remember to only request the permissions you NEED within your app. See the detail on Background Mode later on.
 
 ```xml
 <key>NSLocationWhenInUseUsageDescription</key>
@@ -46,7 +32,27 @@ In order to use permissions, your enclosing app needs to grant permissions in th
 <string>This is the plist item for NSLocationAlwaysUsageDescription</string>
 ```
 
-## Location Usage
+### Background mode setup (optional)
+For background mode to work, a few things need to be configured:
+
+1. In the Xcode project, go to Capabilities, switch on "Background Modes" and check "Location updates".
+2. Using `requestAlwaysAuthorization` in place of `requestWhenInUseAuthorization`, like this:
+```javascript
+Location.requestAlwaysAuthorization();
+```
+3. Set `NSLocationAlwaysUsageDescription` in your `Info.plist` file.
+4. For iOS9+, set [`allowsBackgroundLocationUpdates`](https://developer.apple.com/reference/corelocation/cllocationmanager/1620568-allowsbackgroundlocationupdates) to true, like this:
+```javascript
+Location.setAllowsBackgroundLocationUpdates(true);
+```
+
+## Example application
+In the [example](https://github.com/timfpark/react-native-location/example) folder is a React Native sample app which simply allows you to test out whether the library is working for you. You can also use this as a sample implementation to start from. The app requests always on permissions, takes reading every 5 distance and starts immediately. To utilize in the simulator, look on the `Debug -> Location` menu for optional sample trips that will show you updating location such as City Bicicle Ride, City Run and Freeway Drive.
+
+![Example App](./screenshots/example.gif)
+
+## Usage
+### Location
 ```javascript
 var React = require('react-native');
 var { DeviceEventEmitter } = React;
@@ -78,8 +84,7 @@ var subscription = DeviceEventEmitter.addListener(
 );
 ```
 
-## Heading Usage
-
+### Heading
 ```
 var React = require('react-native');
 var { DeviceEventEmitter } = React;
@@ -99,25 +104,6 @@ DeviceEventEmitter.addListener(
     }
 );
 ```
-
-It is recommended to set `NSWhenInUseUsageDescription` in your `Info.plist` file.
-
-## Background mode
-For background mode to work, a few things need to be configured:
-
-1. In the Xcode project, go to Capabilities, switch on "Background Modes" and check "Location updates".
-2. Using `requestAlwaysAuthorization` in place of `requestWhenInUseAuthorization`, like this:
-    
-    ```javascript
-    Location.requestAlwaysAuthorization();
-    ```
-3. Set `NSLocationAlwaysUsageDescription` in your `Info.plist` file.
-4. For iOS9, set [`allowsBackgroundLocationUpdates`](https://developer.apple.com/reference/corelocation/cllocationmanager/1620568-allowsbackgroundlocationupdates) to true, like this:
-    
-    ```javascript
-    Location.setAllowsBackgroundLocationUpdates(true);
-    ```
-
 
 ## Methods
 
