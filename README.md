@@ -104,23 +104,23 @@ DeviceEventEmitter.addListener(
 
 ## Methods
 
-To access the methods, you need import the `react-native-location` module. This is done through `var Location = require('react-native-location')`.
+To access the methods, you need import the `react-native-location` module. This is done through `import RNLocation from 'react-native-location'`.
 
-### Location.requestWhenInUseAuthorization
+### RNLocation.requestWhenInUseAuthorization
 ```javascript
 RNLocation.requestWhenInUseAuthorization();
 ```
 
-This method should be called before anything else. It requests location updates while the application is open. If the application is in the background, you will not get location updates. Either this method or `Location.requestAlwaysAuthorization` (but not both) needs to be called to receive updates.
+This method should be called before anything else. It requests location updates while the application is open. If the application is in the background, you will not get location updates. Either this method or `RNLocation.requestAlwaysAuthorization` (but not both) needs to be called to receive updates.
 
-### Location.requestAlwaysAuthorization
+### RNLocation.requestAlwaysAuthorization
 ```javascript
 RNLocation.requestAlwaysAuthorization();
 ```
 
-This method should be called before anything else is called.  It requests location updates while the application is open or in the background. Either this method or `Location.requestWhenInUseAuthorization` (but not both) needs to be called to receive updates.
+This method should be called before anything else is called.  It requests location updates while the application is open or in the background. Either this method or `RNLocation.requestWhenInUseAuthorization` (but not both) needs to be called to receive updates.
 
-### Location.getAuthorizationStatus
+### RNLocation.getAuthorizationStatus
 ```javascript
 RNLocation.getAuthorizationStatus(function(authorization) {
   // authorization is a string which is either "authorizedAlways",
@@ -130,25 +130,26 @@ RNLocation.getAuthorizationStatus(function(authorization) {
 
 This methods gets the current authorization status. While this methods provides a callback, it is not executed asynchronously. The values `authorizedAlways` and `authorizedWhenInUse` correspond to the methods `requestWhenInUseAuthorization` and `requestAlwaysAuthorization` respectively.
 
-### Location.setDesiredAccuracy
+### RNLocation.setDesiredAccuracy
 ```javascript
 RNLocation.setDesiredAccuracy(distanceInMeters);
 ```
 
 Set the desired accuracy of location updates in meters.  Determines the method used to obtain location updates.  Low values will trigger using GPS.
 
-### Location.setDistanceFilter
+### RNLocation.setDistanceFilter
 ```javascript
 RNLocation.setDistanceFilter(distanceInMeters);
 ```
 
 Set the desired minimum distance between location updates in meters.
 
-### Location.startMonitoringSignificantLocationChanges
+### RNLocation.startMonitoringSignificantLocationChanges
 ```javascript
-Location.startMonitoringSignificantLocationChanges();
+RNLocation.startMonitoringSignificantLocationChanges();
 ```
-### Location.startUpdatingLocation
+
+### RNLocation.startUpdatingLocation
 ```javascript
 RNLocation.startUpdatingLocation();
 var subscription = DeviceEventEmitter.addListener(
@@ -161,7 +162,7 @@ var subscription = DeviceEventEmitter.addListener(
 
 Start location updates.  Your application will be called back with location updates that meet any mininum distance requirements that you specify via the DeviceEventEmitter event 'locationUpdated'.
 
-### Location.startUpdatingHeading
+### RNLocation.startUpdatingHeading
 ```javascript
 RNLocation.startUpdatingHeading();
 var subscription = DeviceEventEmitter.addListener(
@@ -174,21 +175,21 @@ var subscription = DeviceEventEmitter.addListener(
 
 Start heading updates.  Your application will be called back with heading updates.
 
-### Location.stopUpdatingLocation
+### RNLocation.stopUpdatingLocation
 ```javascript
 RNLocation.stopUpdatingLocation();
 ```
 
 Stop receiving location events.
 
-### Location.stopUpdatingHeading
+### RNLocation.stopUpdatingHeading
 ```javascript
 RNLocation.stopUpdatingHeading();
 ```
 
 Stop receiving heading events.
 
-### Location.stopMonitoringSignificantLocationChanges
+### RNLocation.stopMonitoringSignificantLocationChanges
 ```javascript
 RNLocation.stopMonitoringSignificantLocationChanges();
 ```
