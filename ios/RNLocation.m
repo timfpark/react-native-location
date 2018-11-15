@@ -143,6 +143,7 @@ RCT_EXPORT_METHOD(stopUpdatingHeading)
             @"altitudeAccuracy": @(location.verticalAccuracy),
             @"course": @(location.course),
             @"speed": @(location.speed),
+            @"floor": @(location.floor.level),
         },
         @"timestamp": @([location.timestamp timeIntervalSince1970] * 1000) // in ms
     };
