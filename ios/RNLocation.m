@@ -16,9 +16,12 @@
 
 RCT_EXPORT_MODULE()
 
-@synthesize bridge = _bridge;
+- (NSArray<NSString *> *)supportedEvents
+{
+    return @[@"authorizationStatusDidChange", @"headingUpdated", @"locationUpdated"];
+}
 
-#pragma mark Initialization
+#pragma mark - Initialization
 
 - (instancetype)init
 {
@@ -36,17 +39,15 @@ RCT_EXPORT_MODULE()
     return self;
 }
 
-#pragma mark
+#pragma mark - React methods
 
 RCT_EXPORT_METHOD(requestAlwaysAuthorization)
 {
-    NSLog(@"react-native-location: requestAlwaysAuthorization");
     [self.locationManager requestAlwaysAuthorization];
 }
 
 RCT_EXPORT_METHOD(requestWhenInUseAuthorization)
 {
-    NSLog(@"react-native-location: requestWhenInUseAuthorization");
     [self.locationManager requestWhenInUseAuthorization];
 }
 
@@ -72,7 +73,6 @@ RCT_EXPORT_METHOD(setAllowsBackgroundLocationUpdates:(BOOL) enabled)
 
 RCT_EXPORT_METHOD(startMonitoringSignificantLocationChanges)
 {
-    NSLog(@"react-native-location: startMonitoringSignificantLocationChanges");
     [self.locationManager startMonitoringSignificantLocationChanges];
 }
 
@@ -101,44 +101,24 @@ RCT_EXPORT_METHOD(stopUpdatingHeading)
     [self.locationManager stopUpdatingHeading];
 }
 
--(NSString *)nameForAuthorizationStatus:(CLAuthorizationStatus)authorizationStatus
-{
-    switch (authorizationStatus) {
-        case kCLAuthorizationStatusAuthorizedAlways:
-            NSLog(@"Authorization Status: authorizedAlways");
-            return @"authorizedAlways";
+#pragma mark - CLLocationManagerDelegate
 
-        case kCLAuthorizationStatusAuthorizedWhenInUse:
-            NSLog(@"Authorization Status: authorizedWhenInUse");
-            return @"authorizedWhenInUse";
-
-        case kCLAuthorizationStatusDenied:
-            NSLog(@"Authorization Status: denied");
-            return @"denied";
-
-        case kCLAuthorizationStatusNotDetermined:
-            NSLog(@"Authorization Status: notDetermined");
-            return @"notDetermined";
-
-        case kCLAuthorizationStatusRestricted:
-            NSLog(@"Authorization Status: restricted");
-            return @"restricted";
-    }
-}
-
--(void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
+- (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
 {
     NSString *statusName = [self nameForAuthorizationStatus:status];
-    [self.bridge.eventDispatcher sendDeviceEventWithName:@"authorizationStatusDidChange" body:statusName];
+    [self sendEventWithName:@"authorizationStatusDidChange" body:statusName];
 }
 
-- (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error {
+- (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
+{
     NSLog(@"Location manager failed: %@", error);
 }
 
-- (void)locationManager:(CLLocationManager *)manager didUpdateHeading:(CLHeading *)newHeading {
-  if (newHeading.headingAccuracy < 0)
+- (void)locationManager:(CLLocationManager *)manager didUpdateHeading:(CLHeading *)newHeading
+{
+  if (newHeading.headingAccuracy < 0) {
     return;
+  }
 
   // Use the true heading if it is valid.
   CLLocationDirection heading = ((newHeading.trueHeading > 0) ?
@@ -148,11 +128,11 @@ RCT_EXPORT_METHOD(stopUpdatingHeading)
     @"heading": @(heading)
   };
 
-  NSLog(@"heading: %f", heading);
-  [self.bridge.eventDispatcher sendDeviceEventWithName:@"headingUpdated" body:headingEvent];
+  [self sendEventWithName:@"headingUpdated" body:headingEvent];
 }
 
-- (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations {
+- (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
+{
     CLLocation *location = [locations lastObject];
     NSDictionary *locationEvent = @{
         @"coords": @{
@@ -167,8 +147,25 @@ RCT_EXPORT_METHOD(stopUpdatingHeading)
         @"timestamp": @([location.timestamp timeIntervalSince1970] * 1000) // in ms
     };
 
-    NSLog(@"%@: lat: %f, long: %f, altitude: %f", location.timestamp, location.coordinate.latitude, location.coordinate.longitude, location.altitude);
-    [self.bridge.eventDispatcher sendDeviceEventWithName:@"locationUpdated" body:locationEvent];
+    [self sendEventWithName:@"locationUpdated" body:locationEvent];
+}
+
+#pragma mark - Utilities
+
+- (NSString *)nameForAuthorizationStatus:(CLAuthorizationStatus)authorizationStatus
+{
+    switch (authorizationStatus) {
+        case kCLAuthorizationStatusAuthorizedAlways:
+            return @"authorizedAlways";
+        case kCLAuthorizationStatusAuthorizedWhenInUse:
+            return @"authorizedWhenInUse";
+        case kCLAuthorizationStatusDenied:
+            return @"denied";
+        case kCLAuthorizationStatusNotDetermined:
+            return @"notDetermined";
+        case kCLAuthorizationStatusRestricted:
+            return @"restricted";
+    }
 }
 
 @end

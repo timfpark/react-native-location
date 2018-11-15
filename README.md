@@ -54,14 +54,16 @@ In the [example](https://github.com/timfpark/react-native-location/example) fold
 ## Usage
 ### Location
 ```javascript
-import { DeviceEventEmitter } from 'react-native';
+import { NativeEventEmitter } from 'react-native';
 import RNLocation from 'react-native-location';
+
+const RNLocationEmitter = new NativeEventEmitter(RNLocation);
 
 RNLocation.requestAlwaysAuthorization();
 RNLocation.startUpdatingLocation();
 RNLocation.setDistanceFilter(5.0);
 
-var subscription = DeviceEventEmitter.addListener(
+var subscription = RNLocationEmitter.addListener(
     'locationUpdated',
     (location) => {
         /* Example location returned
@@ -83,14 +85,16 @@ var subscription = DeviceEventEmitter.addListener(
 ```
 
 ### Heading
-```
-import { DeviceEventEmitter } from 'react-native';
+```javascript
+import { NativeEventEmitter } from 'react-native';
 import RNLocation from 'react-native-location';
+
+const RNLocationEmitter = new NativeEventEmitter(RNLocation);
 
 RNLocation.requestAlwaysAuthorization();
 RNLocation.startUpdatingHeading();
 
-DeviceEventEmitter.addListener(
+RNLocationEmitter.addListener(
     'headingUpdated',
     (data) => {
         /* Example data returned
@@ -152,7 +156,8 @@ RNLocation.startMonitoringSignificantLocationChanges();
 ### RNLocation.startUpdatingLocation
 ```javascript
 RNLocation.startUpdatingLocation();
-var subscription = DeviceEventEmitter.addListener(
+const RNLocationEmitter = new NativeEventEmitter(RNLocation);
+var subscription = RNLocationEmitter.addListener(
     'locationUpdated',
     (location) => {
         // do something with the location
@@ -165,7 +170,8 @@ Start location updates.  Your application will be called back with location upda
 ### RNLocation.startUpdatingHeading
 ```javascript
 RNLocation.startUpdatingHeading();
-var subscription = DeviceEventEmitter.addListener(
+const RNLocationEmitter = new NativeEventEmitter(RNLocation);
+var subscription = RNLocationEmitter.addListener(
     'headingUpdated',
     (data) => {
         // do something with the heading
@@ -197,13 +203,24 @@ RNLocation.stopMonitoringSignificantLocationChanges();
 Stop receiving sigificant location change events.
 
 ## Events
-To listen to events we need to call `DeviceEventEmitter.addListener` (`import { DeviceEventEmitter } from 'react-native'`) where the first parameter is the event we want to listen to and the second is a callback function that will be called once the event is triggered.
+To listen to events you need to create a `NativeEventEmitter` from the library:
 
-### locationUpdated
-Received when a location update has been sensed by the system.  The event delivers one parameter, location, that is an object with location, elevation, and accuracy data.
+```javascript
+import { NativeEventEmitter } from 'react-native';
+import RNLocation from 'react-native-location';
+const RNLocationEmitter = new NativeEventEmitter(RNLocation);
+```
 
-### headingUpdated
-Received when the heading changes.  The event delivers one parameter: an object with the current heading in degrees.
+You can then call `RNLocationEmitter.addListener` with the first parameter as the name of the event and the second parameter as a function which will be called when the event fires.
+
+### `authorizationStatusDidChange`
+Received when the location authorization status changes.
+
+### `locationUpdated`
+Received when a location update has been sensed by the system. The event delivers one parameter, location, that is an object with location, elevation, and accuracy data.
+
+### `headingUpdated`
+Received when the heading changes. The event delivers one parameter: an object with the current heading in degrees.
 
 ## License
-MIT, for more information see `LICENSE`
+The library is released under the MIT licence. For more information see `LICENSE`.
