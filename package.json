@@ -15,5 +15,5 @@
     "ios",
     "location"
   ],
-  "main": "RNLocation.ios.js"
+  "main": "index.js"
 }
