@@ -1,3 +1,6 @@
+dist/
+jsconfig.json
+
 ### SublimeText ###
 *.sublime-workspace
 
@@ -31,6 +34,7 @@ $RECYCLE.BIN/
 # App specific
 
 npm-debug.log
+yarn-error.log
 node_modules/
 .tmp
 old

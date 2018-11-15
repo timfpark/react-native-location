@@ -1,9 +1,6 @@
 {
   "name": "react-native-location",
   "version": "0.14.3",
-  "devDependencies": {
-    "react-native": "^0.14"
-  },
   "repository": {
     "type": "git",
     "url": "https://github.com/timfpark/react-native-location.git"
@@ -15,5 +12,41 @@
     "ios",
     "location"
   ],
-  "main": "index.js"
+  "main": "dist/index.js",
+  "typings": "dist/index.js",
+  "scripts": {
+    "build": "genversion src/version.js && npm run build-src",
+    "build-src": "BABEL_ENV=publish babel src -d dist --ignore __tests__ --copy-files",
+    "build-flow": "flow-copy-source -i */__tests__* src dist",
+    "build-src-watch": "genversion src/version.js && BABEL_ENV=development babel src -d dist --ignore __tests__ --copy-files --watch",
+    "run:packager": "node node_modules/react-native/local-cli/cli.js start",
+    "run:ios": "react-native run-ios --project-path ./example/ios",
+    "run:android": "./gradlew installDebug && yarn start:android",
+    "start:android": "adb shell am start -n com.example/.MainActivity",
+    "clean": "rimraf dist/",
+    "validate-ts-declarations": "tsc --project ./",
+    "validate-flow-declarations": "flow",
+    "prepare": "npm run clean && npm run build && npm run build-flow",
+    "precommit": "lint-staged",
+    "prepublishOnly": "npm run validate-ts-declarations && npm run validate-flow-declarations"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.1.5",
+    "@babel/core": "^7.0.0",
+    "@babel/runtime": "^7.1.5",
+    "@invertase/babel-preset-react-native-syntax": "^0.1.3",
+    "@types/react-native": "^0.57.9",
+    "babel-core": "^7.0.0-bridge.0",
+    "babel-jest": "23.6.0",
+    "babel-plugin-module-resolver": "^3.1.1",
+    "flow-bin": "^0.78.0",
+    "flow-copy-source": "^2.0.2",
+    "genversion": "^2.1.0",
+    "metro-react-native-babel-preset": "0.49.2",
+    "moment": "^2.22.2",
+    "react": "16.6.1",
+    "react-native": "0.57.5",
+    "rimraf": "^2.6.2",
+    "typescript": "^3.1.6"
+  }
 }

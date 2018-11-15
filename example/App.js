@@ -1,7 +1,6 @@
 import React from 'react';
 import {
   Linking,
-  NativeEventEmitter,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -9,10 +8,8 @@ import {
   TouchableHighlight,
   View
 } from 'react-native'
-import RNLocation from 'react-native-location'
+import RNLocation, { RNLocationEventEmitter } from 'react-native-location'
 import moment from 'moment'
-
-const RNLocationEmitter = new NativeEventEmitter(RNLocation);
 
 const repoUrl = 'https://github.com/timfpark/react-native-location'
 
@@ -27,7 +24,7 @@ export default class App extends React.PureComponent {
   componentWillMount() {
     RNLocation.requestAlwaysAuthorization()
     RNLocation.setDistanceFilter(5.0)
-    RNLocationEmitter.addListener('locationUpdated', location => {
+    RNLocationEventEmitter.addListener('locationUpdated', location => {
       this.setState({ location })
     })
 
