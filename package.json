@@ -30,6 +30,10 @@
     "precommit": "lint-staged",
     "prepublishOnly": "npm run validate-ts-declarations && npm run validate-flow-declarations"
   },
+  "peerDependencies": {
+    "react": "*",
+    "react-native": ">= 0.46"
+  },
   "devDependencies": {
     "@babel/cli": "^7.1.5",
     "@babel/core": "^7.0.0",
