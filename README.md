@@ -64,16 +64,13 @@ In the [example](https://github.com/timfpark/react-native-location/example) fold
 ## Usage
 ### Location
 ```javascript
-import { NativeEventEmitter } from 'react-native';
-import RNLocation from 'react-native-location';
-
-const RNLocationEmitter = new NativeEventEmitter(RNLocation);
+import RNLocation, { RNLocationEventEmitter } from 'react-native-location';
 
 RNLocation.requestAlwaysAuthorization();
 RNLocation.startUpdatingLocation();
 RNLocation.setDistanceFilter(5.0);
 
-var subscription = RNLocationEmitter.addListener(
+var subscription = RNLocationEventEmitter.addListener(
     'locationUpdated',
     (location) => {
         /* Example location returned
@@ -96,15 +93,12 @@ var subscription = RNLocationEmitter.addListener(
 
 ### Heading
 ```javascript
-import { NativeEventEmitter } from 'react-native';
-import RNLocation from 'react-native-location';
-
-const RNLocationEmitter = new NativeEventEmitter(RNLocation);
+import RNLocation, { RNLocationEventEmitter } from 'react-native-location';
 
 RNLocation.requestAlwaysAuthorization();
 RNLocation.startUpdatingHeading();
 
-RNLocationEmitter.addListener(
+RNLocationEventEmitter.addListener(
     'headingUpdated',
     (data) => {
         /* Example data returned
@@ -166,8 +160,7 @@ RNLocation.startMonitoringSignificantLocationChanges();
 ### RNLocation.startUpdatingLocation
 ```javascript
 RNLocation.startUpdatingLocation();
-const RNLocationEmitter = new NativeEventEmitter(RNLocation);
-var subscription = RNLocationEmitter.addListener(
+const subscription = RNLocationEventEmitter.addListener(
     'locationUpdated',
     (location) => {
         // do something with the location
@@ -180,8 +173,7 @@ Start location updates.  Your application will be called back with location upda
 ### RNLocation.startUpdatingHeading
 ```javascript
 RNLocation.startUpdatingHeading();
-const RNLocationEmitter = new NativeEventEmitter(RNLocation);
-var subscription = RNLocationEmitter.addListener(
+const subscription = RNLocationEventEmitter.addListener(
     'headingUpdated',
     (data) => {
         // do something with the heading
@@ -213,15 +205,13 @@ RNLocation.stopMonitoringSignificantLocationChanges();
 Stop receiving sigificant location change events.
 
 ## Events
-To listen to events you need to create a `NativeEventEmitter` from the library:
+To listen to events you need to import the `RNLocationEventEmitter` from the library:
 
 ```javascript
-import { NativeEventEmitter } from 'react-native';
-import RNLocation from 'react-native-location';
-const RNLocationEmitter = new NativeEventEmitter(RNLocation);
+import RNLocation, { RNLocationEventEmitter } from 'react-native-location';
 ```
 
-You can then call `RNLocationEmitter.addListener` with the first parameter as the name of the event and the second parameter as a function which will be called when the event fires.
+You can then call `RNLocationEventEmitter.addListener` with the first parameter as the name of the event and the second parameter as a function which will be called when the event fires.
 
 ### `authorizationStatusDidChange`
 Received when the location authorization status changes.
