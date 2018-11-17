@@ -2,6 +2,12 @@
 
 Native GPS location support for React Native. Currently only supports iOS.
 
+You might decide to use this library over the [built-in geolocation](https://facebook.github.io/react-native/docs/geolocation.html) because it includes some additional features:
+
+* Allows you choose what type of permission to ask for ("when in use" or "always"). The built-in geolocation library will look at your plist file and choose "always" if you have the `NSLocationAlwaysUsageDescription` property, however, you might have a usecase where you want to start by asking the user for "while in use" permission and later upgrade the permission to "always" when they turn on a feature which requires background location.
+* Ability to check the current permission status (`RNLocation.getAuthorizationStatus`).
+* Allows you to monitor the device heading.
+
 ## Installation
 Install the library using either npm:
 
