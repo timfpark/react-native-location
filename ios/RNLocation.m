@@ -9,6 +9,7 @@
 @interface RNLocation() <CLLocationManagerDelegate>
 
 @property (strong, nonatomic) CLLocationManager *locationManager;
+@property (nonatomic) BOOL hasListeners;
 
 @end
 
@@ -22,6 +23,11 @@ RCT_EXPORT_MODULE()
 }
 
 #pragma mark - Initialization
+
++ (BOOL)requiresMainQueueSetup
+{
+    return YES;
+}
 
 - (instancetype)init
 {
@@ -37,6 +43,18 @@ RCT_EXPORT_MODULE()
     }
 
     return self;
+}
+
+#pragma mark - Listener tracking
+
+- (void)startObserving
+{
+    self.hasListeners = YES;
+}
+
+- (void)stopObserving
+{
+    self.hasListeners = NO;
 }
 
 #pragma mark - React methods
@@ -105,6 +123,10 @@ RCT_EXPORT_METHOD(stopUpdatingHeading)
 
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
 {
+    if (!self.hasListeners) {
+        return;
+    }
+    
     NSString *statusName = [self nameForAuthorizationStatus:status];
     [self sendEventWithName:@"authorizationStatusDidChange" body:statusName];
 }
@@ -116,23 +138,31 @@ RCT_EXPORT_METHOD(stopUpdatingHeading)
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateHeading:(CLHeading *)newHeading
 {
-  if (newHeading.headingAccuracy < 0) {
-    return;
-  }
+    if (newHeading.headingAccuracy < 0) {
+        return;
+    }
+    
+    if (!self.hasListeners) {
+        return;
+    }
 
-  // Use the true heading if it is valid.
-  CLLocationDirection heading = ((newHeading.trueHeading > 0) ?
+    // Use the true heading if it is valid.
+    CLLocationDirection heading = ((newHeading.trueHeading > 0) ?
     newHeading.trueHeading : newHeading.magneticHeading);
 
-  NSDictionary *headingEvent = @{
+    NSDictionary *headingEvent = @{
     @"heading": @(heading)
-  };
+    };
 
-  [self sendEventWithName:@"headingUpdated" body:headingEvent];
+    [self sendEventWithName:@"headingUpdated" body:headingEvent];
 }
 
 - (void)locationManager:(CLLocationManager *)manager didUpdateLocations:(NSArray *)locations
 {
+    if (!self.hasListeners) {
+        return;
+    }
+    
     CLLocation *location = [locations lastObject];
     NSDictionary *locationEvent = @{
         @"coords": @{
