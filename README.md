@@ -21,13 +21,17 @@ You then need to link the native parts of the library:
 react-native link react-native-location
 ```
 
+You then need to open XCode, go to the project settings and ensure that `CoreLocation.framework` is added to the *Link Binary With Libraries* section.
+
 Alternatively, you can do a manual installation with XCode. First, drag `node_modules/react-native-location/ios/RNLocation.xcodeproj` into your XCode project. Click on the your project in XCode (the name of your project at the top of the left panel), go to `Build Phases` then `Link Binary With Libraries` and add `libRNLocation.a` and `CoreLocation.framework`.
 
-You then need to make sure you have the correct permissions inside your `info.plist` file. React Native automatically sets up the PList config key for `NSLocationWhenInUseUsageDescription`. However, to use `NSLocationAlwaysUsageDescription` you will need to add that in your PList file. The string message in the key will show in the Alert box when your app requests permissions. To start, you can simply add these to your file and edit them (or remove them) later. Remember to only request the permissions you NEED within your app. See the detail on Background Mode later on.
+Finally, you then need to make sure you have the correct permissions inside your `info.plist` file. React Native automatically sets up the PList config key for `NSLocationWhenInUseUsageDescription`. However, to use always permission you will need to add `NSLocationAlwaysAndWhenInUseUsageDescription` and `NSLocationAlwaysUsageDescription` into your PList file. The string message in the key will show in the Alert box when your app requests permissions. To start, you can simply add these to your file and edit them (or remove them) later. Remember to only request the permissions you NEED within your app. See the detail on Background Mode later on.
 
 ```xml
 <key>NSLocationWhenInUseUsageDescription</key>
 <string>This is the plist item for NSLocationWhenInUseUsageDescription</string>
+<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+<string>This is the plist item for NSLocationAlwaysAndWhenInUseUsageDescription</string>
 <key>NSLocationAlwaysUsageDescription</key>
 <string>This is the plist item for NSLocationAlwaysUsageDescription</string>
 ```
