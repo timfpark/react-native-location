@@ -1,6 +1,6 @@
 {
   "name": "react-native-location",
-  "version": "0.14.3",
+  "version": "1.0.0-rc.1",
   "repository": {
     "type": "git",
     "url": "https://github.com/timfpark/react-native-location.git"
