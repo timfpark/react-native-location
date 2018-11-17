@@ -11,12 +11,6 @@ The example app makes some assumptions about usage. The always usage permission 
 ![Example app video](../screenshots/example.gif)
 
 ## Developing the library with this Example
-Normally, after a code change to `react-native-location` `src` files, you must remove the `node_modules/react-native-location` directory and `yarn install`. This is because the react-native packager won't follow symlinks.
+Run the packager using `yarn run:packager` from the root directory.
 
-To assist development, this command watches and rsyncs changes:
-
-```
-yarn sync-rnl
-```
-
-Leave a terminal open running this command when running the Example app and making `react-native-location` `src` changes. NOTE: This may run for a long time on first execution.
+Babel is configured to find `react-native-location` from the `dist` directory. If you make a change to the Javascript in `src` you need to run `yarn build` for the example app to find the new code.
