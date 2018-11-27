@@ -138,7 +138,7 @@ RCT_EXPORT_METHOD(configure:(NSDictionary *)options)
     }
 }
 
-#pragma mark - Deprecated
+#pragma mark - Monitoring
 
 RCT_EXPORT_METHOD(startMonitoringSignificantLocationChanges)
 {

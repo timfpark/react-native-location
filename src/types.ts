@@ -1,4 +1,4 @@
-export type AuthorizationStatus =
+export type LocationPermissionStatus =
   | "authorizedAlways"
   | "authorizedWhenInUse"
   | "denied"
@@ -25,6 +25,4 @@ export interface Heading {
   heading: number,
 }
 
-export type AuthorizationStatusCallback = (authorizationStatus: AuthorizationStatus) => void
-export type LocationCallback = (location: Location) => void
-export type HeadingCallback = (heading: Heading) => void
+export type Subscription = () => void;

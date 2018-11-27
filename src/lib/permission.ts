@@ -1,5 +1,5 @@
 import { EventEmitter, Platform } from "react-native";
-import { AuthorizationStatus } from "../types";
+import { LocationPermissionStatus } from "../types";
 
 let nativeInterface: any;
 let eventEmitter: EventEmitter;
@@ -29,7 +29,7 @@ const requestPermission = async (options: RequestPermissionOptions): Promise<boo
   }
 };
 
-const getCurrentPermission = async (): Promise<AuthorizationStatus> => {
+const getCurrentPermission = async (): Promise<LocationPermissionStatus> => {
   switch (Platform.OS) {
     case "ios":
       return await nativeInterface.getAuthorizationStatus();
