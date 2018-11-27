@@ -8,7 +8,7 @@ export interface ConfigureOptions {
     | "automotiveNavigation"
     | "fitness"
     | "otherNavigation"
-    | "airborne"
+    | "airborne" // iOS 12+
     | void,
   allowsBackgroundLocationUpdates?: boolean | void,
   desiredAccuracy?:
@@ -19,7 +19,7 @@ export interface ConfigureOptions {
     | "threeKilometers"
     | void,
   pausesLocationUpdatesAutomatically?: boolean | void,
-  showsBackgroundLocationIndicator?: boolean | void,
+  showsBackgroundLocationIndicator?: boolean | void, // iOS 11+
 }
 
 export default (nativeInterface: any) => {

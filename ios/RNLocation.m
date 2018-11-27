@@ -33,13 +33,7 @@ RCT_EXPORT_MODULE()
 {
     if (self = [super init]) {
         self.locationManager = [[CLLocationManager alloc] init];
-
         self.locationManager.delegate = self;
-
-        self.locationManager.distanceFilter = kCLDistanceFilterNone;
-        self.locationManager.desiredAccuracy = kCLLocationAccuracyBest;
-
-        self.locationManager.pausesLocationUpdatesAutomatically = NO;
     }
 
     return self;
@@ -57,37 +51,94 @@ RCT_EXPORT_MODULE()
     self.hasListeners = NO;
 }
 
-#pragma mark - React methods
+#pragma mark - Permissions
 
-RCT_EXPORT_METHOD(requestAlwaysAuthorization)
+RCT_REMAP_METHOD(requestAlwaysAuthorization,
+                 requestAlwaysAuthorizationWithResolver:(RCTPromiseResolveBlock)resolve
+                 rejecter:(RCTPromiseRejectBlock)reject)
 {
     [self.locationManager requestAlwaysAuthorization];
+    // TODO: Resolve the promise with the result
 }
 
-RCT_EXPORT_METHOD(requestWhenInUseAuthorization)
+RCT_REMAP_METHOD(requestWhenInUseAuthorization,
+                 requestWhenInUseAuthorizationWithResolver:(RCTPromiseResolveBlock)resolve
+                 rejecter:(RCTPromiseRejectBlock)reject)
 {
     [self.locationManager requestWhenInUseAuthorization];
+    // TODO: Resolve the promise with the result
 }
 
-RCT_EXPORT_METHOD(getAuthorizationStatus:(RCTResponseSenderBlock)callback)
+RCT_REMAP_METHOD(getAuthorizationStatus,
+                 getAuthorizationStatusWithResolver:(RCTPromiseResolveBlock)resolve
+                 rejecter:(RCTPromiseRejectBlock)reject)
 {
-    callback(@[[self nameForAuthorizationStatus:[CLLocationManager authorizationStatus]]]);
+    NSString *status = [self nameForAuthorizationStatus:[CLLocationManager authorizationStatus]];
+    resolve(status);
 }
 
-RCT_EXPORT_METHOD(setDesiredAccuracy:(double) accuracy)
+#pragma mark - Configure
+
+RCT_EXPORT_METHOD(configure:(NSDictionary *)options)
 {
-    self.locationManager.desiredAccuracy = accuracy;
+    // Activity type
+    NSString *activityType = [RCTConvert NSString:options[@"activityType"]];
+    if ([activityType isEqualToString:@"other"]) {
+        self.locationManager.activityType = CLActivityTypeOther;
+    } else if ([activityType isEqualToString:@"automotiveNavigation"]) {
+        self.locationManager.activityType = CLActivityTypeAutomotiveNavigation;
+    } else if ([activityType isEqualToString:@"fitness"]) {
+        self.locationManager.activityType = CLActivityTypeFitness;
+    } else if ([activityType isEqualToString:@"otherNavigation"]) {
+        self.locationManager.activityType = CLActivityTypeOtherNavigation;
+    } else if ([activityType isEqualToString:@"airborne"]) {
+        if (@available(iOS 12.0, *)) {
+            self.locationManager.activityType = CLActivityTypeAirborne;
+        }
+    }
+    
+    // Allows background location updates
+    NSNumber *allowsBackgroundLocationUpdates = [RCTConvert NSNumber:options[@"allowsBackgroundLocationUpdates"]];
+    if (allowsBackgroundLocationUpdates != nil) {
+        self.locationManager.allowsBackgroundLocationUpdates = [allowsBackgroundLocationUpdates boolValue];
+    }
+    
+    // Desired accuracy
+    NSString *desiredAccuracy = [RCTConvert NSString:options[@"desiredAccuracy"]];
+    if ([desiredAccuracy isEqualToString:@"bestForNavigation"]) {
+        self.locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation;
+    } else if ([desiredAccuracy isEqualToString:@"best"]) {
+        self.locationManager.desiredAccuracy = kCLLocationAccuracyBest;
+    } else if ([desiredAccuracy isEqualToString:@"nearestTenMeters"]) {
+        self.locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters;
+    } else if ([desiredAccuracy isEqualToString:@"hundredMeters"]) {
+        self.locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters;
+    } else if ([desiredAccuracy isEqualToString:@"threeKilometers"]) {
+        self.locationManager.desiredAccuracy = kCLLocationAccuracyThreeKilometers;
+    }
+    
+    // Distance filter
+    NSNumber *distanceFilter = [RCTConvert NSNumber:options[@"distanceFilter"]];
+    if (distanceFilter != nil) {
+        self.locationManager.distanceFilter = [distanceFilter doubleValue];
+    }
+    
+    // Pauses location updates automatically
+    NSNumber *pausesLocationUpdatesAutomatically = [RCTConvert NSNumber:options[@"pausesLocationUpdatesAutomatically"]];
+    if (pausesLocationUpdatesAutomatically != nil) {
+        self.locationManager.pausesLocationUpdatesAutomatically = [pausesLocationUpdatesAutomatically boolValue];
+    }
+    
+    // Shows background location indicator
+    if (@available(iOS 11.0, *)) {
+        NSNumber *showsBackgroundLocationIndicator = [RCTConvert NSNumber:options[@"showsBackgroundLocationIndicator"]];
+        if (showsBackgroundLocationIndicator != nil) {
+            self.locationManager.showsBackgroundLocationIndicator = [showsBackgroundLocationIndicator boolValue];
+        }
+    }
 }
 
-RCT_EXPORT_METHOD(setDistanceFilter:(double) distance)
-{
-    self.locationManager.distanceFilter = distance;
-}
-
-RCT_EXPORT_METHOD(setAllowsBackgroundLocationUpdates:(BOOL) enabled)
-{
-    self.locationManager.allowsBackgroundLocationUpdates = enabled;
-}
+#pragma mark - Deprecated
 
 RCT_EXPORT_METHOD(startMonitoringSignificantLocationChanges)
 {
