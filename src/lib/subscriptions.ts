@@ -3,7 +3,6 @@ import { Location, Subscription, Heading, LocationPermissionStatus } from "../ty
 
 export default (nativeInterface: any, eventEmitter: EventEmitter) => {
   let locationListenerCount = 0;
-  let significantLocationListenerCount = 0;
   let headingListenerCount = 0;
 
   return {
@@ -33,13 +32,6 @@ export default (nativeInterface: any, eventEmitter: EventEmitter) => {
         if (headingListenerCount === 0) {
           nativeInterface.stopUpdatingHeading();
         }
-      }
-    },
-    subscribeToPermissionUpdates: (listener: (status: LocationPermissionStatus) => void): Subscription => {
-      const emitterSubscription = eventEmitter.addListener("authorizationStatusDidChange", listener);
-
-      return () => {
-        emitterSubscription.remove();
       }
     }
   }

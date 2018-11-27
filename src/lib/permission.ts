@@ -1,5 +1,5 @@
 import { EventEmitter, Platform } from "react-native";
-import { LocationPermissionStatus } from "../types";
+import { LocationPermissionStatus, Subscription } from "../types";
 
 let nativeInterface: any;
 let eventEmitter: EventEmitter;
@@ -42,6 +42,14 @@ const getCurrentPermission = async (): Promise<LocationPermissionStatus> => {
   }
 };
 
+const subscribeToPermissionUpdates = (listener: (status: LocationPermissionStatus) => void): Subscription => {
+  const emitterSubscription = eventEmitter.addListener("authorizationStatusDidChange", listener);
+
+  return () => {
+    emitterSubscription.remove();
+  }
+}
+
 export default (ni: any, em: EventEmitter) => {
   nativeInterface = ni
   eventEmitter = em
@@ -49,5 +57,6 @@ export default (ni: any, em: EventEmitter) => {
   return {
     requestPermission,
     getCurrentPermission,
+    subscribeToPermissionUpdates,
   }
 }
