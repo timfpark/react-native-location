@@ -13,12 +13,11 @@
     "location"
   ],
   "main": "dist/index.js",
-  "typings": "dist/index.js",
+  "typings": "dist/index.d.ts",
   "scripts": {
     "build": "genversion src/version.js && npm run build-src",
-    "build-src": "BABEL_ENV=publish babel src -d dist --ignore __tests__ --copy-files",
-    "build-flow": "flow-copy-source -i */__tests__* src dist",
-    "build-src-watch": "genversion src/version.js && BABEL_ENV=development babel src -d dist --ignore __tests__ --copy-files --watch",
+    "build-src": "tsc",
+    "watch": "yarn build-src --watch",
     "run:packager": "node node_modules/react-native/local-cli/cli.js start",
     "run:ios": "react-native run-ios --project-path ./example/ios",
     "run:android": "./gradlew installDebug && yarn start:android",
@@ -26,7 +25,7 @@
     "clean": "rimraf dist/",
     "validate-ts-declarations": "tsc --project ./",
     "validate-flow-declarations": "flow",
-    "prepare": "npm run clean && npm run build && npm run build-flow",
+    "prepare": "npm run clean && npm run build",
     "precommit": "lint-staged",
     "prepublishOnly": "npm run validate-ts-declarations && npm run validate-flow-declarations"
   },

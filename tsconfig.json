@@ -4,15 +4,13 @@
     "module": "commonjs",
     "jsx": "react",
     "sourceMap": true,
+    "declaration": true,
     "strict": true,
+    "outDir": "./dist",
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "moduleResolution": "node",
-    "experimentalDecorators": true,
-    "emitDecoratorMetadata": true,
     "lib": ["es2015", "es2016", "esnext"]
-  },
-  "files": ["./src/index.d.ts"]
+  }
 }

@@ -1,9 +1,3 @@
-/**
- * @providesModule RNLocation
- * @flow
- */
-'use strict';
-
 import { NativeModules, NativeEventEmitter } from 'react-native';
 
 const { RNLocation } = NativeModules;
