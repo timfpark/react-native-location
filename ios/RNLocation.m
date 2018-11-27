@@ -151,6 +151,25 @@ RCT_EXPORT_METHOD(configure:(NSDictionary *)options)
         self.locationManager.distanceFilter = [distanceFilter doubleValue];
     }
     
+    // Heading filter
+    NSNumber *headingFilter = [RCTConvert NSNumber:options[@"headingFilter"]];
+    if (headingFilter != nil) {
+        double headingFilterValue = [headingFilter doubleValue];
+        self.locationManager.headingFilter = headingFilterValue == 0 ? kCLHeadingFilterNone : headingFilterValue;
+    }
+    
+    // Heading orientation
+    NSString *headingOrientation = [RCTConvert NSString:options[@"headingOrientation"]];
+    if ([headingOrientation isEqualToString:@"portrait"]) {
+        self.locationManager.headingOrientation = CLDeviceOrientationPortrait;
+    } else if ([desiredAccuracy isEqualToString:@"portraitUpsideDown"]) {
+        self.locationManager.headingOrientation = CLDeviceOrientationPortraitUpsideDown;
+    } else if ([desiredAccuracy isEqualToString:@"landscapeLeft"]) {
+        self.locationManager.headingOrientation = CLDeviceOrientationLandscapeLeft;
+    } else if ([desiredAccuracy isEqualToString:@"landscapeRight"]) {
+        self.locationManager.headingOrientation = CLDeviceOrientationLandscapeRight;
+    }
+    
     // Pauses location updates automatically
     NSNumber *pausesLocationUpdatesAutomatically = [RCTConvert NSNumber:options[@"pausesLocationUpdatesAutomatically"]];
     if (pausesLocationUpdatesAutomatically != nil) {

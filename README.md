@@ -130,6 +130,8 @@ RNLocation.configure({
     allowsBackgroundLocationUpdates: false,
     desiredAccuracy: "best",
     distanceFilter: 0,
+    headingFilter: 1,
+    headingOrientation: "portrait",
     pausesLocationUpdatesAutomatically: false,
     showsBackgroundLocationIndicator: false,
 })

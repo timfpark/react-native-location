@@ -18,6 +18,13 @@ export interface ConfigureOptions {
     | "hundredMeters"
     | "threeKilometers"
     | void,
+  headingFilter?: number | void,
+  headingOrientation?:
+    | "portrait"
+    | "portraitUpsideDown"
+    | "landscapeLeft"
+    | "landscapeRight"
+    | void,
   pausesLocationUpdatesAutomatically?: boolean | void,
   showsBackgroundLocationIndicator?: boolean | void, // iOS 11+
 }
