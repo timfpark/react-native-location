@@ -8,7 +8,7 @@ import {
   TouchableHighlight,
   View
 } from 'react-native'
-import RNLocation, { RNLocationEventEmitter } from 'react-native-location'
+import RNLocation from 'react-native-location'
 import moment from 'moment'
 
 const repoUrl = 'https://github.com/timfpark/react-native-location'
@@ -22,21 +22,28 @@ export default class App extends React.PureComponent {
   }
 
   componentWillMount() {
-    RNLocation.requestAlwaysAuthorization()
-    RNLocation.setDistanceFilter(5.0)
-    RNLocationEventEmitter.addListener('locationUpdated', location => {
-      this.setState({ location })
+    RNLocation.configure({
+      distanceFilter: 5.0
     })
-
-    this._startUpdatingLocation();
+    
+    RNLocation.requestPermission({
+      ios: "whenInUse",
+      android: "course"
+    }).then(granted => {
+        if (granted) {
+          this._startUpdatingLocation();
+        }
+      })
   }
 
   _startUpdatingLocation = () => {
-    RNLocation.startUpdatingLocation()
+    this.locationSubscription = RNLocation.subscribeToLocationUpdates(location => {
+      this.setState({ location })
+    })
   }
 
   _stopUpdatingLocation = () => {
-    RNLocation.stopUpdatingLocation()
+    this.locationSubscription && this.locationSubscription();
     this.setState({ location: null })
   }
 
