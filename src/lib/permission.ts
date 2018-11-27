@@ -17,7 +17,7 @@ const requestPermission = async (options: RequestPermissionOptions): Promise<boo
       } else if (options.ios === 'whenInUse') {
         return await nativeInterface.requestWhenInUseAuthorization();
       } else {
-        return true;
+        return false;
       }
     }
     case "android":

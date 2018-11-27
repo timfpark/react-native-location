@@ -46,14 +46,10 @@ Finally, you then need to make sure you have the correct permissions inside your
 For background mode to work, a few things need to be configured:
 
 1. In the Xcode project, go to Capabilities, switch on "Background Modes" and check "Location updates".
-2. Using `requestAlwaysAuthorization` in place of `requestWhenInUseAuthorization`, like this:
+2. Set `NSLocationAlwaysAndWhenInUseUsageDescription` and `NSLocationAlwaysUsageDescription` in your `Info.plist` file.
+3. For iOS 9+, set [`allowsBackgroundLocationUpdates`](https://developer.apple.com/reference/corelocation/cllocationmanager/1620568-allowsbackgroundlocationupdates) to true, like this:
 ```javascript
-Location.requestAlwaysAuthorization();
-```
-3. Set `NSLocationAlwaysUsageDescription` in your `Info.plist` file.
-4. For iOS9+, set [`allowsBackgroundLocationUpdates`](https://developer.apple.com/reference/corelocation/cllocationmanager/1620568-allowsbackgroundlocationupdates) to true, like this:
-```javascript
-Location.setAllowsBackgroundLocationUpdates(true);
+RNLocation.configure({ allowsBackgroundLocationUpdates: true });
 ```
 
 ## Example application
@@ -64,15 +60,18 @@ In the [example](https://github.com/timfpark/react-native-location/example) fold
 ## Usage
 ### Location
 ```javascript
-import RNLocation, { RNLocationEventEmitter } from 'react-native-location';
+import RNLocation from 'react-native-location';
 
-RNLocation.requestAlwaysAuthorization();
-RNLocation.startUpdatingLocation();
-RNLocation.setDistanceFilter(5.0);
+RNLocation.configure({
+  distanceFilter: 5.0
+})
 
-var subscription = RNLocationEventEmitter.addListener(
-    'locationUpdated',
-    (location) => {
+RNLocation.requestPermission({
+  ios: "whenInUse",
+  android: "course"
+}).then(granted => {
+    if (granted) {
+      this.locationSubscription = RNLocation.subscribeToLocationUpdates(location => {
         /* Example location returned
         {
           coords: {
@@ -87,140 +86,121 @@ var subscription = RNLocationEventEmitter.addListener(
           timestamp: 1446007304457.029
         }
         */
+      })
     }
-);
+  })
 ```
 
 ### Heading
 ```javascript
-import RNLocation, { RNLocationEventEmitter } from 'react-native-location';
+import RNLocation from 'react-native-location';
 
-RNLocation.requestAlwaysAuthorization();
-RNLocation.startUpdatingHeading();
+RNLocation.configure({
+  distanceFilter: 5.0
+})
 
-RNLocationEventEmitter.addListener(
-    'headingUpdated',
-    (data) => {
-        /* Example data returned
+RNLocation.requestPermission({
+  ios: "whenInUse",
+  android: "course"
+}).then(granted => {
+    if (granted) {
+      this.locationSubscription = RNLocation.subscribeToHeadingUpdates(heading => {
+        /* Example heading returned
         {
-          heading: 57.2839832
+          heading: 12
         }
         */
+      })
     }
-);
+  })
 ```
 
 ## Methods
-
 To access the methods, you need import the `react-native-location` module. This is done through `import RNLocation from 'react-native-location'`.
 
-### RNLocation.requestWhenInUseAuthorization
+### Configuration
+#### `RNLocation.configure`
+This is used to configure the location provide. You can use this to enable background mode, filter location updates to a certain distance change, and ensure you have the power settings set correctly for your use case.
+
+You can call `configure` multiple times at it will only change the setting which you pass to it. For example if you only want to change `activityType`, you can call `configure` with just that property present.
+
 ```javascript
-RNLocation.requestWhenInUseAuthorization();
+RNLocation.configure({
+    activityType: "other",
+    allowsBackgroundLocationUpdates: false,
+    desiredAccuracy: "best",
+    distanceFilter: 0,
+    pausesLocationUpdatesAutomatically: false,
+    showsBackgroundLocationIndicator: false,
+})
 ```
 
-This method should be called before anything else. It requests location updates while the application is open. If the application is in the background, you will not get location updates. Either this method or `RNLocation.requestAlwaysAuthorization` (but not both) needs to be called to receive updates.
+### Permissions
+Correctly managing permissions is key to working with the users location in mobile apps.
 
-### RNLocation.requestAlwaysAuthorization
+* Ask for the lowest level of permissions you can. You'll almost always only need `whenInUse` (foreground) permission rather than background.
+* On iOS you only get one chance to ask for permission. If the user requests it the first time this method will always resolves to `false`.
+* If you ask for `always` permission then the user gets the chance to accept, but only give you `whenInUse` permission. The Promise will still resolve to `false`, however, if you call `RNLocation.getCurrentPermission` you can check if they actually accepted the lesser permission.
+* You should monitor the permissions and respond to it correctly. The user is able to go to their phone setting and revoke or downgrade permissions at any time.
+
+#### `RNLocation.requestPermission`
+This method should be called before subscribing to location updates. You need to pass in the type of permission you want for each platform. You can choose not to ignore a platform and it will be ignored. The method returns a promise which resolves to `true` if the permission was granted and `false` if not.
+
 ```javascript
-RNLocation.requestAlwaysAuthorization();
-```
-
-This method should be called before anything else is called.  It requests location updates while the application is open or in the background. Either this method or `RNLocation.requestWhenInUseAuthorization` (but not both) needs to be called to receive updates.
-
-### RNLocation.getAuthorizationStatus
-```javascript
-RNLocation.getAuthorizationStatus(function(authorization) {
-  // authorization is a string which is either "authorizedAlways",
-  // "authorizedWhenInUse", "denied", "notDetermined" or "restricted"
+RNLocation.requestPermission({
+  ios: 'whenInUse', // or 'always'
+  android: 'course', // or 'fine'
 });
 ```
 
-This methods gets the current authorization status. While this methods provides a callback, it is not executed asynchronously. The values `authorizedAlways` and `authorizedWhenInUse` correspond to the methods `requestWhenInUseAuthorization` and `requestAlwaysAuthorization` respectively.
-
-### RNLocation.setDesiredAccuracy
-```javascript
-RNLocation.setDesiredAccuracy(distanceInMeters);
-```
-
-Set the desired accuracy of location updates in meters.  Determines the method used to obtain location updates.  Low values will trigger using GPS.
-
-### RNLocation.setDistanceFilter
-```javascript
-RNLocation.setDistanceFilter(distanceInMeters);
-```
-
-Set the desired minimum distance between location updates in meters.
-
-### RNLocation.startMonitoringSignificantLocationChanges
-```javascript
-RNLocation.startMonitoringSignificantLocationChanges();
-```
-
-### RNLocation.startUpdatingLocation
-```javascript
-RNLocation.startUpdatingLocation();
-const subscription = RNLocationEventEmitter.addListener(
-    'locationUpdated',
-    (location) => {
-        // do something with the location
-    }
-);
-```
-
-Start location updates.  Your application will be called back with location updates that meet any mininum distance requirements that you specify via the DeviceEventEmitter event 'locationUpdated'.
-
-### RNLocation.startUpdatingHeading
-```javascript
-RNLocation.startUpdatingHeading();
-const subscription = RNLocationEventEmitter.addListener(
-    'headingUpdated',
-    (data) => {
-        // do something with the heading
-    }
-);
-```
-
-Start heading updates.  Your application will be called back with heading updates.
-
-### RNLocation.stopUpdatingLocation
-```javascript
-RNLocation.stopUpdatingLocation();
-```
-
-Stop receiving location events.
-
-### RNLocation.stopUpdatingHeading
-```javascript
-RNLocation.stopUpdatingHeading();
-```
-
-Stop receiving heading events.
-
-### RNLocation.stopMonitoringSignificantLocationChanges
-```javascript
-RNLocation.stopMonitoringSignificantLocationChanges();
-```
-
-Stop receiving sigificant location change events.
-
-## Events
-To listen to events you need to import the `RNLocationEventEmitter` from the library:
+#### `RNLocation.getCurrentPermission`
+Gets the current permission status.
 
 ```javascript
-import RNLocation, { RNLocationEventEmitter } from 'react-native-location';
+RNLocation.getCurrentPermission()
+  .then(currentPermission => {
+    ...
+  })
 ```
 
-You can then call `RNLocationEventEmitter.addListener` with the first parameter as the name of the event and the second parameter as a function which will be called when the event fires.
+#### `RNLocation.subscribeToPermissionUpdates`
+Monitor the permission status for changes.
 
-### `authorizationStatusDidChange`
-Received when the location authorization status changes.
+```javascript
+// Subscribe
+const unsubscribe = RNLocation.subscribeToPermissionUpdates(currentPermission => {
+  ...
+})
 
-### `locationUpdated`
-Received when a location update has been sensed by the system. The event delivers one parameter, location, that is an object with location, elevation, and accuracy data.
+// Unsubscribe
+unsubscribe();
+```
 
-### `headingUpdated`
-Received when the heading changes. The event delivers one parameter: an object with the current heading in degrees.
+### `RNLocation.subscribeToLocationUpdates`
+Subscribe to location changes with the given listener. Ensure you have the correct permission before calling this method. The location provider will respect the settings you have given it.
+
+```javascript
+// Subscribe
+const unsubscribe = RNLocation.subscribeToLocationUpdates(location => {
+  ...
+})
+
+// Unsubscribe
+unsubscribe();
+```
+
+### `RNLocation.subscribeToHeadingUpdates`
+Subscribe to heading changes with the given listener. Ensure you have the correct permission before calling this method. The location provider will respect the settings you have given it.
+
+```javascript
+// Subscribe
+const unsubscribe = RNLocation.subscribeToHeadingUpdates(location => {
+  ...
+})
+
+// Unsubscribe
+unsubscribe();
+```
 
 ## License
 The library is released under the MIT licence. For more information see `LICENSE`.
