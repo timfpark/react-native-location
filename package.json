@@ -18,7 +18,7 @@
     "build": "npm run build-ts",
     "build-ts": "tsc",
     "watch": "npm run build-ts -- --watch",
-    "test": "npm run eslint",
+    "test": "npm run eslint && npm run build-ts -- --noEmit",
     "eslint": "eslint src/**/*.ts",
     "run:packager": "node node_modules/react-native/local-cli/cli.js start",
     "run:ios": "react-native run-ios --project-path ./example/ios",

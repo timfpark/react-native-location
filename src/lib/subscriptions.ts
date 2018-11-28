@@ -1,10 +1,5 @@
 import { EventEmitter } from "react-native";
-import {
-  Location,
-  Subscription,
-  Heading,
-  LocationPermissionStatus
-} from "../types";
+import { Location, Subscription, Heading } from "../types";
 
 export default (nativeInterface: any, eventEmitter: EventEmitter) => {
   let locationListenerCount = 0;
