@@ -5,16 +5,18 @@ let nativeInterface: any;
 let eventEmitter: EventEmitter;
 
 export interface RequestPermissionOptions {
-  ios?: "whenInUse" | "always" | void,
-  android?: "course" | "fine" | void,
+  ios?: "whenInUse" | "always" | void;
+  android?: "course" | "fine" | void;
 }
-const requestPermission = async (options: RequestPermissionOptions): Promise<boolean> => {
+const requestPermission = async (
+  options: RequestPermissionOptions
+): Promise<boolean> => {
   // iOS Permissions
   switch (Platform.OS) {
     case "ios": {
-      if (options.ios === 'always') {
+      if (options.ios === "always") {
         return await nativeInterface.requestAlwaysAuthorization();
-      } else if (options.ios === 'whenInUse') {
+      } else if (options.ios === "whenInUse") {
         return await nativeInterface.requestWhenInUseAuthorization();
       } else {
         return false;
@@ -42,21 +44,26 @@ const getCurrentPermission = async (): Promise<LocationPermissionStatus> => {
   }
 };
 
-const subscribeToPermissionUpdates = (listener: (status: LocationPermissionStatus) => void): Subscription => {
-  const emitterSubscription = eventEmitter.addListener("authorizationStatusDidChange", listener);
+const subscribeToPermissionUpdates = (
+  listener: (status: LocationPermissionStatus) => void
+): Subscription => {
+  const emitterSubscription = eventEmitter.addListener(
+    "authorizationStatusDidChange",
+    listener
+  );
 
   return () => {
     emitterSubscription.remove();
-  }
-}
+  };
+};
 
 export default (ni: any, em: EventEmitter) => {
-  nativeInterface = ni
-  eventEmitter = em
+  nativeInterface = ni;
+  eventEmitter = em;
 
   return {
     requestPermission,
     getCurrentPermission,
-    subscribeToPermissionUpdates,
-  }
-}
+    subscribeToPermissionUpdates
+  };
+};

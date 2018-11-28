@@ -3,26 +3,26 @@ export type LocationPermissionStatus =
   | "authorizedWhenInUse"
   | "denied"
   | "restricted"
-  | "notDetermined"
+  | "notDetermined";
 
 export interface Location {
-  coords: LocationCoords,
-  timestamp: number,
+  coords: LocationCoords;
+  timestamp: number;
 }
 
 export interface LocationCoords {
-  latitude: number,
-  longitude: number,
-  altitude: number,
-  accuracy: number,
-  altitudeAccuracy: number,
-  course: number,
-  speed: number,
-  floor: number,
+  latitude: number;
+  longitude: number;
+  altitude: number;
+  accuracy: number;
+  altitudeAccuracy: number;
+  course: number;
+  speed: number;
+  floor: number;
 }
 
 export interface Heading {
-  heading: number,
+  heading: number;
 }
 
 export type Subscription = () => void;
