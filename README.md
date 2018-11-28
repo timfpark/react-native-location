@@ -206,5 +206,18 @@ const unsubscribe = RNLocation.subscribeToHeadingUpdates(location => {
 unsubscribe();
 ```
 
+### `RNLocation.subscribeToSignificantLocationUpdates`
+Subscribe to significant updates to the users location with the given listener. *This method does not take into account the `distanceFilter` which you configured RNLocation with.* In most cases, you should call `RNLocation.configure` with the correct settings and then use `RNLocation.subscribeToLocationUpdates` to subscribe to the location updates. For more details, take a look at [Apple's documentation](https://developer.apple.com/documentation/corelocation/cllocationmanager/1423531-startmonitoringsignificantlocati?language=objc). 
+
+```javascript
+// Subscribe
+const unsubscribe = RNLocation.subscribeToSignificantLocationUpdates(location => {
+  ...
+})
+
+// Unsubscribe
+unsubscribe();
+```
+
 ## License
 The library is released under the MIT licence. For more information see `LICENSE`.

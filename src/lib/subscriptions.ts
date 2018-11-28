@@ -4,6 +4,7 @@ import { Location, Subscription, Heading } from "../types";
 export default (nativeInterface: any, eventEmitter: EventEmitter) => {
   let locationListenerCount = 0;
   let headingListenerCount = 0;
+  let significantLocationListenerCount = 0;
 
   return {
     subscribeToLocationUpdates: (
@@ -41,6 +42,25 @@ export default (nativeInterface: any, eventEmitter: EventEmitter) => {
 
         if (headingListenerCount === 0) {
           nativeInterface.stopUpdatingHeading();
+        }
+      };
+    },
+    subscribeToSignificantLocationUpdates: (
+      listener: (location: Location) => void
+    ): Subscription => {
+      const emitterSubscription = eventEmitter.addListener(
+        "locationUpdated",
+        listener
+      );
+      nativeInterface.startMonitoringSignificantLocationChanges();
+      significantLocationListenerCount += 1;
+
+      return () => {
+        emitterSubscription.remove();
+        significantLocationListenerCount -= 1;
+
+        if (significantLocationListenerCount === 0) {
+          nativeInterface.stopMonitoringSignificantLocationChanges();
         }
       };
     }

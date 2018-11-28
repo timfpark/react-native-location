@@ -4,6 +4,9 @@ jsconfig.json
 ### SublimeText ###
 *.sublime-workspace
 
+### VsCode ###
+.vscode
+
 ### OSX ###
 .DS_Store
 .AppleDouble
