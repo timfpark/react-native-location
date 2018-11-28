@@ -1,25 +1,25 @@
 const should = require("should");
 
-describe("jet", () => {
+describe("jet", function() {
   // beforeEach(async function beforeEach() {
   // await device.reloadReactNative();
   // jet.root.setState({ message: this.currentTest.title });
   // });
 
-  it("should provide -> global.jet", async () => {
+  it("should provide -> global.jet", async function() {
     should(jet).not.be.undefined();
     return Promise.resolve();
   });
 
   // main react-native module you're testing on
   // in our case react-native-firebase
-  it("should provide -> jet.module", async () => {
+  it("should provide -> jet.module", async function() {
     should(jet.module).not.be.undefined();
     return Promise.resolve();
   });
 
   // react-native module access
-  it("should provide -> jet.rn", () => {
+  it("should provide -> jet.rn", function() {
     should(jet.rn).not.be.undefined();
     should(jet.rn.Platform.OS).be.a.String();
     should(jet.rn.Platform.OS).equal(device.getPlatform());
@@ -27,7 +27,7 @@ describe("jet", () => {
   });
 
   // 'global' context of the app's JS environment
-  it("should provide -> jet.context", () => {
+  it("should provide -> jet.context", function() {
     should(jet.context).not.be.undefined();
     should(jet.context.setTimeout).be.a.Function();
     should(jet.context.window).be.a.Object();
@@ -37,7 +37,7 @@ describe("jet", () => {
 
   // the apps root component
   // allows you to read and set state if required
-  xit("should provide -> jet.root", async () => {
+  xit("should provide -> jet.root", async function() {
     should(jet.root).not.be.undefined();
     should(jet.root.setState).be.a.Function();
     should(jet.root.state).be.a.Object();
@@ -53,7 +53,7 @@ describe("jet", () => {
   // we shim our own reloadReactNative functionality as the detox reloadReactNative built-in
   // hangs often and seems unpredictable - todo: investigate & PR if solution found
   // reloadReactNative is replaced on init with jet.root automatically
-  xit("should allow reloadReactNative usage without breaking remote debug", async () => {
+  xit("should allow reloadReactNative usage without breaking remote debug", async function() {
     should(jet.reload).be.a.Function();
     // and check it works without breaking anything
     await device.reloadReactNative();
@@ -63,7 +63,7 @@ describe("jet", () => {
 
   // TODO flakey - "This method must not be called before the JS thread is created"
   // https://github.com/facebook/react-native/blob/master/React/CxxBridge/RCTCxxBridge.mm
-  xit("should allow launchApp usage without breaking remote debug", async () => {
+  xit("should allow launchApp usage without breaking remote debug", async function() {
     should(jet.module).not.be.undefined();
     should(jet.reload).be.a.Function();
     should(jet.rn).not.be.undefined();
@@ -81,21 +81,21 @@ describe("jet", () => {
   });
 
   // TIMERS
-  it("timing.setTimeout", cb => {
+  it("timing.setTimeout", function(cb) {
     const start = Date.now();
-    jet.context.setTimeout(() => {
+    jet.context.setTimeout(function() {
       const timeTaken = Date.now() - start;
       if (timeTaken >= 50) cb();
       else cb(new Error("setTimeout fn called too soon."));
     }, 50);
   });
 
-  it("timing.setInterval", cb => {
+  it("timing.setInterval", function(cb) {
     let times = 0;
     let interval;
     const start = Date.now();
 
-    interval = jet.context.setInterval(() => {
+    interval = jet.context.setInterval(function() {
       const timeTaken = Date.now() - start;
 
       times++;
@@ -112,15 +112,15 @@ describe("jet", () => {
     }, 50);
   });
 
-  it("timing.setImmediate", cb => {
+  it("timing.setImmediate", function(cb) {
     jet.context.setImmediate(() => cb());
   });
 
-  it("timing.requestIdleCallback", cb => {
+  it("timing.requestIdleCallback", function(cb) {
     jet.context.requestIdleCallback(() => cb());
   });
 
-  it("timing.requestAnimationFrame", cb => {
+  it("timing.requestAnimationFrame", function(cb) {
     jet.context.requestAnimationFrame(() => cb());
   });
 });

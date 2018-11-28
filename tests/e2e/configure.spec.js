@@ -1,17 +1,17 @@
 const should = require("should");
 require("should-sinon");
 
-describe("Native interface", () => {
+describe("RNLocation.configure", function() {
   let nativeInterface;
   let eventEmitter;
 
-  beforeEach(async function beforeEach() {
+  beforeEach(async function() {
     nativeInterface = sinon.stub(jet.module.nativeInterface);
     eventEmitter = sinon.stub(new jet.rn.NativeEventEmitter(nativeInterface));
     jet.module.configureHelpers(nativeInterface, eventEmitter);
   });
 
-  it("configure", async () => {
+  it("should correctly pass the options", async function() {
     const options = {
       distsnceFilter: 5.0
     };
