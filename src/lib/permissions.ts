@@ -1,14 +1,13 @@
 import { EventEmitter, Platform } from "react-native";
-import { LocationPermissionStatus, Subscription } from "../types";
+import {
+  LocationPermissionStatus,
+  Subscription,
+  RNLocationNativeInterface,
+  RequestPermissionOptions
+} from "../types";
 
-let nativeInterface: any;
-let eventEmitter: EventEmitter;
-
-export interface RequestPermissionOptions {
-  ios?: "whenInUse" | "always" | void;
-  android?: "course" | "fine" | void;
-}
-const requestPermission = async (
+export const requestPermission = async (
+  nativeInterface: RNLocationNativeInterface,
   options: RequestPermissionOptions
 ): Promise<boolean> => {
   // iOS Permissions
@@ -31,7 +30,9 @@ const requestPermission = async (
   }
 };
 
-const getCurrentPermission = async (): Promise<LocationPermissionStatus> => {
+export const getCurrentPermission = async (
+  nativeInterface: RNLocationNativeInterface
+): Promise<LocationPermissionStatus> => {
   switch (Platform.OS) {
     case "ios":
       return await nativeInterface.getAuthorizationStatus();
@@ -44,7 +45,8 @@ const getCurrentPermission = async (): Promise<LocationPermissionStatus> => {
   }
 };
 
-const subscribeToPermissionUpdates = (
+export const subscribeToPermissionUpdates = (
+  eventEmitter: EventEmitter,
   listener: (status: LocationPermissionStatus) => void
 ): Subscription => {
   const emitterSubscription = eventEmitter.addListener(
@@ -57,13 +59,8 @@ const subscribeToPermissionUpdates = (
   };
 };
 
-export default (ni: any, em: EventEmitter) => {
-  nativeInterface = ni;
-  eventEmitter = em;
-
-  return {
-    requestPermission,
-    getCurrentPermission,
-    subscribeToPermissionUpdates
-  };
+export default {
+  requestPermission,
+  getCurrentPermission,
+  subscribeToPermissionUpdates
 };
