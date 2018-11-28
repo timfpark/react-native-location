@@ -17,6 +17,7 @@
   "scripts": {
     "build": "npm run build-ts",
     "build-ts": "tsc",
+    "build-docs": "typedoc --out docs/ --readme none --target es5 --mode file src/",
     "watch": "npm run build-ts -- --watch",
     "test": "npm run eslint && npm run build-ts -- --noEmit",
     "eslint": "eslint src/**/*.ts",
@@ -58,6 +59,7 @@
     "react": "16.6.1",
     "react-native": "0.57.5",
     "rimraf": "^2.6.2",
+    "typedoc": "^0.13.0",
     "typescript": "^3.1.6",
     "typescript-eslint-parser": "^21.0.1"
   },

@@ -6,78 +6,82 @@ import {
   RNLocationNativeInterface
 } from "../types";
 
-let locationListenerCount = 0;
-let headingListenerCount = 0;
-let significantLocationListenerCount = 0;
+/**
+ * Internal helper class for managing event subscriptions
+ * @ignore
+ */
+export default class Subscriptions {
+  private nativeInterface: RNLocationNativeInterface;
+  private eventEmitter: EventEmitter;
+  private locationListenerCount = 0;
+  private headingListenerCount = 0;
+  private significantLocationListenerCount = 0;
 
-export const subscribeToLocationUpdates = (
-  nativeInterface: RNLocationNativeInterface,
-  eventEmitter: EventEmitter,
-  listener: (location: Location) => void
-): Subscription => {
-  const emitterSubscription = eventEmitter.addListener(
-    "locationUpdated",
-    listener
-  );
-  nativeInterface.startUpdatingLocation();
-  locationListenerCount += 1;
+  public constructor(
+    nativeInterface: RNLocationNativeInterface,
+    eventEmitter: EventEmitter
+  ) {
+    this.nativeInterface = nativeInterface;
+    this.eventEmitter = eventEmitter;
+  }
 
-  return () => {
-    emitterSubscription.remove();
-    locationListenerCount -= 1;
+  public subscribeToLocationUpdates(
+    listener: (location: Location) => void
+  ): Subscription {
+    const emitterSubscription = this.eventEmitter.addListener(
+      "locationUpdated",
+      listener
+    );
+    this.nativeInterface.startUpdatingLocation();
+    this.locationListenerCount += 1;
 
-    if (locationListenerCount === 0) {
-      nativeInterface.stopUpdatingLocation();
-    }
-  };
-};
+    return () => {
+      emitterSubscription.remove();
+      this.locationListenerCount -= 1;
 
-export const subscribeToHeadingUpdates = (
-  nativeInterface: RNLocationNativeInterface,
-  eventEmitter: EventEmitter,
-  listener: (heading: Heading) => void
-): Subscription => {
-  const emitterSubscription = eventEmitter.addListener(
-    "headingUpdated",
-    listener
-  );
-  nativeInterface.startUpdatingHeading();
-  headingListenerCount += 1;
+      if (this.locationListenerCount === 0) {
+        this.nativeInterface.stopUpdatingLocation();
+      }
+    };
+  }
 
-  return () => {
-    emitterSubscription.remove();
-    headingListenerCount -= 1;
+  public subscribeToHeadingUpdates(
+    listener: (heading: Heading) => void
+  ): Subscription {
+    const emitterSubscription = this.eventEmitter.addListener(
+      "headingUpdated",
+      listener
+    );
+    this.nativeInterface.startUpdatingHeading();
+    this.headingListenerCount += 1;
 
-    if (headingListenerCount === 0) {
-      nativeInterface.stopUpdatingHeading();
-    }
-  };
-};
+    return () => {
+      emitterSubscription.remove();
+      this.headingListenerCount -= 1;
 
-export const subscribeToSignificantLocationUpdates = (
-  nativeInterface: RNLocationNativeInterface,
-  eventEmitter: EventEmitter,
-  listener: (location: Location) => void
-): Subscription => {
-  const emitterSubscription = eventEmitter.addListener(
-    "locationUpdated",
-    listener
-  );
-  nativeInterface.startMonitoringSignificantLocationChanges();
-  significantLocationListenerCount += 1;
+      if (this.headingListenerCount === 0) {
+        this.nativeInterface.stopUpdatingHeading();
+      }
+    };
+  }
 
-  return () => {
-    emitterSubscription.remove();
-    significantLocationListenerCount -= 1;
+  public subscribeToSignificantLocationUpdates(
+    listener: (location: Location) => void
+  ): Subscription {
+    const emitterSubscription = this.eventEmitter.addListener(
+      "locationUpdated",
+      listener
+    );
+    this.nativeInterface.startMonitoringSignificantLocationChanges();
+    this.significantLocationListenerCount += 1;
 
-    if (significantLocationListenerCount === 0) {
-      nativeInterface.stopMonitoringSignificantLocationChanges();
-    }
-  };
-};
+    return () => {
+      emitterSubscription.remove();
+      this.significantLocationListenerCount -= 1;
 
-export default {
-  subscribeToLocationUpdates,
-  subscribeToHeadingUpdates,
-  subscribeToSignificantLocationUpdates
-};
+      if (this.significantLocationListenerCount === 0) {
+        this.nativeInterface.stopMonitoringSignificantLocationChanges();
+      }
+    };
+  }
+}

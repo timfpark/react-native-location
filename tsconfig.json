@@ -11,6 +11,7 @@
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "lib": ["es2015", "es2016", "esnext"]
+    "lib": ["es2015", "es2016", "esnext"],
+    "types": ["react", "react-native"]
   }
 }

@@ -122,7 +122,7 @@ To access the methods, you need import the `react-native-location` module. This 
 
 ### Configuration
 #### `RNLocation.configure`
-This is used to configure the location provide. You can use this to enable background mode, filter location updates to a certain distance change, and ensure you have the power settings set correctly for your use case.
+This is used to configure the location provider. You can use this to enable background mode, filter location updates to a certain distance change, and ensure you have the power settings set correctly for your use case.
 
 You can call `configure` multiple times at it will only change the setting which you pass to it. For example if you only want to change `activityType`, you can call `configure` with just that property present.
 
