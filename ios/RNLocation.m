@@ -41,6 +41,15 @@ RCT_EXPORT_MODULE()
     return self;
 }
 
+- (void)dealloc
+{
+    [self stopMonitoringSignificantLocationChanges];
+    [self stopUpdatingLocation];
+    [self stopUpdatingHeading];
+    
+    self.locationManager = nil;
+}
+
 #pragma mark - Listener tracking
 
 - (void)startObserving
