@@ -1,42 +1,36 @@
-import { NativeModules, NativeEventEmitter } from "react-native";
 import {
   ConfigureOptions,
-  RNLocationNativeInterface,
   RequestPermissionOptions,
   LocationPermissionStatus,
   Subscription,
   Location,
   Heading
 } from "./types";
+import NativeInterface from "./lib/nativeInterface";
 import Subscriptions from "./lib/subscriptions";
 import Permissions from "./lib/permissions";
 
-/**
- * The native interface. Only for internal use.
- * @ignore
- */
-const RNLocation: RNLocationNativeInterface = NativeModules.RNLocation;
-if (!RNLocation) {
-  console.warn(
-    "Could not find the RNLocation native module. Have you correctly linked react-native-location and rebuilt your app?"
-  );
-}
-/**
- * The event emitter. Only for internal use.
- * @ignore
- */
-const eventEmitter = new NativeEventEmitter(RNLocation);
+const {
+  /**
+   * @ignore
+   */
+  nativeInterface,
+  /**
+   * @ignore
+   */
+  eventEmitter
+} = NativeInterface.get();
 
 /**
  * The subscription helper. Only for internal use.
  * @ignore
  */
-const subscriptions = new Subscriptions(RNLocation, eventEmitter);
+const subscriptions = new Subscriptions(nativeInterface, eventEmitter);
 /**
  * The permissions helper. Only for internal use.
  * @ignore
  */
-const permissions = new Permissions(RNLocation, eventEmitter);
+const permissions = new Permissions(nativeInterface, eventEmitter);
 
 /**
  * This is used to configure the location provider. You can use this to enable background mode, filter location updates to a certain distance change, and ensure you have the power settings set correctly for your use case.
@@ -47,7 +41,7 @@ const permissions = new Permissions(RNLocation, eventEmitter);
  * @returns {void}
  */
 export const configure = (options: ConfigureOptions): void => {
-  RNLocation.configure(options);
+  nativeInterface.configure(options);
 };
 
 /**
