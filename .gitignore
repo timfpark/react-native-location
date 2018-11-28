@@ -1,6 +1,8 @@
 dist/
 docs/
 jsconfig.json
+coverage/
+.nyc*
 
 ### SublimeText ###
 *.sublime-workspace

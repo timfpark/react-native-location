@@ -4,13 +4,15 @@ import {
   LocationPermissionStatus,
   Subscription,
   Location,
-  Heading
+  Heading,
+  RNLocationNativeInterface
 } from "./types";
 import NativeInterface from "./lib/nativeInterface";
 import Subscriptions from "./lib/subscriptions";
 import Permissions from "./lib/permissions";
+import { EventEmitter } from "react-native";
 
-const {
+let {
   /**
    * @ignore
    */
@@ -25,12 +27,31 @@ const {
  * The subscription helper. Only for internal use.
  * @ignore
  */
-const subscriptions = new Subscriptions(nativeInterface, eventEmitter);
+let subscriptions: Subscriptions;
 /**
  * The permissions helper. Only for internal use.
  * @ignore
  */
-const permissions = new Permissions(nativeInterface, eventEmitter);
+let permissions: Permissions;
+
+/**
+ * Internal method to configure the helps. Useful for Jet testing.
+ *
+ * @ignore
+ * @param {RNLocationNativeInterface} ni Native interface
+ * @param {EventEmitter} evt Event emitter
+ * @returns {void}
+ */
+export const configureHelpers = (
+  ni: RNLocationNativeInterface,
+  evt: EventEmitter
+): void => {
+  nativeInterface = ni;
+  eventEmitter = evt;
+  subscriptions = new Subscriptions(nativeInterface, eventEmitter);
+  permissions = new Permissions(nativeInterface, eventEmitter);
+};
+configureHelpers(nativeInterface, eventEmitter);
 
 /**
  * This is used to configure the location provider. You can use this to enable background mode, filter location updates to a certain distance change, and ensure you have the power settings set correctly for your use case.
@@ -131,7 +152,11 @@ export default {
   subscribeToPermissionUpdates,
   subscribeToLocationUpdates,
   subscribeToHeadingUpdates,
-  subscribeToSignificantLocationUpdates
+  subscribeToSignificantLocationUpdates,
+  // Internal use only
+  configureHelpers,
+  nativeInterface,
+  eventEmitter
 };
 
 /**
