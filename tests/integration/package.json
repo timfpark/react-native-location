@@ -52,7 +52,7 @@
       "node_modules",
       "dist/types.js"
     ],
-    "cwd": "..",
+    "cwd": "../../",
     "all": true,
     "sourceMap": false,
     "instrument": false,

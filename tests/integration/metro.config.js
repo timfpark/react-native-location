@@ -8,14 +8,16 @@ const { DEFAULT } = require("react-native/local-cli/util/Config");
 const config = {
   resolver: {
     blackListRE: createBlacklist([
-      new RegExp(`^${escape(resolve(__dirname, "..", "node_modules"))}\\/.*$`)
+      new RegExp(
+        `^${escape(resolve(__dirname, "..", "..", "node_modules"))}\\/.*$`
+      )
     ]),
     extraNodeModules: new Proxy(
       {},
       {
         get: (target, name) => {
           if (name === "react-native-location") {
-            return join(__dirname, `../dist`);
+            return join(__dirname, `../../dist`);
           }
           return join(__dirname, `node_modules/${name}`);
         }
@@ -23,7 +25,7 @@ const config = {
     ),
     platforms: ["android", "ios"]
   },
-  watchFolders: [resolve(__dirname, "../dist")]
+  watchFolders: [resolve(__dirname, "../../dist")]
 };
 
 module.exports = mergeConfig(DEFAULT, config);
