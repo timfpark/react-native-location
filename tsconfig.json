@@ -12,6 +12,7 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "lib": ["es2015", "es2016", "esnext"],
-    "types": ["react", "react-native"]
-  }
+    "types": ["react", "react-native", "jest"],
+  },
+  "exclude": ["node_modules/", "dist/", "**/__tests__/**", "**/__mocks__/**"]
 }

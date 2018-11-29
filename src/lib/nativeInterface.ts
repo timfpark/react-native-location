@@ -12,7 +12,6 @@ export const get = (): {
     );
   }
   const eventEmitter = new NativeEventEmitter(nativeInterface);
-
   return { nativeInterface, eventEmitter };
 };
 
