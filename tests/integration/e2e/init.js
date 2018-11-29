@@ -18,11 +18,6 @@ beforeEach(async function beforeEach() {
   const retry = this.currentTest.currentRetry();
 });
 
-afterEach(() => {
-  // Restore the default sandbox here
-  sinon.restore();
-});
-
 after(async () => {
   console.log("Cleaning up...");
   // await detox.cleanup(); // TODO hangs - most likely jet internals interfering

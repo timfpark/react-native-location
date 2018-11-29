@@ -11,23 +11,23 @@
     "build-android": "detox build --configuration android.emu.debug",
     "test-android": "detox test --configuration android.emu.debug",
     "test-android-reuse": "detox test --configuration android.emu.debug --reuse",
-    "test-android-cover": "nyc detox test --configuration android.emu.debug",
-    "test-android-cover-reuse": "nyc detox test --configuration android.emu.debug --reuse",
+    "test-android-cover": "nyc --report-dir=coverage/e2e-android detox test --configuration android.emu.debug",
+    "test-android-cover-reuse": "nyc --report-dir=coverage/e2e-android detox test --configuration android.emu.debug --reuse",
     "test-ios": "detox test --configuration ios.sim.debug --loglevel warn",
     "test-ios-reuse": "detox test --configuration ios.sim.debug --reuse --loglevel warn",
-    "test-ios-cover": "nyc detox test --configuration ios.sim.debug",
-    "test-ios-cover-reuse": "nyc detox test --configuration ios.sim.debug --reuse --loglevel warn",
+    "test-ios-cover": "nyc --report-dir=coverage/e2e-ios detox test --configuration ios.sim.debug",
+    "test-ios-cover-reuse": "nyc --report-dir=coverage/e2e-ios detox test --configuration ios.sim.debug --reuse --loglevel warn",
     "ios:pod:install": "cd ios && rm -rf ReactNativeFirebaseDemo.xcworkspace && pod install && cd .."
   },
   "dependencies": {
+    "chai": "^4.2.0",
     "detox": "9.0.4",
     "jet": "^0.2.0",
     "mocha": "^5.2.0",
     "react": "16.6.1",
     "react-native": "0.57.7",
-    "should": "^13.2.3",
-    "should-sinon": "^0.0.6",
-    "sinon": "^7.1.1"
+    "sinon": "^7.1.1",
+    "sinon-chai": "^3.3.0"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0-0",
@@ -57,7 +57,7 @@
     "sourceMap": false,
     "instrument": false,
     "reporter": [
-      "lcov",
+      "json",
       "text-summary"
     ]
   },

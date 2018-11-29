@@ -1,14 +1,22 @@
-const should = require("should");
-require("should-sinon");
+const chai = require("chai");
+const sinon = require("sinon");
+const sinonChai = require("sinon-chai");
+const expect = chai.expect;
+chai.use(sinonChai);
+const sandbox = sinon.createSandbox();
 
 describe("RNLocation.configure", function() {
   let nativeInterface;
   let eventEmitter;
 
   beforeEach(async function() {
-    nativeInterface = sinon.stub(jet.module.nativeInterface);
-    eventEmitter = sinon.stub(new jet.rn.NativeEventEmitter(nativeInterface));
+    nativeInterface = sandbox.stub(jet.module.nativeInterface);
+    eventEmitter = sandbox.stub(new jet.rn.NativeEventEmitter(nativeInterface));
     jet.module.configureHelpers(nativeInterface, eventEmitter);
+  });
+
+  afterEach(function() {
+    sandbox.restore();
   });
 
   it("should correctly pass the options", async function() {
@@ -17,7 +25,7 @@ describe("RNLocation.configure", function() {
     };
     jet.module.configure(options);
 
-    nativeInterface.configure.should.be.calledWith(options);
+    expect(nativeInterface.configure).to.have.been.calledWith(options);
 
     return Promise.resolve();
   });

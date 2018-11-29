@@ -1,14 +1,22 @@
-const should = require("should");
-require("should-sinon");
+const chai = require("chai");
+const sinon = require("sinon");
+const sinonChai = require("sinon-chai");
+const expect = chai.expect;
+chai.use(sinonChai);
+const sandbox = sinon.createSandbox();
 
 describe("Permissions", function() {
   let nativeInterface;
   let eventEmitter;
 
-  beforeEach(async function beforeEach() {
-    nativeInterface = sinon.stub(jet.module.nativeInterface);
-    eventEmitter = sinon.stub(new jet.rn.NativeEventEmitter(nativeInterface));
+  beforeEach(function beforeEach() {
+    nativeInterface = sandbox.stub(jet.module.nativeInterface);
+    eventEmitter = sandbox.stub(new jet.rn.NativeEventEmitter(nativeInterface));
     jet.module.configureHelpers(nativeInterface, eventEmitter);
+  });
+
+  afterEach(function() {
+    sandbox.restore();
   });
 
   describe("RNLocation.requestPermission", function() {
@@ -25,8 +33,10 @@ describe("Permissions", function() {
             // No options
           });
 
-          nativeInterface.requestAlwaysAuthorization.should.not.be.called();
-          nativeInterface.requestWhenInUseAuthorization.should.not.be.called();
+          expect(nativeInterface.requestAlwaysAuthorization).not.to.have.been
+            .called;
+          expect(nativeInterface.requestWhenInUseAuthorization).not.to.have.been
+            .called;
         });
 
         it("should resolve to false when called with no options", async function() {
@@ -34,7 +44,7 @@ describe("Permissions", function() {
             // No options
           });
 
-          should(result).be.false();
+          expect(result).to.be.equal(false);
         });
       });
 
@@ -48,8 +58,10 @@ describe("Permissions", function() {
             ios: "always"
           });
 
-          nativeInterface.requestAlwaysAuthorization.should.be.calledOnce();
-          nativeInterface.requestWhenInUseAuthorization.should.not.be.called();
+          expect(nativeInterface.requestAlwaysAuthorization).to.have.been
+            .calledOnce;
+          expect(nativeInterface.requestWhenInUseAuthorization).not.to.have.been
+            .called;
         });
 
         it("should resolve to true when the native interface does", async function() {
@@ -61,7 +73,7 @@ describe("Permissions", function() {
             ios: "always"
           });
 
-          should(result).be.true();
+          expect(result).to.be.equal(true);
         });
 
         it("should resolve to false when the native interface does", async function() {
@@ -73,13 +85,13 @@ describe("Permissions", function() {
             ios: "always"
           });
 
-          should(result).be.false();
+          expect(result).to.be.equal(false);
         });
       });
 
       describe("whenInUse", function() {
         it("should call the correct method when asking for whenInUse permission", async function() {
-          nativeInterface.requestAlwaysAuthorization.returns(
+          nativeInterface.requestWhenInUseAuthorization.returns(
             Promise.resolve(true)
           );
 
@@ -87,8 +99,10 @@ describe("Permissions", function() {
             ios: "whenInUse"
           });
 
-          nativeInterface.requestAlwaysAuthorization.should.not.be.called();
-          nativeInterface.requestWhenInUseAuthorization.should.be.calledOnce();
+          expect(nativeInterface.requestWhenInUseAuthorization).to.have.been
+            .calledOnce;
+          expect(nativeInterface.requestAlwaysAuthorization).not.to.have.been
+            .called;
         });
 
         it("should resolve to true when the native interface does", async function() {
@@ -100,7 +114,7 @@ describe("Permissions", function() {
             ios: "whenInUse"
           });
 
-          should(result).be.true();
+          expect(result).to.be.equal(true);
         });
 
         it("should resolve to false when the native interface does", async function() {
@@ -112,7 +126,7 @@ describe("Permissions", function() {
             ios: "whenInUse"
           });
 
-          should(result).be.false();
+          expect(result).to.be.equal(false);
         });
       });
     });
