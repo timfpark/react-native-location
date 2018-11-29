@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "packager-chrome": "react-native start --platforms ios,android",
-    "packager-jet": "REACT_DEBUGGER='echo nope' react-native start",
+    "packager-jet": "REACT_DEBUGGER='echo nope' react-native start --config /Users/matt/Projects/OS/react-native-location/tests/integration/rn-cli.config.js",
     "packager-jet-reset-cache": "REACT_DEBUGGER='echo nope' react-native start --reset-cache",
     "build-ios": "detox build --configuration ios.sim.debug",
     "build-ios-release": "detox build --configuration ios.sim.release",
@@ -37,7 +37,8 @@
     "jest": "23.6.0",
     "metro-react-native-babel-preset": "0.49.2",
     "nyc": "^13.1.0",
-    "react-test-renderer": "16.6.1"
+    "react-test-renderer": "16.6.1",
+    "typescript": "^3.1.6"
   },
   "nyc": {
     "check-coverage": false,
@@ -46,11 +47,11 @@
     "functions": 95,
     "branches": 95,
     "include": [
-      "dist/**"
+      "src/**"
     ],
     "exclude": [
       "node_modules",
-      "dist/types.js"
+      "src/types.js"
     ],
     "cwd": "../../",
     "all": true,
@@ -59,6 +60,9 @@
     "reporter": [
       "json",
       "text-summary"
+    ],
+    "extension": [
+      ".ts"
     ]
   },
   "detox": {

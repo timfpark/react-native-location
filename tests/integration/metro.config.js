@@ -17,7 +17,7 @@ const config = {
       {
         get: (target, name) => {
           if (name === "react-native-location") {
-            return join(__dirname, `../../dist`);
+            return join(__dirname, `../../src`);
           }
           return join(__dirname, `node_modules/${name}`);
         }
@@ -25,7 +25,7 @@ const config = {
     ),
     platforms: ["android", "ios"]
   },
-  watchFolders: [resolve(__dirname, "../../dist")]
+  watchFolders: [resolve(__dirname, "../../src")]
 };
 
 module.exports = mergeConfig(DEFAULT, config);
