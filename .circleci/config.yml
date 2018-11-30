@@ -191,10 +191,13 @@ jobs:
         name: Run Jet Tests
         command: cd tests/integration && yarn run test-ios-cover
 
-    # TODO merge coverage output from android and iOS
+    - run:
+        name: Merge Coverage
+        command: yarn run build-coverage
+    
     - run:
         name: Submit Coverage
-        command: yarn run codecov
+        command: yarn run submit-coverage
 
     - store_artifacts:
         path: ~/detox-artifacts
