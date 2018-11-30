@@ -27,7 +27,7 @@
     "validate-ts-declarations": "npm run build-ts -- --noEmit",
     "run:packager": "node node_modules/react-native/local-cli/cli.js start",
     "run:ios": "react-native run-ios --project-path ./example/ios",
-    "run:android": "./gradlew installDebug && yarn start:android",
+    "run:android": "cd example/android && ./gradlew installDebug && yarn start:android",
     "start:android": "adb shell am start -n com.example/.MainActivity",
     "clean": "rimraf dist/ docs/ coverage/",
     "prepare": "npm run clean && npm run build",
