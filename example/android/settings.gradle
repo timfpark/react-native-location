@@ -1,3 +1,6 @@
 rootProject.name = 'example'
 
+include ':react-native-location'
+project(':react-native-location').projectDir = new File(rootProject.projectDir, '../../android')
+
 include ':app'

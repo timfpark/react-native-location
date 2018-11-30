@@ -29,7 +29,7 @@
     "run:ios": "react-native run-ios --project-path ./example/ios",
     "run:android": "./gradlew installDebug && yarn start:android",
     "start:android": "adb shell am start -n com.example/.MainActivity",
-    "clean": "rimraf dist/ coverage/",
+    "clean": "rimraf dist/ docs/ coverage/",
     "prepare": "npm run clean && npm run build",
     "prepublishOnly": "npm run validate-ts-declarations && npm run validate-flow-declarations"
   },
