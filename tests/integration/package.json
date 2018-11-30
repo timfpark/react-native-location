@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "packager-chrome": "react-native start --platforms ios,android",
-    "packager-jet": "REACT_DEBUGGER='echo nope' react-native start --config /Users/matt/Projects/OS/react-native-location/tests/integration/rn-cli.config.js",
+    "packager-jet": "REACT_DEBUGGER='echo nope' react-native start",
     "packager-jet-reset-cache": "REACT_DEBUGGER='echo nope' react-native start --reset-cache",
     "build-ios": "detox build --configuration ios.sim.debug",
     "build-ios-release": "detox build --configuration ios.sim.release",
