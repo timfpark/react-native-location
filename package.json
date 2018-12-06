@@ -57,6 +57,7 @@
     "husky": "^1.2.0",
     "istanbul": "^0.4.5",
     "lint-staged": "^8.1.0",
+    "lodash": "^4.17.11",
     "metro-react-native-babel-preset": "0.49.2",
     "moment": "^2.22.2",
     "prettier": "^1.15.2",
