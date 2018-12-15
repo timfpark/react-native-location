@@ -70,7 +70,9 @@ RNLocation.configure({
 
 RNLocation.requestPermission({
   ios: "whenInUse",
-  android: "course"
+  android: {
+    detail: "coarse"
+  }
 }).then(granted => {
     if (granted) {
       this.locationSubscription = RNLocation.subscribeToLocationUpdates(location => {
@@ -103,7 +105,9 @@ RNLocation.configure({
 
 RNLocation.requestPermission({
   ios: "whenInUse",
-  android: "course"
+  android: {
+    detail: 'coarse'
+  }
 }).then(granted => {
     if (granted) {
       this.locationSubscription = RNLocation.subscribeToHeadingUpdates(heading => {
@@ -148,12 +152,20 @@ Correctly managing permissions is key to working with the users location in mobi
 * You should monitor the permissions and respond to it correctly. The user is able to go to their phone setting and revoke or downgrade permissions at any time.
 
 #### `RNLocation.requestPermission`
-This method should be called before subscribing to location updates. You need to pass in the type of permission you want for each platform. You can choose not to ignore a platform and it will be ignored. The method returns a promise which resolves to `true` if the permission was granted and `false` if not.
+This method should be called before subscribing to location updates. You need to pass in the type of permission you want for each platform. You can choose not to ignore a platform and it will be ignored. The method returns a promise which resolves to `true` if the permission was granted and `false` if not. For Android you can optionally provide a `rationale` which will be displayed if you ask the user for permission a 2nd time after they have denied permission once.
 
 ```javascript
 RNLocation.requestPermission({
   ios: 'whenInUse', // or 'always'
-  android: 'course', // or 'fine'
+  android: {
+    detail: 'coarse', // or 'fine'
+    rationale: {
+      title: "We need to access your location",
+      message: "We use your location to show where you are on the map",
+      buttonPositive: "OK",
+      buttonNegative: "Cancel"
+    }
+  }
 });
 ```
 

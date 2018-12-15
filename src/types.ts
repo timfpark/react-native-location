@@ -57,7 +57,15 @@ export interface ConfigureOptions {
 
 export interface RequestPermissionOptions {
   ios?: "whenInUse" | "always" | void;
-  android?: "course" | "fine" | void;
+  android?: {
+    detail: "coarse" | "fine";
+    rationale?: {
+      title: string;
+      message: string;
+      buttonPositive: string;
+      buttonNegative: string;
+    } | void;
+  } | void;
 }
 
 export type Subscription = () => void;

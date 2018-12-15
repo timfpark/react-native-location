@@ -1,4 +1,4 @@
-import { EventEmitter, Platform } from "react-native";
+import { EventEmitter, Platform, PermissionsAndroid } from "react-native";
 import {
   LocationPermissionStatus,
   Subscription,
@@ -32,13 +32,22 @@ export default class Permissions {
           return await this.nativeInterface.requestAlwaysAuthorization();
         } else if (options.ios === "whenInUse") {
           return await this.nativeInterface.requestWhenInUseAuthorization();
-        } else {
+        }
+        return false;
+      }
+      case "android": {
+        if (!options.android) {
           return false;
         }
+
+        const granted = await PermissionsAndroid.request(
+          options.android.detail === "fine"
+            ? PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+            : PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
+          options.android.rationale || undefined
+        );
+        return granted === PermissionsAndroid.RESULTS.GRANTED;
       }
-      case "android":
-        // TODO: Android Permissions
-        return false;
       default:
         // Unsupported
         return false;
@@ -49,9 +58,16 @@ export default class Permissions {
     switch (Platform.OS) {
       case "ios":
         return await this.nativeInterface.getAuthorizationStatus();
-      case "android":
-        // TODO: Implement Android
-        return "notDetermined";
+      case "android": {
+        const fine = await PermissionsAndroid.check(
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+        );
+        const coarse = await PermissionsAndroid.check(
+          PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION
+        );
+
+        return fine || coarse ? "authorizedAlways" : "notDetermined";
+      }
       default:
         // Platform not supported, so return "restricted" to signal that there's nothing
         return "restricted";

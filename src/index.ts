@@ -50,6 +50,8 @@ export const configureHelpers = (
   eventEmitter = evt;
   subscriptions = new Subscriptions(nativeInterface, eventEmitter);
   permissions = new Permissions(nativeInterface, eventEmitter);
+
+  eventEmitter.addListener("onWarning", console.warn);
 };
 configureHelpers(nativeInterface, eventEmitter);
 

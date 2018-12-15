@@ -67,6 +67,9 @@ profile
 DerivedData
 
 .idea/
+android/.gradle
+android/*.iml
+android/local.properties
 
 # Pods - for those of you who use CocoaPods
 Pods
