@@ -2,7 +2,7 @@
 
 ![MIT License](https://img.shields.io/npm/l/react-native-location.svg) ![Supports Android and iOS](https://img.shields.io/badge/platforms-android%20|%20ios-lightgrey.svg) ![Supports React Native >= 0.46](https://img.shields.io/badge/react%20native-%3E%3D%200.46-lightgrey.svg) ![CircleCI Status](https://img.shields.io/circleci/project/github/timfpark/react-native-location/master.svg)
 
-Native GPS location support for React Native. Currently only supports iOS.
+Native GPS location support for React Native.
 
 You might decide to use this library over the [built-in geolocation](https://facebook.github.io/react-native/docs/geolocation.html) because it includes some additional features:
 
@@ -44,6 +44,18 @@ Finally, you then need to make sure you have the correct permissions inside your
 <string>This is the plist item for NSLocationAlwaysUsageDescription</string>
 ```
 
+For Android, you need to ensure that your `AndroidManifest.xml` contains this line:
+
+```xml
+<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+```
+
+If you want to access fine location then you should also include:
+
+```xml
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+```
+
 ### Background mode setup (optional)
 For background mode to work, a few things need to be configured:
 
@@ -75,18 +87,16 @@ RNLocation.requestPermission({
   }
 }).then(granted => {
     if (granted) {
-      this.locationSubscription = RNLocation.subscribeToLocationUpdates(location => {
+      this.locationSubscription = RNLocation.subscribeToLocationUpdates(locations => {
         /* Example location returned
         {
-          coords: {
-            speed: -1,
-            longitude: -0.1337,
-            latitude: 51.50998,
-            accuracy: 5,
-            heading: -1,
-            altitude: 0,
-            altitudeAccuracy: -1
-          },
+          speed: -1,
+          longitude: -0.1337,
+          latitude: 51.50998,
+          accuracy: 5,
+          heading: -1,
+          altitude: 0,
+          altitudeAccuracy: -1
           timestamp: 1446007304457.029
         }
         */
@@ -132,10 +142,11 @@ You can call `configure` multiple times at it will only change the setting which
 
 ```javascript
 RNLocation.configure({
+    distanceFilter: 0,
+    // iOS Only
     activityType: "other",
     allowsBackgroundLocationUpdates: false,
     desiredAccuracy: "best",
-    distanceFilter: 0,
     headingFilter: 1,
     headingOrientation: "portrait",
     pausesLocationUpdatesAutomatically: false,
@@ -193,11 +204,11 @@ unsubscribe();
 ```
 
 ### `RNLocation.subscribeToLocationUpdates`
-Subscribe to location changes with the given listener. Ensure you have the correct permission before calling this method. The location provider will respect the settings you have given it.
+Subscribe to location changes with the given listener. Ensure you have the correct permission before calling this method. The location provider will respect the settings you have given it. Each event may return an array with more than one location. This is because the OS might batch location updates together and deliver them all at once. Take a look at the `timestamp` to find the latest.
 
 ```javascript
 // Subscribe
-const unsubscribe = RNLocation.subscribeToLocationUpdates(location => {
+const unsubscribe = RNLocation.subscribeToLocationUpdates(locations => {
   ...
 })
 
@@ -205,12 +216,12 @@ const unsubscribe = RNLocation.subscribeToLocationUpdates(location => {
 unsubscribe();
 ```
 
-### `RNLocation.subscribeToHeadingUpdates`
+### `RNLocation.subscribeToHeadingUpdates` (iOS only)
 Subscribe to heading changes with the given listener. Ensure you have the correct permission before calling this method. The location provider will respect the settings you have given it.
 
 ```javascript
 // Subscribe
-const unsubscribe = RNLocation.subscribeToHeadingUpdates(location => {
+const unsubscribe = RNLocation.subscribeToHeadingUpdates(heading => {
   ...
 })
 
@@ -218,12 +229,12 @@ const unsubscribe = RNLocation.subscribeToHeadingUpdates(location => {
 unsubscribe();
 ```
 
-### `RNLocation.subscribeToSignificantLocationUpdates`
-Subscribe to significant updates to the users location with the given listener. *This method does not take into account the `distanceFilter` which you configured RNLocation with.* In most cases, you should call `RNLocation.configure` with the correct settings and then use `RNLocation.subscribeToLocationUpdates` to subscribe to the location updates. For more details, take a look at [Apple's documentation](https://developer.apple.com/documentation/corelocation/cllocationmanager/1423531-startmonitoringsignificantlocati?language=objc). 
+### `RNLocation.subscribeToSignificantLocationUpdates` (iOS only)
+Subscribe to significant updates to the users location with the given listener. *This method does not take into account the `distanceFilter` which you configured RNLocation with.* In most cases, you should call `RNLocation.configure` with the correct settings and then use `RNLocation.subscribeToLocationUpdates` to subscribe to the location updates. This will allow you to support both Android and iOS with the same code. For more details, take a look at [Apple's documentation](https://developer.apple.com/documentation/corelocation/cllocationmanager/1423531-startmonitoringsignificantlocati?language=objc). 
 
 ```javascript
 // Subscribe
-const unsubscribe = RNLocation.subscribeToSignificantLocationUpdates(location => {
+const unsubscribe = RNLocation.subscribeToSignificantLocationUpdates(locations => {
   ...
 })
 

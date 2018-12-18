@@ -15,6 +15,7 @@ import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.ReadableType;
+import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.WritableMap;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
@@ -30,6 +31,8 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
 import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Collections;
 
 public class RNFusedLocationProvider {
     private static final int REQUEST_CHECK_SETTINGS = 12341234;
@@ -148,40 +151,39 @@ public class RNFusedLocationProvider {
                 return;
             }
 
-            // Get the last location
-            Location location = locationResult.getLastLocation();
+            // Map the locations to maps
+            WritableArray results = Arguments.createArray();
+            for (Location location : locationResult.getLocations()) {
+                // Create the coordinate map
+                WritableMap dict = Arguments.createMap();
+                dict.putDouble("latitude", location.getLatitude());
+                dict.putDouble("longitude", location.getLongitude());
+                dict.putDouble("altitude", location.getAltitude());
+                dict.putDouble("accuracy", location.getAccuracy());
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    dict.putDouble("altitudeAccuracy", location.getVerticalAccuracyMeters());
+                } else {
+                    dict.putDouble("altitudeAccuracy", 0.0);
+                }
+                dict.putDouble("course", location.getBearing());
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    dict.putDouble("courseAccuracy", location.getBearingAccuracyDegrees());
+                } else {
+                    dict.putDouble("courseAccuracy", 0.0);
+                }
+                dict.putDouble("speed", location.getSpeed());
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    dict.putDouble("speedAccuracy", location.getSpeedAccuracyMetersPerSecond());
+                } else {
+                    dict.putDouble("speedAccuracy", 0.0);
+                }
+                dict.putDouble("timestamp", location.getTime());
 
-            // Create the coordinate map
-            WritableMap coordsMap = Arguments.createMap();
-            coordsMap.putDouble("latitude", location.getLatitude());
-            coordsMap.putDouble("longitude", location.getLongitude());
-            coordsMap.putDouble("altitude", location.getAltitude());
-            coordsMap.putDouble("accuracy", location.getAccuracy());
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                coordsMap.putDouble("altitudeAccuracy", location.getVerticalAccuracyMeters());
-            } else {
-                coordsMap.putDouble("altitudeAccuracy", 0.0);
+                results.pushMap(dict);
             }
-            coordsMap.putDouble("course", location.getBearing());
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                coordsMap.putDouble("courseAccuracy", location.getBearingAccuracyDegrees());
-            } else {
-                coordsMap.putDouble("courseAccuracy", 0.0);
-            }
-            coordsMap.putDouble("speed", location.getSpeed());
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                coordsMap.putDouble("speedAccuracy", location.getSpeedAccuracyMetersPerSecond());
-            } else {
-                coordsMap.putDouble("speedAccuracy", 0.0);
-            }
-
-            // Create the container map
-            WritableMap map = Arguments.createMap();
-            map.putDouble("timestamp", location.getTime());
-            map.putMap("coords", coordsMap);
 
             // Emit the event
-            Utils.emitEvent(context, "locationUpdated", map);
+            Utils.emitEvent(context, "locationUpdated", results);
         };
     };
 

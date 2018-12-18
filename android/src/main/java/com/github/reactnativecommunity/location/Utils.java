@@ -16,7 +16,7 @@ public class Utils {
         emitEvent(context, "onWarning", error);
     }
 
-    public static void emitEvent(ReactApplicationContext context, String eventName, @Nullable WritableMap params) {
+    public static void emitEvent(ReactApplicationContext context, String eventName, @Nullable Object params) {
         context
                 .getJSModule(RCTNativeAppEventEmitter.class)
                 .emit(eventName, params);

@@ -282,22 +282,23 @@ RCT_EXPORT_METHOD(stopUpdatingHeading)
         return;
     }
     
-    CLLocation *location = [locations lastObject];
-    NSDictionary *locationEvent = @{
-        @"coords": @{
-            @"latitude": @(location.coordinate.latitude),
-            @"longitude": @(location.coordinate.longitude),
-            @"altitude": @(location.altitude),
-            @"accuracy": @(location.horizontalAccuracy),
-            @"altitudeAccuracy": @(location.verticalAccuracy),
-            @"course": @(location.course),
-            @"speed": @(location.speed),
-            @"floor": @(location.floor.level),
-        },
-        @"timestamp": @([location.timestamp timeIntervalSince1970] * 1000) // in ms
-    };
+    NSMutableArray *results = [NSMutableArray arrayWithCapacity:[locations count]];
+    [locations enumerateObjectsUsingBlock:^(CLLocation *location, NSUInteger idx, BOOL *stop) {
+        [results addObject:@{
+                             @"latitude": @(location.coordinate.latitude),
+                             @"longitude": @(location.coordinate.longitude),
+                             @"altitude": @(location.altitude),
+                             @"accuracy": @(location.horizontalAccuracy),
+                             @"altitudeAccuracy": @(location.verticalAccuracy),
+                             @"course": @(location.course),
+                             @"speed": @(location.speed),
+                             @"floor": @(location.floor.level),
+                             @"timestamp": @([location.timestamp timeIntervalSince1970] * 1000) // in ms
+                             }];
+    }];
+    
 
-    [self sendEventWithName:@"locationUpdated" body:locationEvent];
+    [self sendEventWithName:@"locationUpdated" body:results];
 }
 
 #pragma mark - Utilities
