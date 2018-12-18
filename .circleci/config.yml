@@ -66,7 +66,7 @@ aliases:
 - &yarn
   name: Yarn Install ./ and ./tests/integration
   command: |
-    yarn install --non-interactive --cache-folder ~/.cache/yarn & cd tests/integration && yarn install --non-interactive --cache-folder ~/.cache/yarn & wait
+    yarn install --network-concurrency 1 --non-interactive --cache-folder ~/.cache/yarn & cd tests/integration && yarn install --network-concurrency 1 --non-interactive --cache-folder ~/.cache/yarn & wait
 
 # -------------------------
 #         ANALYSE
@@ -75,7 +75,7 @@ aliases:
 # eslint
 - &eslint
   name: Lint Code
-  command: yarn run eslint
+  command: pwd && yarn run eslint
 
 # flow
 - &validate-flow-declarations
@@ -143,6 +143,8 @@ jobs:
     - attach_workspace:
         at: ~/react-native-location
     - restore-cache: *restore-yarn-cache
+    - run: rm -rf node_modules
+    - run: yarn cache clean
     - run: *yarn
     - save-cache: *save-yarn-cache
     - run: *eslint
