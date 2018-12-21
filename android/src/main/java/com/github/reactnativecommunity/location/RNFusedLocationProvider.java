@@ -158,8 +158,8 @@ public class RNFusedLocationProvider {
                 WritableMap dict = Arguments.createMap();
                 dict.putDouble("latitude", location.getLatitude());
                 dict.putDouble("longitude", location.getLongitude());
-                dict.putDouble("altitude", location.getAltitude());
                 dict.putDouble("accuracy", location.getAccuracy());
+                dict.putDouble("altitude", location.getAltitude());
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                     dict.putDouble("altitudeAccuracy", location.getVerticalAccuracyMeters());
                 } else {

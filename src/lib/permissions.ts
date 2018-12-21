@@ -25,8 +25,8 @@ export default class Permissions {
   public async requestPermission(
     options: RequestPermissionOptions
   ): Promise<boolean> {
-    // iOS Permissions
     switch (Platform.OS) {
+      // iOS Permissions
       case "ios": {
         if (options.ios === "always") {
           return await this.nativeInterface.requestAlwaysAuthorization();
@@ -35,6 +35,7 @@ export default class Permissions {
         }
         return false;
       }
+      // Android permissions
       case "android": {
         if (!options.android) {
           return false;
@@ -48,16 +49,18 @@ export default class Permissions {
         );
         return granted === PermissionsAndroid.RESULTS.GRANTED;
       }
+      // Unsupported
       default:
-        // Unsupported
         return false;
     }
   }
 
   public async getCurrentPermission(): Promise<LocationPermissionStatus> {
     switch (Platform.OS) {
+      // iOS permissions
       case "ios":
         return await this.nativeInterface.getAuthorizationStatus();
+      // Android permissions
       case "android": {
         const fine = await PermissionsAndroid.check(
           PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
@@ -68,6 +71,7 @@ export default class Permissions {
 
         return fine || coarse ? "authorizedAlways" : "notDetermined";
       }
+      // Unsupported
       default:
         // Platform not supported, so return "restricted" to signal that there's nothing
         return "restricted";

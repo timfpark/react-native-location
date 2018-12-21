@@ -24,20 +24,23 @@ export type HeadingOrientation =
   | "portraitUpsideDown"
   | "landscapeLeft"
   | "landscapeRight";
-
-export interface Location {
-  coords: LocationCoords;
+export type Location = LocationShared & LocationAndroid & LocationIOS;
+export interface LocationShared {
   timestamp: number;
-}
-export interface LocationCoords {
   latitude: number;
   longitude: number;
-  altitude: number;
   accuracy: number;
+  altitude: number;
   altitudeAccuracy: number;
   course: number;
   speed: number;
-  floor: number;
+}
+export interface LocationAndroid {
+  courseAccuracy?: number;
+  speedAccuracy?: number;
+}
+export interface LocationIOS {
+  floor?: number;
 }
 export interface Heading {
   heading: number;

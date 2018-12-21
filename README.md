@@ -97,6 +97,7 @@ RNLocation.requestPermission({
           heading: -1,
           altitude: 0,
           altitudeAccuracy: -1
+          floor: 0
           timestamp: 1446007304457.029
         }
         */
