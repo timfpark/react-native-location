@@ -1,6 +1,11 @@
+/* eslint-disable valid-jsdoc */
+
 import { NativeModules, NativeEventEmitter, EventEmitter } from "react-native";
 import { RNLocationNativeInterface } from "../types";
 
+/**
+ * @ignore
+ */
 export const get = (): {
   nativeInterface: RNLocationNativeInterface;
   eventEmitter: EventEmitter;
