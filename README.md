@@ -181,6 +181,18 @@ RNLocation.requestPermission({
 });
 ```
 
+#### `RNLocation.requestPermission`
+Checks if the currently granted permissions match the given options. You can call this before `requestPermission` to check if you already have the permission level you would like. This is especially useful if you want to display a message to the user about not having the correct permissions before actually requesting them.
+
+```javascript
+RNLocation.checkPermission({
+  ios: 'whenInUse', // or 'always'
+  android: {
+    detail: 'coarse' // or 'fine'
+  }
+});
+```
+
 #### `RNLocation.getCurrentPermission`
 Gets the current permission status.
 

@@ -96,6 +96,18 @@ export const getCurrentPermission = (): Promise<LocationPermissionStatus> => {
 };
 
 /**
+ * Checks that the current location permission matches the given options.
+ *
+ * @param {RequestPermissionOptions} options The permissions which you are checking.
+ * @returns {Promise<boolean>} If the current location permissions match the given options.
+ */
+export const checkPermission = (
+  options: RequestPermissionOptions
+): Promise<boolean> => {
+  return permissions.checkPermission(options);
+};
+
+/**
  * Monitor the permission status for changes.
  *
  * @param {LocationPermissionStatusCallback} listener The listener which will be called when the permission status changes.
@@ -150,6 +162,7 @@ export const subscribeToSignificantLocationUpdates = (
 export default {
   configure,
   requestPermission,
+  checkPermission,
   getCurrentPermission,
   subscribeToPermissionUpdates,
   subscribeToLocationUpdates,

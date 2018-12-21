@@ -21,7 +21,7 @@ RCT_EXPORT_MODULE()
 
 - (NSArray<NSString *> *)supportedEvents
 {
-    return @[@"authorizationStatusDidChange", @"headingUpdated", @"locationUpdated"];
+    return @[@"authorizationStatusDidChange", @"headingUpdated", @"locationUpdated", @"onWarning"];
 }
 
 #pragma mark - Initialization

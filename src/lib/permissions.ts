@@ -78,6 +78,50 @@ export default class Permissions {
     }
   }
 
+  public async checkPermission(
+    options: RequestPermissionOptions
+  ): Promise<boolean> {
+    switch (Platform.OS) {
+      // iOS Permissions
+      case "ios": {
+        const currentPermission = await this.nativeInterface.getAuthorizationStatus();
+        if (options.ios === "always") {
+          return currentPermission === "authorizedAlways";
+        } else if (options.ios === "whenInUse") {
+          return (
+            currentPermission === "authorizedAlways" ||
+            currentPermission === "authorizedWhenInUse"
+          );
+        }
+        return false;
+      }
+      // Android permissions
+      case "android": {
+        if (!options.android) {
+          return false;
+        }
+
+        const grantedFine = await PermissionsAndroid.check(
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+        );
+        const grantedCoarse = await PermissionsAndroid.check(
+          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+        );
+
+        if (options.android.detail === "fine") {
+          return grantedFine;
+        } else if (options.android.detail === "coarse") {
+          return grantedFine || grantedCoarse;
+        } else {
+          return false;
+        }
+      }
+      // Unsupported
+      default:
+        return false;
+    }
+  }
+
   public subscribeToPermissionUpdates(
     listener: (status: LocationPermissionStatus) => void
   ): Subscription {
