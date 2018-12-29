@@ -1,6 +1,6 @@
 # `react-native-location`
 
-![MIT License](https://img.shields.io/npm/l/react-native-location.svg) ![Supports Android and iOS](https://img.shields.io/badge/platforms-android%20|%20ios-lightgrey.svg) ![Supports React Native >= 0.46](https://img.shields.io/badge/react%20native-%3E%3D%200.46-lightgrey.svg) ![CircleCI Status](https://img.shields.io/circleci/project/github/timfpark/react-native-location/master.svg)
+![MIT License](https://img.shields.io/npm/l/react-native-location.svg) ![Supports Android and iOS](https://img.shields.io/badge/platforms-android%20|%20ios-lightgrey.svg) ![Supports React Native >= 0.46](https://img.shields.io/badge/react%20native-%3E%3D%200.46-lightgrey.svg) ![CircleCI Status](https://img.shields.io/circleci/project/github/timfpark/react-native-location/develop.svg)
 
 Native GPS location support for React Native.
 
@@ -11,16 +11,16 @@ You might decide to use this library over the [built-in geolocation](https://fac
 * Allows you to monitor the device heading.
 
 ## Installation
-Install the library using either npm:
-
-```
-npm install --save react-native-location
-```
-
-or using Yarn:
+Install the library using either Yarn:
 
 ```
 yarn add react-native-location
+```
+
+or using npm:
+
+```
+npm install --save react-native-location
 ```
 
 You then need to link the native parts of the library:
@@ -72,7 +72,6 @@ In the [example](https://github.com/timfpark/react-native-location/example) fold
 ![Example App](./screenshots/example.gif)
 
 ## Usage
-### Location
 ```javascript
 import RNLocation from 'react-native-location';
 
@@ -99,32 +98,6 @@ RNLocation.requestPermission({
           altitudeAccuracy: -1
           floor: 0
           timestamp: 1446007304457.029
-        }
-        */
-      })
-    }
-  })
-```
-
-### Heading
-```javascript
-import RNLocation from 'react-native-location';
-
-RNLocation.configure({
-  distanceFilter: 5.0
-})
-
-RNLocation.requestPermission({
-  ios: "whenInUse",
-  android: {
-    detail: 'coarse'
-  }
-}).then(granted => {
-    if (granted) {
-      this.locationSubscription = RNLocation.subscribeToHeadingUpdates(heading => {
-        /* Example heading returned
-        {
-          heading: 12
         }
         */
       })
@@ -229,12 +202,12 @@ const unsubscribe = RNLocation.subscribeToLocationUpdates(locations => {
 unsubscribe();
 ```
 
-### `RNLocation.subscribeToHeadingUpdates` (iOS only)
-Subscribe to heading changes with the given listener. Ensure you have the correct permission before calling this method. The location provider will respect the settings you have given it.
+### `RNLocation.subscribeToSignificantLocationUpdates` (iOS only)
+Subscribe to significant updates to the users location with the given listener. *This method does not take into account the `distanceFilter` which you configured RNLocation with.* In most cases, you should call `RNLocation.configure` with the correct settings and then use `RNLocation.subscribeToLocationUpdates` to subscribe to the location updates. This will allow you to support both Android and iOS with the same code. For more details, take a look at [Apple's documentation](https://developer.apple.com/documentation/corelocation/cllocationmanager/1423531-startmonitoringsignificantlocati?language=objc). 
 
 ```javascript
 // Subscribe
-const unsubscribe = RNLocation.subscribeToHeadingUpdates(heading => {
+const unsubscribe = RNLocation.subscribeToSignificantLocationUpdates(locations => {
   ...
 })
 
@@ -242,12 +215,12 @@ const unsubscribe = RNLocation.subscribeToHeadingUpdates(heading => {
 unsubscribe();
 ```
 
-### `RNLocation.subscribeToSignificantLocationUpdates` (iOS only)
-Subscribe to significant updates to the users location with the given listener. *This method does not take into account the `distanceFilter` which you configured RNLocation with.* In most cases, you should call `RNLocation.configure` with the correct settings and then use `RNLocation.subscribeToLocationUpdates` to subscribe to the location updates. This will allow you to support both Android and iOS with the same code. For more details, take a look at [Apple's documentation](https://developer.apple.com/documentation/corelocation/cllocationmanager/1423531-startmonitoringsignificantlocati?language=objc). 
+### `RNLocation.subscribeToHeadingUpdates` (iOS only)
+Subscribe to heading changes with the given listener. Ensure you have the correct permission before calling this method. The location provider will respect the settings you have given it.
 
 ```javascript
 // Subscribe
-const unsubscribe = RNLocation.subscribeToSignificantLocationUpdates(locations => {
+const unsubscribe = RNLocation.subscribeToHeadingUpdates(heading => {
   ...
 })
 

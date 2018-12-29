@@ -126,7 +126,7 @@ export const subscribeToPermissionUpdates = (
  * @returns {Subscription} The subscription function which can be used to unsubscribe.
  */
 export const subscribeToLocationUpdates = (
-  listener: (location: Location) => void
+  listener: (locations: Location[]) => void
 ): Subscription => {
   return subscriptions.subscribeToLocationUpdates(listener);
 };
@@ -154,7 +154,7 @@ export const subscribeToHeadingUpdates = (
  * @returns {Subscription} The subscription function which can be used to unsubscribe.
  */
 export const subscribeToSignificantLocationUpdates = (
-  listener: (location: Location) => void
+  listener: (locations: Location[]) => void
 ): Subscription => {
   return subscriptions.subscribeToSignificantLocationUpdates(listener);
 };

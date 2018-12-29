@@ -26,7 +26,7 @@ export default class Subscriptions {
   }
 
   public subscribeToLocationUpdates(
-    listener: (location: Location) => void
+    listener: (locations: Location[]) => void
   ): Subscription {
     const emitterSubscription = this.eventEmitter.addListener(
       "locationUpdated",
@@ -66,7 +66,7 @@ export default class Subscriptions {
   }
 
   public subscribeToSignificantLocationUpdates(
-    listener: (location: Location) => void
+    listener: (locations: Location[]) => void
   ): Subscription {
     const emitterSubscription = this.eventEmitter.addListener(
       "locationUpdated",
