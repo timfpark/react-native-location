@@ -7,7 +7,7 @@ Native GPS location support for React Native.
 You might decide to use this library over the [built-in geolocation](https://facebook.github.io/react-native/docs/geolocation.html) because it includes some additional features:
 
 * Allows you choose what type of permission to ask for ("when in use" or "always"). The built-in geolocation library will look at your plist file and choose "always" if you have the `NSLocationAlwaysUsageDescription` property, however, you might have a usecase where you want to start by asking the user for "while in use" permission and later upgrade the permission to "always" when they turn on a feature which requires background location.
-* Ability to check the current permission status (`RNLocation.getAuthorizationStatus`).
+* Ability to check the current permission status (`RNLocation.getCurrentPermission`).
 * Allows you to monitor the device heading.
 
 ## Installation
@@ -154,7 +154,7 @@ RNLocation.requestPermission({
 });
 ```
 
-#### `RNLocation.requestPermission`
+#### `RNLocation.checkPermission`
 Checks if the currently granted permissions match the given options. You can call this before `requestPermission` to check if you already have the permission level you would like. This is especially useful if you want to display a message to the user about not having the correct permissions before actually requesting them.
 
 ```javascript
