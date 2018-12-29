@@ -21,7 +21,7 @@ describe("RNLocation.configure", function() {
 
   it("should correctly pass the options", async function() {
     const options = {
-      distsnceFilter: 5.0
+      distanceFilter: 5.0
     };
     jet.module.configure(options);
 

@@ -10,6 +10,8 @@ You might decide to use this library over the [built-in geolocation](https://fac
 * Ability to check the current permission status (`RNLocation.getCurrentPermission`).
 * Allows you to monitor the device heading.
 
+**This is a prerelease version of the library which changes the API and adds Android support. For the previous version, please see the [master branch](https://github.com/timfpark/react-native-location/tree/master).**
+
 ## Installation
 Install the library using either Yarn:
 
