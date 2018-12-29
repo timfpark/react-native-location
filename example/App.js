@@ -46,8 +46,8 @@ export default class App extends React.PureComponent {
 
   _startUpdatingLocation = () => {
     this.locationSubscription = RNLocation.subscribeToLocationUpdates(
-      location => {
-        this.setState({ location });
+      locations => {
+        this.setState({ location: locations[0] });
       }
     );
   };
@@ -101,21 +101,21 @@ export default class App extends React.PureComponent {
                 <View style={[styles.detailBox, styles.third]}>
                   <Text style={styles.valueTitle}>Course</Text>
                   <Text style={[styles.detail, styles.largeDetail]}>
-                    {location.coords.course}
+                    {location.course}
                   </Text>
                 </View>
 
                 <View style={[styles.detailBox, styles.third]}>
                   <Text style={styles.valueTitle}>Speed</Text>
                   <Text style={[styles.detail, styles.largeDetail]}>
-                    {location.coords.speed}
+                    {location.speed}
                   </Text>
                 </View>
 
                 <View style={[styles.detailBox, styles.third]}>
                   <Text style={styles.valueTitle}>Altitude</Text>
                   <Text style={[styles.detail, styles.largeDetail]}>
-                    {location.coords.altitude}
+                    {location.altitude}
                   </Text>
                 </View>
               </View>
@@ -124,31 +124,25 @@ export default class App extends React.PureComponent {
                 <View style={styles.row}>
                   <View style={[styles.detailBox, styles.half]}>
                     <Text style={styles.valueTitle}>Latitude</Text>
-                    <Text style={styles.detail}>
-                      {location.coords.latitude}
-                    </Text>
+                    <Text style={styles.detail}>{location.latitude}</Text>
                   </View>
 
                   <View style={[styles.detailBox, styles.half]}>
                     <Text style={styles.valueTitle}>Longitude</Text>
-                    <Text style={styles.detail}>
-                      {location.coords.longitude}
-                    </Text>
+                    <Text style={styles.detail}>{location.longitude}</Text>
                   </View>
                 </View>
 
                 <View style={styles.row}>
                   <View style={[styles.detailBox, styles.half]}>
                     <Text style={styles.valueTitle}>Accuracy</Text>
-                    <Text style={styles.detail}>
-                      {location.coords.accuracy}
-                    </Text>
+                    <Text style={styles.detail}>{location.accuracy}</Text>
                   </View>
 
                   <View style={[styles.detailBox, styles.half]}>
                     <Text style={styles.valueTitle}>Altitude Accuracy</Text>
                     <Text style={styles.detail}>
-                      {location.coords.altitudeAccuracy}
+                      {location.altitudeAccuracy}
                     </Text>
                   </View>
                 </View>

@@ -16,11 +16,21 @@ export type LocationActivityType =
   | "otherNavigation"
   | "airborne"; // iOS 12+
 /**
- * The accuracy of a geographical coordinate.
+ * The accuracy of the location responses for Android.
  * @platform ios
  * @see [Apple Docs](https://developer.apple.com/documentation/corelocation/cllocationaccuracy?language=objc)
  */
-export type LocationAccuracy =
+export type LocationPriorityAndroid =
+  | "balancedPowerAccuracy"
+  | "highAccuracy"
+  | "lowPower"
+  | "noPower";
+/**
+ * The accuracy of a geographical coordinate for iOS.
+ * @platform ios
+ * @see [Apple Docs](https://developer.apple.com/documentation/corelocation/cllocationaccuracy?language=objc)
+ */
+export type LocationAccuracyIOS =
   | "bestForNavigation"
   | "best"
   | "nearestTenMeters"
@@ -132,11 +142,15 @@ export interface ConfigureOptions {
    */
   allowsBackgroundLocationUpdates?: boolean | void;
   /**
-   * The accuracy of the location data. Defaults to `best`.
-   * @platform ios
+   * The accuracy of the location data. Defaults to `best` on iOS and `balancedPowerAccuracy` on Android.
+   * @platform android ios
    * @see [Apple Docs](https://developer.apple.com/documentation/corelocation/cllocationmanager/1423836-desiredaccuracy)
+   * @see [Android Docs](https://developers.google.com/android/reference/com/google/android/gms/location/LocationRequest.html#setPriority(int))
    */
-  desiredAccuracy?: LocationAccuracy | void;
+  desiredAccuracy?: {
+    ios?: LocationAccuracyIOS | void;
+    android?: LocationPriorityAndroid | void;
+  } | void;
   /**
    * The minimum angle in degrees that the device heading needs to change before the heading update callback in your app is called. Defaults to `0` for no filtering.
    * @platform ios

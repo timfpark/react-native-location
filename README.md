@@ -116,12 +116,15 @@ You can call `configure` multiple times at it will only change the setting which
 
 ```javascript
 RNLocation.configure({
-    distanceFilter: 0,
+    distanceFilter: 100, // Meters
+    desiredAccuracy: {
+      ios: "best",
+      android: "balancedPowerAccuracy"
+    },
     // iOS Only
     activityType: "other",
     allowsBackgroundLocationUpdates: false,
-    desiredAccuracy: "best",
-    headingFilter: 1,
+    headingFilter: 1, // Degrees
     headingOrientation: "portrait",
     pausesLocationUpdatesAutomatically: false,
     showsBackgroundLocationIndicator: false,

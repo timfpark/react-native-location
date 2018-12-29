@@ -141,17 +141,20 @@ RCT_EXPORT_METHOD(configure:(NSDictionary *)options)
     }
     
     // Desired accuracy
-    NSString *desiredAccuracy = [RCTConvert NSString:options[@"desiredAccuracy"]];
-    if ([desiredAccuracy isEqualToString:@"bestForNavigation"]) {
-        self.locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation;
-    } else if ([desiredAccuracy isEqualToString:@"best"]) {
-        self.locationManager.desiredAccuracy = kCLLocationAccuracyBest;
-    } else if ([desiredAccuracy isEqualToString:@"nearestTenMeters"]) {
-        self.locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters;
-    } else if ([desiredAccuracy isEqualToString:@"hundredMeters"]) {
-        self.locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters;
-    } else if ([desiredAccuracy isEqualToString:@"threeKilometers"]) {
-        self.locationManager.desiredAccuracy = kCLLocationAccuracyThreeKilometers;
+    NSDictionary *desiredAccuracy = [RCTConvert NSDictionary:options[@"desiredAccuracy"]];
+    if (desiredAccuracy != nil) {
+        NSString *desiredAccuracyIOS = [RCTConvert NSString:desiredAccuracy[@"ios"]];
+        if ([desiredAccuracyIOS isEqualToString:@"bestForNavigation"]) {
+            self.locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation;
+        } else if ([desiredAccuracyIOS isEqualToString:@"best"]) {
+            self.locationManager.desiredAccuracy = kCLLocationAccuracyBest;
+        } else if ([desiredAccuracyIOS isEqualToString:@"nearestTenMeters"]) {
+            self.locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters;
+        } else if ([desiredAccuracyIOS isEqualToString:@"hundredMeters"]) {
+            self.locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters;
+        } else if ([desiredAccuracyIOS isEqualToString:@"threeKilometers"]) {
+            self.locationManager.desiredAccuracy = kCLLocationAccuracyThreeKilometers;
+        }
     }
     
     // Distance filter
@@ -171,11 +174,11 @@ RCT_EXPORT_METHOD(configure:(NSDictionary *)options)
     NSString *headingOrientation = [RCTConvert NSString:options[@"headingOrientation"]];
     if ([headingOrientation isEqualToString:@"portrait"]) {
         self.locationManager.headingOrientation = CLDeviceOrientationPortrait;
-    } else if ([desiredAccuracy isEqualToString:@"portraitUpsideDown"]) {
+    } else if ([headingOrientation isEqualToString:@"portraitUpsideDown"]) {
         self.locationManager.headingOrientation = CLDeviceOrientationPortraitUpsideDown;
-    } else if ([desiredAccuracy isEqualToString:@"landscapeLeft"]) {
+    } else if ([headingOrientation isEqualToString:@"landscapeLeft"]) {
         self.locationManager.headingOrientation = CLDeviceOrientationLandscapeLeft;
-    } else if ([desiredAccuracy isEqualToString:@"landscapeRight"]) {
+    } else if ([headingOrientation isEqualToString:@"landscapeRight"]) {
         self.locationManager.headingOrientation = CLDeviceOrientationLandscapeRight;
     }
     

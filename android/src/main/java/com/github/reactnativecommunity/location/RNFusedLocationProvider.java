@@ -70,6 +70,37 @@ public class RNFusedLocationProvider {
             }
         }
 
+        // Priority
+        if (options.hasKey("desiredAccuracy")) {
+            if (options.getType("desiredAccuracy") == ReadableType.Map) {
+                ReadableMap desiredAccuracy = options.getMap("desiredAccuracy");
+                if (desiredAccuracy.hasKey("android")) {
+                    if (desiredAccuracy.getType("android") == ReadableType.String) {
+                        String desiredAccuracyAndroid = desiredAccuracy.getString("android");
+                        if (desiredAccuracyAndroid.equals("balancedPowerAccuracy")) {
+                            locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+                            hasChanges = true;
+                        } else if (desiredAccuracyAndroid.equals("highAccuracy")) {
+                            locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+                            hasChanges = true;
+                        } else if (desiredAccuracyAndroid.equals("lowPower")) {
+                            locationRequest.setPriority(LocationRequest.PRIORITY_LOW_POWER);
+                            hasChanges = true;
+                        } else if (desiredAccuracyAndroid.equals("noPower")) {
+                            locationRequest.setPriority(LocationRequest.PRIORITY_NO_POWER);
+                            hasChanges = true;
+                        } else {
+                            Utils.emitWarning(context, "desiredAccuracy.android was passed an unknown value: " + desiredAccuracyAndroid, "401");
+                        }
+                    } else {
+                        Utils.emitWarning(context, "desiredAccuracy.android must be a string", "401");
+                    }
+                }
+            } else {
+                Utils.emitWarning(context, "desiredAccuracy must be an object", "401");
+            }
+        }
+
         // Return early if no changes were made
         if (!hasChanges) {
             promise.resolve(null);
