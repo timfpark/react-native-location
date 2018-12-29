@@ -1,5 +1,7 @@
 # `react-native-location`
 
+**There is a prerelease version of the library which changes the API and adds Android support. All new users are recommened to start with the new version to avoid migration issues in the future. Please see the [develop branch](https://github.com/timfpark/react-native-location/tree/develop) for details.**
+
 Native GPS location support for React Native. Currently only supports iOS.
 
 You might decide to use this library over the [built-in geolocation](https://facebook.github.io/react-native/docs/geolocation.html) because it includes some additional features:
