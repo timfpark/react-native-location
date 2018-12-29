@@ -1,6 +1,6 @@
 # `react-native-location`
 
-![MIT License](https://img.shields.io/npm/l/react-native-location.svg) ![Supports Android and iOS](https://img.shields.io/badge/platforms-android%20|%20ios-lightgrey.svg) ![Supports React Native >= 0.46](https://img.shields.io/badge/react%20native-%3E%3D%200.46-lightgrey.svg) ![CircleCI Status](https://img.shields.io/circleci/project/github/timfpark/react-native-location/develop.svg)
+![MIT License](https://img.shields.io/npm/l/react-native-location.svg) ![Supports Android and iOS](https://img.shields.io/badge/platforms-android%20|%20ios-lightgrey.svg) ![Supports React Native >= 0.46](https://img.shields.io/badge/react%20native-%3E%3D%200.46-lightgrey.svg) [![CircleCI Status](https://img.shields.io/circleci/project/github/timfpark/react-native-location/develop.svg)](https://circleci.com/gh/timfpark/workflows/react-native-location/tree/develop)
 
 Native GPS location support for React Native.
 
