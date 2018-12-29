@@ -1,6 +1,6 @@
 # `react-native-location`
 
-**There is a prerelease version of the library which changes the API and adds Android support. All new users are recommened to start with the new version to avoid migration issues in the future. Please see the [develop branch](https://github.com/timfpark/react-native-location/tree/develop) for details.**
+## There is a prerelease version of the library which changes the API and adds Android support. All new users are recommened to start with the new version to avoid migration issues in the future. Please see the [develop branch](https://github.com/timfpark/react-native-location/tree/develop) for details.
 
 Native GPS location support for React Native. Currently only supports iOS.
 
