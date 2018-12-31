@@ -11,15 +11,15 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
 
-import java.util.Map;
-import java.util.HashMap;
+import javax.annotation.Nonnull;
 
 public class RNLocationModule extends ReactContextBaseJavaModule {
-    private RNFusedLocationProvider fusedLocationProvider;
+    private @Nonnull RNLocationProvider locationProvider;
 
     public RNLocationModule(ReactApplicationContext reactContext) {
         super(reactContext);
         reactContext.addActivityEventListener(activityEventListener);
+        locationProvider = createDefaultLocationProvider();
     }
 
     @Override
@@ -27,38 +27,69 @@ public class RNLocationModule extends ReactContextBaseJavaModule {
         return "RNLocation";
     }
 
-    @Override
-    public Map<String, Object> getConstants() {
-        final Map<String, Object> constants = new HashMap<>();
-        return constants;
-    }
+    // React interface
 
     @ReactMethod
+    @SuppressWarnings("unused")
     public void configure(ReadableMap options, final Promise promise) {
-        getFusedLocationProvider().configure(getCurrentActivity(), options, promise);
+        // Update the location provider if we are given one
+        if (options.hasKey("androidProvider")) {
+            String providerName = options.getString("androidProvider");
+            switch (providerName) {
+                case "auto":
+                    locationProvider = createDefaultLocationProvider();
+                    break;
+                case "playServices":
+                    locationProvider = createPlayServicesLocationProvider();
+                    break;
+                case "standard":
+                    locationProvider = createStandardLocationProvider();
+                    break;
+                default:
+                    Utils.emitWarning(getReactApplicationContext(), "androidProvider was passed an unknown value: " + providerName, "401");
+            }
+        }
+
+        // Pass the options to the location provider
+        locationProvider.configure(getCurrentActivity(), options, promise);
     }
 
     @ReactMethod
+    @SuppressWarnings("unused")
     public void startUpdatingLocation() {
-        getFusedLocationProvider().startUpdatingLocation();
+        locationProvider.startUpdatingLocation();
     }
 
     @ReactMethod
+    @SuppressWarnings("unused")
     public void stopUpdatingLocation() {
-        getFusedLocationProvider().stopUpdatingLocation();
+        locationProvider.stopUpdatingLocation();
     }
+
+    // Helpers
 
     private ActivityEventListener activityEventListener = new BaseActivityEventListener() {
         public void onActivityResult(Activity activity, int requestCode, int resultCode, Intent data) {
-            getFusedLocationProvider().onActivityResult(requestCode, resultCode, data);
+            if (locationProvider instanceof RNPlayServicesLocationProvider) {
+                ((RNPlayServicesLocationProvider) locationProvider).onActivityResult(requestCode, resultCode, data);
+            }
         }
     };
 
-    private RNFusedLocationProvider getFusedLocationProvider() {
-        if (fusedLocationProvider == null) {
-            fusedLocationProvider = new RNFusedLocationProvider(getCurrentActivity(), getReactApplicationContext());
+    private RNLocationProvider createDefaultLocationProvider() {
+        // If we have the correct classes for the fused location provider, we default to that. Otherwise, we default to the built-in methods
+        if (Utils.hasFusedLocationProvider()) {
+            return createPlayServicesLocationProvider();
+        } else {
+            return createStandardLocationProvider();
         }
+    }
 
-        return fusedLocationProvider;
+    private RNPlayServicesLocationProvider createPlayServicesLocationProvider() {
+        return new RNPlayServicesLocationProvider(getCurrentActivity(), getReactApplicationContext());
+    }
+
+    private RNStandardLocationProvider createStandardLocationProvider() {
+        return new RNStandardLocationProvider(getReactApplicationContext());
     }
 }

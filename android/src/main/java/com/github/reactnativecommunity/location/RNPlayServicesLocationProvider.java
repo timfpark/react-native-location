@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 
@@ -16,7 +15,6 @@ import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.bridge.ReadableMap;
 import com.facebook.react.bridge.ReadableType;
 import com.facebook.react.bridge.WritableArray;
-import com.facebook.react.bridge.WritableMap;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -31,10 +29,8 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Collections;
 
-public class RNFusedLocationProvider {
+public class RNPlayServicesLocationProvider implements RNLocationProvider {
     private static final int REQUEST_CHECK_SETTINGS = 12341234;
 
     private final ReactApplicationContext context;
@@ -48,7 +44,7 @@ public class RNFusedLocationProvider {
     private ReadableMap pendingConfigureOptions = null;
     private Promise pendingConfigurePromise = null;
 
-    public RNFusedLocationProvider(Activity activity, ReactApplicationContext context) {
+    public RNPlayServicesLocationProvider(Activity activity, ReactApplicationContext context) {
         this.context = context;
         locationProvider = LocationServices.getFusedLocationProviderClient(activity);
         locationSettingsClient = LocationServices.getSettingsClient(activity);
@@ -56,6 +52,7 @@ public class RNFusedLocationProvider {
 
     // Public interface
 
+    @Override
     public void configure(final Activity activity, final ReadableMap options, final Promise promise) {
         boolean hasChanges = false;
 
@@ -149,14 +146,40 @@ public class RNFusedLocationProvider {
         });
     }
 
+    @Override
     public void startUpdatingLocation() {
         isUpdatingLocation = true;
         reSetUpLocationListeners();
     }
 
+    @Override
     public void stopUpdatingLocation() {
         isUpdatingLocation = false;
         reSetUpLocationListeners();
+    }
+
+    // Callbacks
+
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode != REQUEST_CHECK_SETTINGS) return;
+
+        if (resultCode == Activity.RESULT_OK
+                && pendingConfigureActivity != null
+                && pendingConfigureActivity.get() != null
+                && pendingConfigureOptions != null
+                && pendingConfigurePromise != null)
+        {
+            // If the resolution was ok, try to configure again
+            configure(pendingConfigureActivity.get(), pendingConfigureOptions, pendingConfigurePromise);
+        } else if (pendingConfigurePromise != null) {
+            // If not, we reject the promise
+            pendingConfigurePromise.reject("500", "Error configuring react-native-location");
+        }
+
+        // Cleanup our stored state
+        pendingConfigureActivity = null;
+        pendingConfigureOptions = null;
+        pendingConfigurePromise = null;
     }
 
     // Helper methods
@@ -185,60 +208,12 @@ public class RNFusedLocationProvider {
             // Map the locations to maps
             WritableArray results = Arguments.createArray();
             for (Location location : locationResult.getLocations()) {
-                // Create the coordinate map
-                WritableMap dict = Arguments.createMap();
-                dict.putDouble("latitude", location.getLatitude());
-                dict.putDouble("longitude", location.getLongitude());
-                dict.putDouble("accuracy", location.getAccuracy());
-                dict.putDouble("altitude", location.getAltitude());
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    dict.putDouble("altitudeAccuracy", location.getVerticalAccuracyMeters());
-                } else {
-                    dict.putDouble("altitudeAccuracy", 0.0);
-                }
-                dict.putDouble("course", location.getBearing());
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    dict.putDouble("courseAccuracy", location.getBearingAccuracyDegrees());
-                } else {
-                    dict.putDouble("courseAccuracy", 0.0);
-                }
-                dict.putDouble("speed", location.getSpeed());
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    dict.putDouble("speedAccuracy", location.getSpeedAccuracyMetersPerSecond());
-                } else {
-                    dict.putDouble("speedAccuracy", 0.0);
-                }
-                dict.putDouble("timestamp", location.getTime());
-
-                results.pushMap(dict);
+                results.pushMap(Utils.locationToMap(location));
             }
 
             // Emit the event
             Utils.emitEvent(context, "locationUpdated", results);
-        };
+        }
     };
 
-    // Callbacks
-
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode != REQUEST_CHECK_SETTINGS) return;
-
-        if (resultCode == Activity.RESULT_OK
-                && pendingConfigureActivity != null
-                && pendingConfigureActivity.get() != null
-                && pendingConfigureOptions != null
-                && pendingConfigurePromise != null)
-        {
-            // If the resolution was ok, try to configure again
-            configure(pendingConfigureActivity.get(), pendingConfigureOptions, pendingConfigurePromise);
-        } else if (pendingConfigurePromise != null) {
-            // If not, we reject the promise
-            pendingConfigurePromise.reject("500", "Error configuring react-native-location");
-        }
-
-        // Cleanup our stored state
-        pendingConfigureActivity = null;
-        pendingConfigureOptions = null;
-        pendingConfigurePromise = null;
-    }
 }

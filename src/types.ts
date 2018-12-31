@@ -16,8 +16,13 @@ export type LocationActivityType =
   | "otherNavigation"
   | "airborne"; // iOS 12+
 /**
+ * The location provider to use for Android.
+ * @platform android
+ */
+export type AndroidProvider = "auto" | "fused" | "builtin";
+/**
  * The accuracy of the location responses for Android.
- * @platform ios
+ * @platform android
  * @see [Apple Docs](https://developer.apple.com/documentation/corelocation/cllocationaccuracy?language=objc)
  */
 export type LocationPriorityAndroid =
@@ -135,6 +140,12 @@ export interface ConfigureOptions {
    * @see [Apple Docs](https://developer.apple.com/documentation/corelocation/cllocationmanager/1620567-activitytype)
    */
   activityType?: LocationActivityType | void;
+
+  /**
+   * The provider which is used on Android to get the location. Your app must include the Google Play services dependencies to use the `playServices` location provider. By default it will choose the `playServices` location provider if it detects that the dependencies are installed, otherwise, it will use the `standard` Android version which does not require Google Play Services to be installed. Note that `auto` only checks that the dependencies are installed, not that the user has the Google Play services APK installed and set up correctly.
+   * @platform android
+   */
+  androidProvider?: AndroidProvider | void;
   /**
    * A Boolean value indicating whether the app should receive location updates when suspended. Requires permissions to always access the users location. Defaults to `false`.
    * @platform ios
