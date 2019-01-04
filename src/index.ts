@@ -51,7 +51,9 @@ export const configureHelpers = (
   subscriptions = new Subscriptions(nativeInterface, eventEmitter);
   permissions = new Permissions(nativeInterface, eventEmitter);
 
-  eventEmitter.addListener("onWarning", console.warn);
+  eventEmitter.addListener("onWarning", opts => {
+    console.warn("react-native-location warning:", opts);
+  });
 };
 configureHelpers(nativeInterface, eventEmitter);
 

@@ -29,7 +29,7 @@ export default class App extends React.PureComponent {
     RNLocation.requestPermission({
       ios: "whenInUse",
       android: {
-        detail: "coarse",
+        detail: "fine",
         rationale: {
           title: "Location permission",
           message: "We use your location to demo the library",

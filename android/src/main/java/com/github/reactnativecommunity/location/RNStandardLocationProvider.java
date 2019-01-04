@@ -55,12 +55,8 @@ public class RNStandardLocationProvider implements RNLocationProvider {
     private final LocationListener locationListener = new LocationListener() {
         @Override
         public void onLocationChanged(Location location) {
-            // Convert the location to a map and wrap it in an array
-            WritableArray results = Arguments.createArray();
-            results.pushMap(Utils.locationToMap(location));
+            processLocation(location);
 
-            // Emit the event
-            Utils.emitEvent(context, "locationUpdated", results);
         }
 
         @Override
@@ -79,8 +75,8 @@ public class RNStandardLocationProvider implements RNLocationProvider {
         public void onProviderDisabled(String provider) {}
     };
 
-    // Private helpers
 
+    // Private helpers
     private void setupListening() {
         try {
             LocationManager locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
@@ -94,12 +90,19 @@ public class RNStandardLocationProvider implements RNLocationProvider {
                 return;
             }
             if (!provider.equals(watchedProvider)) {
+                // Setup the listener
                 locationManager.removeUpdates(locationListener);
                 locationManager.requestLocationUpdates(provider, 1000, options.distanceFilter, locationListener);
+
+                // Get the last known location
+                Location lastLocation = locationManager.getLastKnownLocation(provider);
+                if (lastLocation != null) {
+                    processLocation(lastLocation);
+                }
             }
             watchedProvider = provider;
         } catch (SecurityException e) {
-            Utils.emitWarning(context, "Attempted to start updating the location without location permissions", "403");
+            Utils.emitWarning(context, "Attempted to start updating the location without location permissions. Detail: " + e.getLocalizedMessage(), "403");
         }
     }
 
@@ -116,6 +119,15 @@ public class RNStandardLocationProvider implements RNLocationProvider {
             }
         }
         return provider;
+    }
+
+    private void processLocation(Location location) {
+        // Convert the location to a map and wrap it in an array
+        WritableArray results = Arguments.createArray();
+        results.pushMap(Utils.locationToMap(location));
+
+        // Emit the event
+        Utils.emitEvent(context, "locationUpdated", results);
     }
 
     private static class LocationOptions {
@@ -146,10 +158,10 @@ public class RNStandardLocationProvider implements RNLocationProvider {
                         if (desiredAccuracy.getType("android") == ReadableType.String) {
                             String desiredAccuracyAndroid = desiredAccuracy.getString("android");
                             switch (desiredAccuracyAndroid) {
-                                case "balancedPowerAccuracy":
                                 case "highAccuracy":
                                     highAccuracy = true;
                                     break;
+                                case "balancedPowerAccuracy":
                                 case "lowPower":
                                 case "noPower":
                                     highAccuracy = false;

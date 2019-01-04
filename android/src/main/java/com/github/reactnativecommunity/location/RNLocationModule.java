@@ -14,12 +14,11 @@ import com.facebook.react.bridge.ReadableMap;
 import javax.annotation.Nonnull;
 
 public class RNLocationModule extends ReactContextBaseJavaModule {
-    private @Nonnull RNLocationProvider locationProvider;
+    private RNLocationProvider locationProvider;
 
     public RNLocationModule(ReactApplicationContext reactContext) {
         super(reactContext);
         reactContext.addActivityEventListener(activityEventListener);
-        locationProvider = createDefaultLocationProvider();
     }
 
     @Override
@@ -48,6 +47,9 @@ public class RNLocationModule extends ReactContextBaseJavaModule {
                 default:
                     Utils.emitWarning(getReactApplicationContext(), "androidProvider was passed an unknown value: " + providerName, "401");
             }
+        } else if (locationProvider == null) {
+            // Otherwise ensure we have a provider and create a default if not
+            locationProvider = createDefaultLocationProvider();
         }
 
         // Pass the options to the location provider
@@ -57,12 +59,24 @@ public class RNLocationModule extends ReactContextBaseJavaModule {
     @ReactMethod
     @SuppressWarnings("unused")
     public void startUpdatingLocation() {
+        // Ensure we have a provider
+        if (locationProvider == null) {
+            locationProvider = createDefaultLocationProvider();
+        }
+
+        // Call the provider
         locationProvider.startUpdatingLocation();
     }
 
     @ReactMethod
     @SuppressWarnings("unused")
     public void stopUpdatingLocation() {
+        // Ensure we have a provider
+        if (locationProvider == null) {
+            locationProvider = createDefaultLocationProvider();
+        }
+
+        // Call the provider
         locationProvider.stopUpdatingLocation();
     }
 
