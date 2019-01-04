@@ -58,6 +58,13 @@ If you want to access fine location then you should also include:
 <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 ```
 
+If you would like to use the Google Play Services Fused Location provider, then you need to add these dependencies to your `android/app/build.gradle` file:
+
+```groovy
+implementation "com.google.android.gms:play-services-base:16.0.1"
+implementation "com.google.android.gms:play-services-location:16.0.0"
+```
+
 ### Background mode setup (optional)
 For background mode to work, a few things need to be configured:
 
