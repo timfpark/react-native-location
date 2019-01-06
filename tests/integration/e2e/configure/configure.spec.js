@@ -10,9 +10,9 @@ describe("RNLocation.configure", function() {
   let eventEmitter;
 
   beforeEach(async function() {
-    nativeInterface = sandbox.stub(jet.module.nativeInterface);
+    nativeInterface = sandbox.stub(jet.module._nativeInterface);
     eventEmitter = sandbox.stub(new jet.rn.NativeEventEmitter(nativeInterface));
-    jet.module.configureHelpers(nativeInterface, eventEmitter);
+    jet.module._configureHelpers(nativeInterface, eventEmitter);
   });
 
   afterEach(function() {

@@ -42,7 +42,7 @@ let permissions: Permissions;
  * @param {EventEmitter} evt Event emitter
  * @returns {void}
  */
-export const configureHelpers = (
+export const _configureHelpers = (
   ni: RNLocationNativeInterface,
   evt: EventEmitter
 ): void => {
@@ -55,7 +55,7 @@ export const configureHelpers = (
     console.warn("react-native-location warning:", opts);
   });
 };
-configureHelpers(nativeInterface, eventEmitter);
+_configureHelpers(nativeInterface, eventEmitter);
 
 /**
  * This is used to configure the location provider. You can use this to enable background mode, filter location updates to a certain distance change, and ensure you have the power settings set correctly for your use case.
@@ -171,9 +171,9 @@ export default {
   subscribeToHeadingUpdates,
   subscribeToSignificantLocationUpdates,
   // Internal use only
-  configureHelpers,
-  nativeInterface,
-  eventEmitter
+  _configureHelpers,
+  _nativeInterface: nativeInterface,
+  _eventEmitter: eventEmitter
 };
 
 /**
