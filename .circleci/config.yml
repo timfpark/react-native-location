@@ -69,6 +69,23 @@ aliases:
     yarn install --network-concurrency 1 --non-interactive --cache-folder ~/.cache/yarn & cd tests/integration && yarn install --network-concurrency 1 --non-interactive --cache-folder ~/.cache/yarn & wait
 
 # -------------------------
+#         ANDROID
+# -------------------------
+
+- &android-create-avd
+  name: Create AVD
+  command: ADV_NAME="Nexus_5X_API_28_x86" ADV_PACKAGE="system-images;android-28;google_apis;x86" avd-create
+
+- &android-launch-avd
+  name: Launch AVD
+  background: true
+  command: ADV_NAME="Nexus_5X_API_28_x86" avd-launch
+
+- &android-wait-avd
+  name: Wait for AVD to be ready
+  command: timeout 300 avd-wait-ready
+
+# -------------------------
 #         ANALYSE
 # -------------------------
 
@@ -107,14 +124,11 @@ js_defaults: &js_defaults
 android_defaults: &android_defaults
   <<: *defaults
   docker:
-  - image: circleci/android:api-27-node8-alpha
-  resource_class: "large"
+    - image: invertase/react-native-firebase-android:standard
+  resource_class: "xlarge"
   environment:
-  - TERM: "dumb"
-  - ADB_INSTALL_TIMEOUT: 10
-  - _JAVA_OPTIONS: "-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
-  - GRADLE_OPTS: '-Dorg.gradle.daemon=false -Dorg.gradle.jvmargs="-XX:+HeapDumpOnOutOfMemoryError"'
-  - BUILD_THREADS: 2
+    - _JAVA_OPTIONS: "-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -Xmx2048m"
+    - GRADLE_OPTS: '-Dorg.gradle.daemon=false -Dorg.gradle.jvmargs="-XX:+HeapDumpOnOutOfMemoryError -Xmx2048m"'
 
 # IOS
 macos_defaults: &macos_defaults
@@ -206,6 +220,101 @@ jobs:
     - store_artifacts:
         path: ~/react-native-location/coverage
 
+  jet-test-android:
+    <<: *android_defaults
+    steps:
+      - attach_workspace:
+          at: ~/react-native-location
+
+      - restore-cache: *restore-yarn-cache
+      - run: *yarn
+      - save-cache: *save-yarn-cache
+
+      # must always be after environment config job but before android build
+      - run: *packager-jet
+      - run: *packager-warmup
+      - run: *android-create-avd
+      - run: *android-launch-avd
+
+      # restore saved caches
+      - restore_cache:
+          keys:
+            - gradle-wrapper-{{ checksum "tests/integration/android/gradle/wrapper/gradle-wrapper.properties" }}
+
+      - restore_cache:
+          keys:
+            # for multi-project builds where dependencies are not defined in one central file,
+            # an additional run step before is necessary that concatenates affected files
+            # into one file that can be checksummed
+            - gradle-cache-{{ checksum "tests/integration/android/build.gradle" }}
+            - gradle-cache
+
+      - restore_cache:
+          keys:
+            - gradle-build-caches-{{ .Revision }}
+            - gradle-build-caches
+
+      - run:
+          name: Restoring Gradle Build Caches
+          command: |
+            [ -d ~/gradle-build-caches ] &&
+              [ -n "$(ls -A ~/gradle-build-caches)" ] &&
+              rm -rf ~/.gradle/caches/build-cache-* &&
+              mkdir -p ~/.gradle/caches/ &&
+              mv ~/gradle-build-caches/* ~/.gradle/caches/ || true
+      # download and cache dependencies and Gradle
+      - run:
+          name: Downloading Dependencies
+          command: cd tests/android && ./gradlew --max-workers 6 downloadDependencies
+
+      - save_cache:
+          paths:
+            - ~/.gradle/wrapper/
+          key: gradle-wrapper-{{ checksum "tests/integration/android/gradle/wrapper/gradle-wrapper.properties" }}
+
+      - save_cache:
+          paths:
+            - ~/.gradle/caches/
+          key: gradle-cache-{{ checksum "tests/integration/android/build.gradle" }}
+
+      - run:
+          name: Build Android Testing App
+          command: cd tests/integration/android && yarn build-android
+
+      # cache gradle build caches
+      - run:
+          name: Collecting Gradle Build Caches
+          command: |
+            mkdir -p ~/gradle-build-caches
+            [ -d ~/.gradle/caches ] &&
+              [ -n "$(ls -Ad ~/.gradle/caches/build-cache-* 2>/dev/null)" ] &&
+              rm -rf ~/gradle-build-caches/* &&
+              mv ~/.gradle/caches/build-cache-* ~/gradle-build-caches || true
+          when: always
+
+      - save_cache:
+          paths:
+            - ~/gradle-build-caches
+          key: gradle-build-caches-{{ .Revision }}
+          when: always
+
+      - run: *android-wait-avd
+  
+      # Now Test \o/
+      - run:
+          name: Run Jet Tests
+          command: cd tests && yarn run test-android-cover
+
+      # TODO merge coverage output from android and iOS
+      - run:
+          name: Submit Coverage
+          command: yarn run codecov
+
+      - store_artifacts:
+          path: ~/detox-artifacts
+      - store_artifacts:
+          path: ~/react-native-location/coverage
+
 
 # -------------------------
 #        WORK FLOWS
@@ -221,6 +330,11 @@ workflows:
     - analyse:
         requires:
         - checkout-code
+    
+    - jet-test-android:
+        requires:
+        - checkout-code
+        - analyse
 
     - jet-test-ios:
         requires:
