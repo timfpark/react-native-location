@@ -41,10 +41,12 @@ export default class Permissions {
           return false;
         }
 
-        const granted = await PermissionsAndroid.request(
+        const permissionType =
           options.android.detail === "fine"
             ? PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
-            : PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION,
+            : PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION;
+        const granted = await PermissionsAndroid.request(
+          permissionType,
           options.android.rationale || undefined
         );
         return granted === PermissionsAndroid.RESULTS.GRANTED;
@@ -69,7 +71,13 @@ export default class Permissions {
           PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION
         );
 
-        return fine || coarse ? "authorizedAlways" : "notDetermined";
+        if (fine) {
+          return "authorizedFine";
+        } else if (coarse) {
+          return "authorizedCoarse";
+        } else {
+          return "notDetermined";
+        }
       }
       // Unsupported
       default:
@@ -101,17 +109,15 @@ export default class Permissions {
           return false;
         }
 
-        const grantedFine = await PermissionsAndroid.check(
-          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
-        );
-        const grantedCoarse = await PermissionsAndroid.check(
-          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
-        );
+        const currentPermission = await this.getCurrentPermission();
 
         if (options.android.detail === "fine") {
-          return grantedFine;
+          return currentPermission === "authorizedFine";
         } else if (options.android.detail === "coarse") {
-          return grantedFine || grantedCoarse;
+          return (
+            currentPermission === "authorizedFine" ||
+            currentPermission === "authorizedCoarse"
+          );
         } else {
           return false;
         }

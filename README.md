@@ -179,7 +179,7 @@ RNLocation.checkPermission({
 ```
 
 #### `RNLocation.getCurrentPermission`
-Gets the current permission status.
+Gets the current permission status. Note that the values will be different on Android and iOS as the permission systems are different. It's usually best to use `RNLocation.checkPermission` instead of checking the permission status yourself to avoid re-implementing the logic.
 
 ```javascript
 RNLocation.getCurrentPermission()

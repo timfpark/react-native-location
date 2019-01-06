@@ -1,6 +1,11 @@
 export type LocationPermissionStatus =
+  // iOS
   | "authorizedAlways"
   | "authorizedWhenInUse"
+  // Android
+  | "authorizedFine"
+  | "authorizedCoarse"
+  // Shared
   | "denied"
   | "restricted"
   | "notDetermined";
