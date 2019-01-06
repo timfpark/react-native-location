@@ -23,6 +23,7 @@ describe("Permissions", function() {
     describe("iOS", function() {
       before(function() {
         if (jet.rn.Platform.OS !== "ios") {
+          this.test.parent.pending = true;
           this.skip();
         }
       });

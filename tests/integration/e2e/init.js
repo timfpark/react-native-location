@@ -3,6 +3,7 @@ const config = require("../package.json").detox;
 
 before(async () => {
   await detox.init(config);
+  await sleep(10000);
   // needs to be called before any usage of firestore
   // await firebase.firestore().settings({ persistence: true });
   // await firebase.firestore().settings({ persistence: false });

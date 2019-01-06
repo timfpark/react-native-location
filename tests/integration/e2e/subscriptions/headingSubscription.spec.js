@@ -9,6 +9,13 @@ describe("Subscriptions", function() {
   let nativeInterface;
   let eventEmitter;
 
+  before(function() {
+    if (jet.rn.Platform.OS !== "ios") {
+      this.test.parent.pending = true;
+      this.skip();
+    }
+  });
+
   beforeEach(function beforeEach() {
     nativeInterface = sandbox.stub(jet.module._nativeInterface);
     eventEmitter = sandbox.stub(new jet.rn.NativeEventEmitter(nativeInterface));

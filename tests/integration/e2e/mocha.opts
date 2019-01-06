@@ -4,3 +4,4 @@
 --slow 10000
 --exit
 --require jet/platform/node
+--require ./e2e/helpers
