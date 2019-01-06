@@ -145,7 +145,7 @@ dependencies {
     implementation "com.facebook.react:react-native:+"  // From node_modules
 
     //noinspection GradleDynamicVersion
-    implementation(project(':jet')) {
+    implementation(project(path: ':jet', configuration: 'default')) {
         transitive = false
     }
 

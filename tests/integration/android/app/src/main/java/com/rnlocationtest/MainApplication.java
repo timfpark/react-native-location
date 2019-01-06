@@ -7,6 +7,7 @@ import io.invertase.jet.JetPackage;
 import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
+import com.facebook.react.devsupport.DevInternalSettings;
 import com.facebook.react.shell.MainReactPackage;
 import com.facebook.soloader.SoLoader;
 
@@ -46,6 +47,12 @@ public class MainApplication extends Application implements ReactApplication {
   @Override
   public void onCreate() {
     super.onCreate();
+
+    DevInternalSettings settings = (DevInternalSettings) getReactNativeHost().getReactInstanceManager().getDevSupportManager().getDevSettings();
+    if (settings != null) {
+      settings.setBundleDeltasEnabled(false);
+    }
+
     SoLoader.init(this, /* native exopackage */ false);
   }
 }

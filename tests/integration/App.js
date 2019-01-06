@@ -7,7 +7,7 @@
  */
 
 import React, { Component } from "react";
-import { Platform, StyleSheet, Text, View } from "react-native";
+import { AppRegistry, Platform, StyleSheet, Text, View } from "react-native";
 import RNLocation from "react-native-location";
 import jet from "jet/platform/react-native";
 
@@ -19,7 +19,7 @@ const instructions = Platform.select({
 });
 
 type Props = {};
-export default class App extends Component<Props> {
+class App extends Component<Props> {
   constructor(props) {
     super(props);
     this.state = {
@@ -59,3 +59,5 @@ const styles = StyleSheet.create({
     marginBottom: 5
   }
 });
+
+AppRegistry.registerComponent("testing", () => App);

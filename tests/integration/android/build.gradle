@@ -21,6 +21,18 @@ buildscript {
 }
 
 allprojects {
+    task downloadDependencies() {
+        description 'Download all dependencies to the Gradle cache'
+        doLast {
+        configurations.findAll().each { config ->
+            if (config.name.contains("minReactNative") && config.canBeResolved) {
+            print config.name
+            print '\n'
+            config.files
+            }
+        }
+        }
+    }
     repositories {
         mavenLocal()
         google()
@@ -30,6 +42,30 @@ allprojects {
             url "$rootDir/../node_modules/react-native/android"
         }
     }
+}
+
+subprojects {
+  task listAllDependencies(type: DependencyReportTask) {}
+  ext {
+    compileSdk = 27
+    buildTools = "28.0.3"
+    minSdk = 18
+    targetSdk = 26
+  }
+
+  afterEvaluate { project ->
+    if (!project.name.equalsIgnoreCase("app")
+      && project.hasProperty("android")) {
+      android {
+        compileSdkVersion compileSdk
+        buildToolsVersion buildTools
+        defaultConfig {
+          minSdkVersion minSdk
+          targetSdkVersion targetSdk
+        }
+      }
+    }
+  }
 }
 
 
