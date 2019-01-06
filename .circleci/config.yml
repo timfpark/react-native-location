@@ -265,7 +265,7 @@ jobs:
       # download and cache dependencies and Gradle
       - run:
           name: Downloading Dependencies
-          command: cd tests/android && ./gradlew --max-workers 6 downloadDependencies
+          command: cd tests/integration/android && ./gradlew --max-workers 6 downloadDependencies
 
       - save_cache:
           paths:
@@ -334,7 +334,6 @@ workflows:
     - jet-test-android:
         requires:
         - checkout-code
-        - analyse
 
     - jet-test-ios:
         requires:
