@@ -79,7 +79,7 @@ aliases:
 - &android-launch-avd
   name: Launch AVD
   background: true
-  command: avd-launch
+  command: sudo apt-get install libqt5widgets5 & avd-launch
 
 - &android-wait-avd
   name: Wait for AVD to be ready
