@@ -52,7 +52,7 @@ aliases:
 - &packager-jet
   name: Start React Native Pacakager (background)
   background: true
-  command: cd tests/integration && yarn run packager-jet || true
+  command: cd tests/integration && yarn run packager-jet-reset-cache || true
 
 - &packager-warmup
   name: Warming up Packager
@@ -74,12 +74,12 @@ aliases:
 
 - &android-create-avd
   name: Create AVD
-  command: ADV_NAME="Nexus_5X_API_28_x86" ADV_PACKAGE="system-images;android-28;google_apis;x86" avd-create
+  command: avd-create
 
 - &android-launch-avd
   name: Launch AVD
   background: true
-  command: ADV_NAME="Nexus_5X_API_28_x86" avd-launch
+  command: avd-launch
 
 - &android-wait-avd
   name: Wait for AVD to be ready
