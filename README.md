@@ -33,10 +33,19 @@ The easiest way to link the library is using the CLI tool by running this comman
 react-native link react-native-location
 ```
 
-### 1b. Or manually link the library
+### 1b. Install with Cocoapods
+You can also link the library using Cocoapods by adding this line to your `Podfile`:
+
+```ruby
+pod 'react-native-location', :path => '../node_modules/react-native-location/react-native-location.podspec'
+```
+
+### 1c. Or manually link the library
 If you can't or don't want to use the CLI tool, you can also manually link the library using the [intructions in the React NAtive documentation](https://facebook.github.io/react-native/docs/linking-libraries-ios#manual-linking).
 
 ### 2. Ensure you have the CoreLocation library linked
+*This is not required if you have installed using Cocoapods.*
+
 You then need to make sure you have the iOS CoreLocation library linked to your project.
 
 To do this, click on the your project in XCode (the name of your project at the top of the left panel), select your apps build target, go to the `Build Phases` tab then in the `Link Binary With Libraries` section add `CoreLocation.framework`.
