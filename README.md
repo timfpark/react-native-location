@@ -87,6 +87,7 @@ If you can't or don't want to use the CLI tool, you can manually link the librar
 <details>
 <summary>Show changes</summary>
 #### `android/settings.gradle`
+
 ```groovy
 include ':react-native-location'
 project(':react-native-location').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-location/android')
