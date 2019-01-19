@@ -23,15 +23,32 @@ npm install --save react-native-location
 
 You then need to link the native parts of the library:
 
+<details>
+<summary>iOS</summary>
+
+### 1a. Automatically link with the CLI tool
+The easiest way to link the library is using the CLI tool by running this command from the root of your project:
+
 ```
 react-native link react-native-location
 ```
 
-You then need to open XCode, go to the project settings and ensure that `CoreLocation.framework` is added to the *Link Binary With Libraries* section.
+### 1b. Or manually link the library
+If you can't or don't want to use the CLI tool, you can also manually link the library using the [intructions in the React NAtive documentation](https://facebook.github.io/react-native/docs/linking-libraries-ios#manual-linking).
 
-Alternatively, you can do a manual installation with XCode. First, drag `node_modules/react-native-location/ios/RNLocation.xcodeproj` into your XCode project. Click on the your project in XCode (the name of your project at the top of the left panel), go to `Build Phases` then `Link Binary With Libraries` and add `libRNLocation.a` and `CoreLocation.framework`.
+### 2. Ensure you have the CoreLocation library linked
+You then need to make sure you have the iOS CoreLocation library linked to your project.
 
-Finally, you then need to make sure you have the correct permissions inside your `info.plist` file. React Native automatically sets up the PList config key for `NSLocationWhenInUseUsageDescription`. However, to use always permission you will need to add `NSLocationAlwaysAndWhenInUseUsageDescription` and `NSLocationAlwaysUsageDescription` into your PList file. The string message in the key will show in the Alert box when your app requests permissions. To start, you can simply add these to your file and edit them (or remove them) later. Remember to only request the permissions you NEED within your app. See the detail on Background Mode later on.
+To do this, click on the your project in XCode (the name of your project at the top of the left panel), select your apps build target, go to the `Build Phases` tab then in the `Link Binary With Libraries` section add `CoreLocation.framework`.
+
+### 3. Info.plist usage descriptions
+Finally, you then need to make sure you have the correct usage discriptions inside your `Info.plist` file. The message will show in the Alert box when your app requests permissions and lets the user know why you are asking for that permissions. They are also part of the App Store review process.
+
+If you are only requesting "when in use" (foreground) location access you just need to make sure you have the `NSLocationWhenInUseUsageDescription` item in your Plist.
+
+If you are requesting "always" (background) permission you will *also* need to add `NSLocationAlwaysAndWhenInUseUsageDescription` and `NSLocationAlwaysUsageDescription` into your PList file.
+
+The easiest way to add these is to find your `Info.plist` in Xcode, right click on it, and then choose "edit as source code". You can then enter the items you need into the file:
 
 ```xml
 <key>NSLocationWhenInUseUsageDescription</key>
@@ -42,7 +59,69 @@ Finally, you then need to make sure you have the correct permissions inside your
 <string>This is the plist item for NSLocationAlwaysUsageDescription</string>
 ```
 
-For Android, you need to ensure that your `AndroidManifest.xml` contains this line:
+### 4. Background mode setup (optional)
+For background location to work, a few things need to be configured:
+
+1. In the Xcode project, go to Capabilities, switch on "Background Modes" and check "Location updates".
+2. Set `NSLocationAlwaysAndWhenInUseUsageDescription` and `NSLocationAlwaysUsageDescription` in your `Info.plist` file.
+3. For iOS 9+, set [`allowsBackgroundLocationUpdates`](https://developer.apple.com/reference/corelocation/cllocationmanager/1620568-allowsbackgroundlocationupdates) to true when configuring the library in your Javascript code. Like this:
+
+```javascript
+RNLocation.configure({ allowsBackgroundLocationUpdates: true });
+```
+
+</details>
+
+<details>
+<summary>Android</summary>
+### 1a. Automatically link the library using the CLI tool
+The easiest way to link the library is using the CLI tool by running this command from the root of your project:
+
+```
+react-native link react-native-location
+```
+
+### 1b. Manually link the library
+If you can't or don't want to use the CLI tool, you can manually link the library by making the following changes
+
+<details>
+<summary>Show changes</summary>
+#### `android/settings.gradle`
+```groovy
+include ':react-native-location'
+project(':react-native-location').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-location/android')
+```
+
+#### `android/app/build.gradle`
+```groovy
+dependencies {
+   ...
+   implementation project(':react-native-location')
+}
+```
+
+#### `android/app/src/main/.../MainApplication.java`
+On top, where imports are:
+
+```java
+import com.github.reactnativecommunity.location.RNLocationPackage;
+```
+
+Add the `RNLocationPackage` class to your list of exported packages.
+
+```java
+@Override
+protected List<ReactPackage> getPackages() {
+    return Arrays.asList(
+            new MainReactPackage(),
+            new RNLocationPackage()
+    );
+}
+```
+</details>
+
+### 2. Android manifest permissions
+You need to ensure that your `AndroidManifest.xml` contains this line:
 
 ```xml
 <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
@@ -54,25 +133,21 @@ If you want to access fine location then you should also include:
 <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 ```
 
+### 3. Install the Google Fused Location provider dependency (optional)
+The library provides two methods of getting the location on Android. The default is the builtin location manager, however, you can optionally choose to install the Fused Location library which provides more accurate and faster results. The downside is that it will only work on devices with Google Play Services installed and configured (which is most Android devices in the west, but not Kindle devices or Asian markets).
+
 If you would like to use the Google Play Services Fused Location provider, then you need to add these dependencies to your `android/app/build.gradle` file:
 
 ```groovy
 implementation "com.google.android.gms:play-services-base:16.0.1"
 implementation "com.google.android.gms:play-services-location:16.0.0"
 ```
-
-### Background mode setup (optional)
-For background mode to work, a few things need to be configured:
-
-1. In the Xcode project, go to Capabilities, switch on "Background Modes" and check "Location updates".
-2. Set `NSLocationAlwaysAndWhenInUseUsageDescription` and `NSLocationAlwaysUsageDescription` in your `Info.plist` file.
-3. For iOS 9+, set [`allowsBackgroundLocationUpdates`](https://developer.apple.com/reference/corelocation/cllocationmanager/1620568-allowsbackgroundlocationupdates) to true, like this:
-```javascript
-RNLocation.configure({ allowsBackgroundLocationUpdates: true });
-```
+</details>
 
 ## Example application
-In the [example](https://github.com/timfpark/react-native-location/example) folder is a React Native sample app which simply allows you to test out whether the library is working for you. You can also use this as a sample implementation to start from. The app requests always on permissions, takes reading every 5 distance and starts immediately. To utilize in the simulator, look on the `Debug -> Location` menu for optional sample trips that will show you updating location such as City Bicicle Ride, City Run and Freeway Drive.
+In the [example](https://github.com/timfpark/react-native-location/example) folder is a React Native sample app which you can use as a sample implementation to start from.
+
+The app requests permissions, takes reading every 5 distance and starts immediately. To use in the iOS simulator, look on the `Debug -> Location` menu for sample trips that will show you updating location such as City Bycicle Ride, City Run, and Freeway Drive.
 
 ![Example App](./screenshots/example.gif)
 
