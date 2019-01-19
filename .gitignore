@@ -1,8 +1,14 @@
 dist/
+docs/
 jsconfig.json
+coverage/
+.nyc*
 
 ### SublimeText ###
 *.sublime-workspace
+
+### VsCode ###
+.vscode
 
 ### OSX ###
 .DS_Store
@@ -61,6 +67,9 @@ profile
 DerivedData
 
 .idea/
+android/.gradle
+android/*.iml
+android/local.properties
 
 # Pods - for those of you who use CocoaPods
 Pods

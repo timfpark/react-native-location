@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import {
   Linking,
   SafeAreaView,
@@ -7,67 +7,91 @@ import {
   Text,
   TouchableHighlight,
   View
-} from 'react-native'
-import RNLocation, { RNLocationEventEmitter } from 'react-native-location'
-import moment from 'moment'
+} from "react-native";
+import RNLocation from "react-native-location";
+import moment from "moment";
 
-const repoUrl = 'https://github.com/timfpark/react-native-location'
+const repoUrl = "https://github.com/timfpark/react-native-location";
 
 export default class App extends React.PureComponent {
   constructor() {
-    super()
+    super();
     this.state = {
       location: null
-    }
+    };
   }
 
   componentWillMount() {
-    RNLocation.requestAlwaysAuthorization()
-    RNLocation.setDistanceFilter(5.0)
-    RNLocationEventEmitter.addListener('locationUpdated', location => {
-      this.setState({ location })
-    })
+    RNLocation.configure({
+      distanceFilter: 5.0
+    });
 
-    this._startUpdatingLocation();
+    RNLocation.requestPermission({
+      ios: "whenInUse",
+      android: {
+        detail: "fine",
+        rationale: {
+          title: "Location permission",
+          message: "We use your location to demo the library",
+          buttonPositive: "OK",
+          buttonNegative: "Cancel"
+        }
+      }
+    }).then(granted => {
+      if (granted) {
+        this._startUpdatingLocation();
+      }
+    });
   }
 
   _startUpdatingLocation = () => {
-    RNLocation.startUpdatingLocation()
-  }
+    this.locationSubscription = RNLocation.subscribeToLocationUpdates(
+      locations => {
+        this.setState({ location: locations[0] });
+      }
+    );
+  };
 
   _stopUpdatingLocation = () => {
-    RNLocation.stopUpdatingLocation()
-    this.setState({ location: null })
-  }
+    this.locationSubscription && this.locationSubscription();
+    this.setState({ location: null });
+  };
 
   _openRepoUrl = () => {
-    Linking.openURL(repoUrl)
-      .catch(err => console.error('An error occurred', err));
-  }
+    Linking.openURL(repoUrl).catch(err =>
+      console.error("An error occurred", err)
+    );
+  };
 
   render() {
     const { location } = this.state;
     return (
       <ScrollView style={styles.container}>
         <SafeAreaView style={styles.innerContainer}>
-          <View style={{alignItems:'center',marginTop:30}}>
-            <Text style={styles.title}>
-              react-native-location
-            </Text>
-            <TouchableHighlight onPress={this._openRepoUrl} underlayColor='#CCC' activeOpacity={0.8}>
-              <Text style={styles.repoLink}>
-                {repoUrl}
-              </Text>
+          <View style={{ alignItems: "center", marginTop: 30 }}>
+            <Text style={styles.title}>react-native-location</Text>
+            <TouchableHighlight
+              onPress={this._openRepoUrl}
+              underlayColor="#CCC"
+              activeOpacity={0.8}
+            >
+              <Text style={styles.repoLink}>{repoUrl}</Text>
             </TouchableHighlight>
           </View>
 
           <View style={styles.row}>
-            <TouchableHighlight onPress={this._startUpdatingLocation} style={[styles.button, { backgroundColor:'#126312' }]}>
-                <Text style={styles.buttonText}>Start</Text>
+            <TouchableHighlight
+              onPress={this._startUpdatingLocation}
+              style={[styles.button, { backgroundColor: "#126312" }]}
+            >
+              <Text style={styles.buttonText}>Start</Text>
             </TouchableHighlight>
 
-            <TouchableHighlight onPress={this._stopUpdatingLocation} style={[styles.button, { backgroundColor:'#881717' }]}>
-                <Text style={styles.buttonText}>Stop</Text>
+            <TouchableHighlight
+              onPress={this._stopUpdatingLocation}
+              style={[styles.button, { backgroundColor: "#881717" }]}
+            >
+              <Text style={styles.buttonText}>Stop</Text>
             </TouchableHighlight>
           </View>
 
@@ -75,88 +99,62 @@ export default class App extends React.PureComponent {
             <React.Fragment>
               <View style={styles.row}>
                 <View style={[styles.detailBox, styles.third]}>
-                  <Text style={styles.valueTitle}>
-                    Course
-                  </Text>
+                  <Text style={styles.valueTitle}>Course</Text>
                   <Text style={[styles.detail, styles.largeDetail]}>
-                    {location.coords.course}
+                    {location.course}
                   </Text>
                 </View>
 
                 <View style={[styles.detailBox, styles.third]}>
-                  <Text style={styles.valueTitle}>
-                    Speed
-                  </Text>
+                  <Text style={styles.valueTitle}>Speed</Text>
                   <Text style={[styles.detail, styles.largeDetail]}>
-                    {location.coords.speed}
+                    {location.speed}
                   </Text>
                 </View>
 
                 <View style={[styles.detailBox, styles.third]}>
-                  <Text style={styles.valueTitle}>
-                    Altitude
-                  </Text>
+                  <Text style={styles.valueTitle}>Altitude</Text>
                   <Text style={[styles.detail, styles.largeDetail]}>
-                    {location.coords.altitude}
+                    {location.altitude}
                   </Text>
                 </View>
               </View>
 
-              <View style={{alignItems:'flex-start'}}>
+              <View style={{ alignItems: "flex-start" }}>
                 <View style={styles.row}>
                   <View style={[styles.detailBox, styles.half]}>
-                    <Text style={styles.valueTitle}>
-                      Latitude
-                    </Text>
-                    <Text style={styles.detail}>
-                      {location.coords.latitude}
-                    </Text>
+                    <Text style={styles.valueTitle}>Latitude</Text>
+                    <Text style={styles.detail}>{location.latitude}</Text>
                   </View>
 
                   <View style={[styles.detailBox, styles.half]}>
-                    <Text style={styles.valueTitle}>
-                      Longitude
-                    </Text>
+                    <Text style={styles.valueTitle}>Longitude</Text>
+                    <Text style={styles.detail}>{location.longitude}</Text>
+                  </View>
+                </View>
+
+                <View style={styles.row}>
+                  <View style={[styles.detailBox, styles.half]}>
+                    <Text style={styles.valueTitle}>Accuracy</Text>
+                    <Text style={styles.detail}>{location.accuracy}</Text>
+                  </View>
+
+                  <View style={[styles.detailBox, styles.half]}>
+                    <Text style={styles.valueTitle}>Altitude Accuracy</Text>
                     <Text style={styles.detail}>
-                      {location.coords.longitude}
+                      {location.altitudeAccuracy}
                     </Text>
                   </View>
                 </View>
 
                 <View style={styles.row}>
                   <View style={[styles.detailBox, styles.half]}>
-                    <Text style={styles.valueTitle}>
-                      Accuracy
-                    </Text>
-                    <Text style={styles.detail}>
-                      {location.coords.accuracy}
-                    </Text>
+                    <Text style={styles.valueTitle}>Timestamp</Text>
+                    <Text style={styles.detail}>{location.timestamp}</Text>
                   </View>
 
                   <View style={[styles.detailBox, styles.half]}>
-                    <Text style={styles.valueTitle}>
-                      Altitude Accuracy
-                    </Text>
-                    <Text style={styles.detail}>
-                      {location.coords.altitudeAccuracy}
-                    </Text>
-                  </View>
-                </View>
-
-                <View style={styles.row}>
-                  <View style={[styles.detailBox, styles.half]}>
-                    <Text style={styles.valueTitle}>
-                      Timestamp
-                    </Text>
-                    <Text style={styles.detail}>
-                      {location.timestamp}
-                    </Text>
-                  </View>
-
-                  <View style={[styles.detailBox, styles.half]}>
-                    <Text style={styles.valueTitle}>
-                      Date / Time
-                    </Text>
+                    <Text style={styles.valueTitle}>Date / Time</Text>
                     <Text style={styles.detail}>
                       {moment(location.timestamp).format("MM-DD-YYYY h:mm:ss")}
                     </Text>
@@ -165,9 +163,7 @@ export default class App extends React.PureComponent {
 
                 <View style={styles.row}>
                   <View style={[styles.detailBox, styles.full]}>
-                    <Text style={styles.json}>
-                      {JSON.stringify(location)}
-                    </Text>
+                    <Text style={styles.json}>{JSON.stringify(location)}</Text>
                   </View>
                 </View>
               </View>
@@ -182,71 +178,71 @@ export default class App extends React.PureComponent {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#CCCCCC',
+    backgroundColor: "#CCCCCC"
   },
   innerContainer: {
-    marginVertical: 30,
+    marginVertical: 30
   },
   title: {
-    textAlign: 'center',
+    textAlign: "center",
     fontSize: 30,
-    fontWeight: 'bold',
+    fontWeight: "bold"
   },
   repoLink: {
-    textAlign: 'center',
+    textAlign: "center",
     fontSize: 12,
-    fontWeight: 'bold',
-    color: '#0000CC',
-    textDecorationLine:'underline',
+    fontWeight: "bold",
+    color: "#0000CC",
+    textDecorationLine: "underline"
   },
   row: {
-    flexDirection: 'row',
-    alignItems: 'flex-start',
-    justifyContent: 'space-between',
+    flexDirection: "row",
+    alignItems: "flex-start",
+    justifyContent: "space-between",
     marginTop: 5,
-    marginBottom: 5,
+    marginBottom: 5
   },
   detailBox: {
     padding: 15,
-    justifyContent: 'center'
+    justifyContent: "center"
   },
   button: {
     flex: 1,
     marginHorizontal: 10,
     marginTop: 15,
     borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 10
   },
   buttonText: {
     fontSize: 30,
-    color: '#FFFFFF'
+    color: "#FFFFFF"
   },
   valueTitle: {
-    fontFamily: 'Futura',
+    fontFamily: "Futura",
     fontSize: 12
   },
   detail: {
     fontSize: 15,
-    fontWeight: 'bold'
+    fontWeight: "bold"
   },
   largeDetail: {
-    fontSize: 20,
+    fontSize: 20
   },
   json: {
     fontSize: 12,
-    fontFamily: 'Courier',
-    textAlign: 'center',
-    fontWeight:'bold'
+    fontFamily: "Courier",
+    textAlign: "center",
+    fontWeight: "bold"
   },
   full: {
-    width: "100%",
+    width: "100%"
   },
   half: {
-    width: "50%",
+    width: "50%"
   },
   third: {
-    width: "33%",
-  },
+    width: "33%"
+  }
 });

@@ -1,0 +1,227 @@
+# Based off the script from the react-native-firebase project. Licenced under the Apache 2.0 licence
+# Details: https://github.com/invertase/react-native-firebase
+
+# -------------------------
+#         ALIASES
+# -------------------------
+
+aliases:
+# -------------------------
+#          CACHE
+# -------------------------
+- &restore-yarn-cache
+  keys:
+  - yarn-cache-{{ arch }}-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}-{{ checksum "tests/integration/package.json" }}-{{ checksum "tests/integration/yarn.lock" }}
+  - yarn-cache-{{ arch }}
+
+- &save-yarn-cache
+  paths:
+  - ~/.cache/yarn
+  - ~/Library/Detox/ios
+  key: yarn-cache-{{ arch }}-{{ checksum "package.json" }}-{{ checksum "yarn.lock" }}-{{ checksum "tests/integration/package.json" }}-{{ checksum "tests/integration/yarn.lock" }}
+
+- &save-ios-build-cache
+  paths:
+  - ~/react-native-location/tests/integration/ios/build/Build
+  key: v2-ios-build-cache-{{ arch }}
+
+- &restore-ios-build-cache
+  keys:
+  - v2-ios-build-cache-{{ arch }}
+
+- &save-brew-cache
+  paths:
+  - /usr/local/Homebrew
+  - ~/Library/Caches/Homebrew
+  key: v3-brew-cache-{{ arch }}
+
+- &restore-brew-cache
+  keys:
+  - v3-brew-cache-{{ arch }}
+
+- &configure-jet-detox-environment
+  name: Configure Jet + Detox Environment
+  command: |
+    brew install node@8
+    brew tap wix/brew
+    brew install applesimutils
+    brew install watchman
+    touch .watchmanconfig
+    node -v
+
+- &packager-jet
+  name: Start React Native Pacakager (background)
+  background: true
+  command: cd tests/integration && yarn run packager-jet || true
+
+- &packager-warmup
+  name: Warming up Packager
+  background: true
+  command: node .circleci/scripts/packager-warmup.js
+
+
+# -------------------------
+#       INSTALLATION
+# -------------------------
+- &yarn
+  name: Yarn Install ./ and ./tests/integration
+  command: |
+    yarn install --network-concurrency 1 --non-interactive --cache-folder ~/.cache/yarn & cd tests/integration && yarn install --network-concurrency 1 --non-interactive --cache-folder ~/.cache/yarn & wait
+
+# -------------------------
+#         ANALYSE
+# -------------------------
+
+# eslint
+- &eslint
+  name: Lint Code
+  command: pwd && yarn run eslint
+
+# flow
+- &validate-flow-declarations
+  name: Validate Flow Declarations
+  command: yarn run validate-flow-declarations
+
+# typescript
+- &validate-ts-declarations
+  name: Validate TypeScript Declarations
+  command: yarn run validate-ts-declarations
+
+# -------------------------
+#        DEFAULTS
+# -------------------------
+defaults: &defaults
+  working_directory: ~/react-native-location
+  environment:
+  - GIT_COMMIT_DESC: git log --format=oneline -n 1 $CIRCLE_SHA1
+
+# JAVASCRIPT
+js_defaults: &js_defaults
+  <<: *defaults
+  docker:
+  - image: circleci/node:8
+  environment:
+  - PATH: "/opt/yarn/yarn-v1.5.1/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+
+# ANDROID
+android_defaults: &android_defaults
+  <<: *defaults
+  docker:
+  - image: circleci/android:api-27-node8-alpha
+  resource_class: "large"
+  environment:
+  - TERM: "dumb"
+  - ADB_INSTALL_TIMEOUT: 10
+  - _JAVA_OPTIONS: "-XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
+  - GRADLE_OPTS: '-Dorg.gradle.daemon=false -Dorg.gradle.jvmargs="-XX:+HeapDumpOnOutOfMemoryError"'
+  - BUILD_THREADS: 2
+
+# IOS
+macos_defaults: &macos_defaults
+  <<: *defaults
+  resource_class: "large"
+  macos:
+    xcode: "9.4.0"
+
+# -------------------------
+#          JOBS
+# -------------------------
+version: 2
+jobs:
+  # Set up a Node environment for downstream jobs
+  checkout-code:
+    <<: *js_defaults
+    steps:
+    - checkout
+    - persist_to_workspace:
+        root: .
+        paths: .
+
+  analyse:
+    <<: *js_defaults
+    steps:
+    - attach_workspace:
+        at: ~/react-native-location
+    - restore-cache: *restore-yarn-cache
+    - run: rm -rf node_modules
+    - run: yarn cache clean
+    - run: *yarn
+    - save-cache: *save-yarn-cache
+    - run: *eslint
+    - run: *validate-flow-declarations
+    - run: *validate-ts-declarations
+
+  jet-test-ios:
+    <<: *macos_defaults
+    steps:
+    - attach_workspace:
+        at: ~/react-native-location
+    - run:
+        name: Start iPhone X simulator (background)
+        background: true
+        command: xcrun simctl boot "iPhone X" || true
+    - run:
+        name: Configure Environment Variables
+        command: |
+          echo 'export PATH=/usr/local/opt/node@8/bin:$PATH' >> $BASH_ENV
+          source $BASH_ENV
+    # Brew
+    - restore-cache: *restore-brew-cache
+    - run: *configure-jet-detox-environment
+    - save-cache: *save-brew-cache
+
+    # Yarn install - to ensure detox post install builds
+    - restore-cache: *restore-yarn-cache
+    - run: *yarn
+    - save-cache: *save-yarn-cache
+
+    # must always be after environment config job but before ios build
+    - run: *packager-jet
+    - run: *packager-warmup
+
+    # XCode Build
+    - restore-cache: *restore-ios-build-cache
+    - run:
+        name: Build iOS Testing App
+        command: cd tests/integration && yarn run build-ios
+    - save-cache: *save-ios-build-cache
+
+    - run: mkdir ~/detox-artifacts
+
+    # Now Test \o/
+    - run:
+        name: Run Jet Tests
+        command: cd tests/integration && yarn run test-ios-cover
+
+    - run:
+        name: Merge Coverage
+        command: yarn run build-coverage
+    
+    - run:
+        name: Submit Coverage
+        command: yarn run submit-coverage
+
+    - store_artifacts:
+        path: ~/detox-artifacts
+    - store_artifacts:
+        path: ~/react-native-location/coverage
+
+
+# -------------------------
+#        WORK FLOWS
+# -------------------------
+workflows:
+  version: 2
+  Test:
+    jobs:
+    # Checkout repo and run Yarn install at root and in tests
+    - checkout-code
+
+    # Run lint, flow, and typescript checks
+    - analyse:
+        requires:
+        - checkout-code
+
+    - jet-test-ios:
+        requires:
+        - checkout-code

@@ -9,6 +9,8 @@
 @interface RNLocation() <CLLocationManagerDelegate>
 
 @property (strong, nonatomic) CLLocationManager *locationManager;
+@property (strong, nonatomic) RCTPromiseResolveBlock alwaysPermissionResolver;
+@property (strong, nonatomic) RCTPromiseResolveBlock whenInUsePermissionResolver;
 @property (nonatomic) BOOL hasListeners;
 
 @end
@@ -19,7 +21,7 @@ RCT_EXPORT_MODULE()
 
 - (NSArray<NSString *> *)supportedEvents
 {
-    return @[@"authorizationStatusDidChange", @"headingUpdated", @"locationUpdated"];
+    return @[@"authorizationStatusDidChange", @"headingUpdated", @"locationUpdated", @"onWarning"];
 }
 
 #pragma mark - Initialization
@@ -33,16 +35,19 @@ RCT_EXPORT_MODULE()
 {
     if (self = [super init]) {
         self.locationManager = [[CLLocationManager alloc] init];
-
         self.locationManager.delegate = self;
-
-        self.locationManager.distanceFilter = kCLDistanceFilterNone;
-        self.locationManager.desiredAccuracy = kCLLocationAccuracyBest;
-
-        self.locationManager.pausesLocationUpdatesAutomatically = NO;
     }
 
     return self;
+}
+
+- (void)dealloc
+{
+    [self stopMonitoringSignificantLocationChanges];
+    [self stopUpdatingLocation];
+    [self stopUpdatingHeading];
+    
+    self.locationManager = nil;
 }
 
 #pragma mark - Listener tracking
@@ -57,37 +62,142 @@ RCT_EXPORT_MODULE()
     self.hasListeners = NO;
 }
 
-#pragma mark - React methods
+#pragma mark - Permissions
 
-RCT_EXPORT_METHOD(requestAlwaysAuthorization)
+RCT_REMAP_METHOD(requestAlwaysAuthorization,
+                 requestAlwaysAuthorizationWithResolver:(RCTPromiseResolveBlock)resolve
+                 rejecter:(RCTPromiseRejectBlock)reject)
 {
-    [self.locationManager requestAlwaysAuthorization];
+    // Get the current status
+    CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
+
+    if (status == kCLAuthorizationStatusAuthorizedAlways) {
+        // We already have the correct status so resolve with true
+        resolve(@(YES));
+    } else if (status == kCLAuthorizationStatusNotDetermined || status == kCLAuthorizationStatusAuthorizedWhenInUse) {
+        // If we have not asked, or we have "when in use" permission, ask for always permission
+        [self.locationManager requestAlwaysAuthorization];
+        // Save the resolver so we can return a result later on
+        self.alwaysPermissionResolver = resolve;
+    } else {
+        // We are not in a state to ask for permission so resolve with false
+        resolve(@(NO));
+    }
 }
 
-RCT_EXPORT_METHOD(requestWhenInUseAuthorization)
+RCT_REMAP_METHOD(requestWhenInUseAuthorization,
+                 requestWhenInUseAuthorizationWithResolver:(RCTPromiseResolveBlock)resolve
+                 rejecter:(RCTPromiseRejectBlock)reject)
 {
-    [self.locationManager requestWhenInUseAuthorization];
+    // Get the current status
+    CLAuthorizationStatus status = [CLLocationManager authorizationStatus];
+    
+    if (status == kCLAuthorizationStatusAuthorizedAlways || status == kCLAuthorizationStatusAuthorizedWhenInUse) {
+        // We already have the correct status so resolve with true
+        resolve(@(YES));
+    } else if (status == kCLAuthorizationStatusNotDetermined) {
+        // If we have not asked, or we have "when in use" permission, ask for always permission
+        [self.locationManager requestWhenInUseAuthorization];
+        // Save the resolver so we can return a result later on
+        self.whenInUsePermissionResolver = resolve;
+    } else {
+        // We are not in a state to ask for permission so resolve with false
+        resolve(@(NO));
+    }
 }
 
-RCT_EXPORT_METHOD(getAuthorizationStatus:(RCTResponseSenderBlock)callback)
+RCT_REMAP_METHOD(getAuthorizationStatus,
+                 getAuthorizationStatusWithResolver:(RCTPromiseResolveBlock)resolve
+                 rejecter:(RCTPromiseRejectBlock)reject)
 {
-    callback(@[[self nameForAuthorizationStatus:[CLLocationManager authorizationStatus]]]);
+    NSString *status = [self nameForAuthorizationStatus:[CLLocationManager authorizationStatus]];
+    resolve(status);
 }
 
-RCT_EXPORT_METHOD(setDesiredAccuracy:(double) accuracy)
+#pragma mark - Configure
+
+RCT_EXPORT_METHOD(configure:(NSDictionary *)options)
 {
-    self.locationManager.desiredAccuracy = accuracy;
+    // Activity type
+    NSString *activityType = [RCTConvert NSString:options[@"activityType"]];
+    if ([activityType isEqualToString:@"other"]) {
+        self.locationManager.activityType = CLActivityTypeOther;
+    } else if ([activityType isEqualToString:@"automotiveNavigation"]) {
+        self.locationManager.activityType = CLActivityTypeAutomotiveNavigation;
+    } else if ([activityType isEqualToString:@"fitness"]) {
+        self.locationManager.activityType = CLActivityTypeFitness;
+    } else if ([activityType isEqualToString:@"otherNavigation"]) {
+        self.locationManager.activityType = CLActivityTypeOtherNavigation;
+    } else if ([activityType isEqualToString:@"airborne"]) {
+        if (@available(iOS 12.0, *)) {
+            self.locationManager.activityType = CLActivityTypeAirborne;
+        }
+    }
+    
+    // Allows background location updates
+    NSNumber *allowsBackgroundLocationUpdates = [RCTConvert NSNumber:options[@"allowsBackgroundLocationUpdates"]];
+    if (allowsBackgroundLocationUpdates != nil) {
+        self.locationManager.allowsBackgroundLocationUpdates = [allowsBackgroundLocationUpdates boolValue];
+    }
+    
+    // Desired accuracy
+    NSDictionary *desiredAccuracy = [RCTConvert NSDictionary:options[@"desiredAccuracy"]];
+    if (desiredAccuracy != nil) {
+        NSString *desiredAccuracyIOS = [RCTConvert NSString:desiredAccuracy[@"ios"]];
+        if ([desiredAccuracyIOS isEqualToString:@"bestForNavigation"]) {
+            self.locationManager.desiredAccuracy = kCLLocationAccuracyBestForNavigation;
+        } else if ([desiredAccuracyIOS isEqualToString:@"best"]) {
+            self.locationManager.desiredAccuracy = kCLLocationAccuracyBest;
+        } else if ([desiredAccuracyIOS isEqualToString:@"nearestTenMeters"]) {
+            self.locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters;
+        } else if ([desiredAccuracyIOS isEqualToString:@"hundredMeters"]) {
+            self.locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters;
+        } else if ([desiredAccuracyIOS isEqualToString:@"threeKilometers"]) {
+            self.locationManager.desiredAccuracy = kCLLocationAccuracyThreeKilometers;
+        }
+    }
+    
+    // Distance filter
+    NSNumber *distanceFilter = [RCTConvert NSNumber:options[@"distanceFilter"]];
+    if (distanceFilter != nil) {
+        self.locationManager.distanceFilter = [distanceFilter doubleValue];
+    }
+    
+    // Heading filter
+    NSNumber *headingFilter = [RCTConvert NSNumber:options[@"headingFilter"]];
+    if (headingFilter != nil) {
+        double headingFilterValue = [headingFilter doubleValue];
+        self.locationManager.headingFilter = headingFilterValue == 0 ? kCLHeadingFilterNone : headingFilterValue;
+    }
+    
+    // Heading orientation
+    NSString *headingOrientation = [RCTConvert NSString:options[@"headingOrientation"]];
+    if ([headingOrientation isEqualToString:@"portrait"]) {
+        self.locationManager.headingOrientation = CLDeviceOrientationPortrait;
+    } else if ([headingOrientation isEqualToString:@"portraitUpsideDown"]) {
+        self.locationManager.headingOrientation = CLDeviceOrientationPortraitUpsideDown;
+    } else if ([headingOrientation isEqualToString:@"landscapeLeft"]) {
+        self.locationManager.headingOrientation = CLDeviceOrientationLandscapeLeft;
+    } else if ([headingOrientation isEqualToString:@"landscapeRight"]) {
+        self.locationManager.headingOrientation = CLDeviceOrientationLandscapeRight;
+    }
+    
+    // Pauses location updates automatically
+    NSNumber *pausesLocationUpdatesAutomatically = [RCTConvert NSNumber:options[@"pausesLocationUpdatesAutomatically"]];
+    if (pausesLocationUpdatesAutomatically != nil) {
+        self.locationManager.pausesLocationUpdatesAutomatically = [pausesLocationUpdatesAutomatically boolValue];
+    }
+    
+    // Shows background location indicator
+    if (@available(iOS 11.0, *)) {
+        NSNumber *showsBackgroundLocationIndicator = [RCTConvert NSNumber:options[@"showsBackgroundLocationIndicator"]];
+        if (showsBackgroundLocationIndicator != nil) {
+            self.locationManager.showsBackgroundLocationIndicator = [showsBackgroundLocationIndicator boolValue];
+        }
+    }
 }
 
-RCT_EXPORT_METHOD(setDistanceFilter:(double) distance)
-{
-    self.locationManager.distanceFilter = distance;
-}
-
-RCT_EXPORT_METHOD(setAllowsBackgroundLocationUpdates:(BOOL) enabled)
-{
-    self.locationManager.allowsBackgroundLocationUpdates = enabled;
-}
+#pragma mark - Monitoring
 
 RCT_EXPORT_METHOD(startMonitoringSignificantLocationChanges)
 {
@@ -123,16 +233,28 @@ RCT_EXPORT_METHOD(stopUpdatingHeading)
 
 - (void)locationManager:(CLLocationManager *)manager didChangeAuthorizationStatus:(CLAuthorizationStatus)status
 {
-    if (!self.hasListeners) {
-        return;
+    // Handle the always permission resolver
+    if (self.alwaysPermissionResolver != nil) {
+        self.alwaysPermissionResolver(@(status == kCLAuthorizationStatusAuthorizedAlways));
+        self.alwaysPermissionResolver = nil;
     }
     
-    NSString *statusName = [self nameForAuthorizationStatus:status];
-    [self sendEventWithName:@"authorizationStatusDidChange" body:statusName];
+    // Handle the when in use permission resolver
+    if (self.whenInUsePermissionResolver != nil) {
+        self.whenInUsePermissionResolver(@(status == kCLAuthorizationStatusAuthorizedWhenInUse));
+        self.whenInUsePermissionResolver = nil;
+    }
+    
+    // Handle the event listener
+    if (self.hasListeners) {
+        NSString *statusName = [self nameForAuthorizationStatus:status];
+        [self sendEventWithName:@"authorizationStatusDidChange" body:statusName];
+    }
 }
 
 - (void)locationManager:(CLLocationManager *)manager didFailWithError:(NSError *)error
 {
+    // TODO: Pass this to JS
     NSLog(@"Location manager failed: %@", error);
 }
 
@@ -163,22 +285,23 @@ RCT_EXPORT_METHOD(stopUpdatingHeading)
         return;
     }
     
-    CLLocation *location = [locations lastObject];
-    NSDictionary *locationEvent = @{
-        @"coords": @{
-            @"latitude": @(location.coordinate.latitude),
-            @"longitude": @(location.coordinate.longitude),
-            @"altitude": @(location.altitude),
-            @"accuracy": @(location.horizontalAccuracy),
-            @"altitudeAccuracy": @(location.verticalAccuracy),
-            @"course": @(location.course),
-            @"speed": @(location.speed),
-            @"floor": @(location.floor.level),
-        },
-        @"timestamp": @([location.timestamp timeIntervalSince1970] * 1000) // in ms
-    };
+    NSMutableArray *results = [NSMutableArray arrayWithCapacity:[locations count]];
+    [locations enumerateObjectsUsingBlock:^(CLLocation *location, NSUInteger idx, BOOL *stop) {
+        [results addObject:@{
+                             @"latitude": @(location.coordinate.latitude),
+                             @"longitude": @(location.coordinate.longitude),
+                             @"altitude": @(location.altitude),
+                             @"accuracy": @(location.horizontalAccuracy),
+                             @"altitudeAccuracy": @(location.verticalAccuracy),
+                             @"course": @(location.course),
+                             @"speed": @(location.speed),
+                             @"floor": @(location.floor.level),
+                             @"timestamp": @([location.timestamp timeIntervalSince1970] * 1000) // in ms
+                             }];
+    }];
+    
 
-    [self sendEventWithName:@"locationUpdated" body:locationEvent];
+    [self sendEventWithName:@"locationUpdated" body:results];
 }
 
 #pragma mark - Utilities

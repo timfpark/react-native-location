@@ -1,0 +1,15 @@
+{
+  "presets": ["module:metro-react-native-babel-preset"],
+  "sourceMaps": "inline",
+  "plugins": [
+    [
+      "istanbul",
+      {
+        "instrument": true,
+        "relativePath": false,
+        "include": ["**/src/**"],
+        "useInlineSourceMaps": true
+      }
+    ]
+  ]
+}
