@@ -74,6 +74,7 @@ RNLocation.configure({ allowsBackgroundLocationUpdates: true });
 
 <details>
 <summary>Android</summary>
+
 ### 1a. Automatically link the library using the CLI tool
 The easiest way to link the library is using the CLI tool by running this command from the root of your project:
 
@@ -86,8 +87,8 @@ If you can't or don't want to use the CLI tool, you can manually link the librar
 
 <details>
 <summary>Show changes</summary>
+   
 #### `android/settings.gradle`
-
 ```groovy
 include ':react-native-location'
 project(':react-native-location').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-location/android')
