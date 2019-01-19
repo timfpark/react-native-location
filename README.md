@@ -1,16 +1,12 @@
 # `react-native-location`
 
-![MIT License](https://img.shields.io/npm/l/react-native-location.svg) ![Supports Android and iOS](https://img.shields.io/badge/platforms-android%20|%20ios-lightgrey.svg) ![Supports React Native >= 0.46](https://img.shields.io/badge/react%20native-%3E%3D%200.46-lightgrey.svg) [![CircleCI Status](https://img.shields.io/circleci/project/github/timfpark/react-native-location/develop.svg)](https://circleci.com/gh/timfpark/workflows/react-native-location/tree/develop)
+![MIT License](https://img.shields.io/npm/l/react-native-location.svg) ![Supports Android and iOS](https://img.shields.io/badge/platforms-android%20|%20ios-lightgrey.svg) ![Supports React Native >= 0.46](https://img.shields.io/badge/react%20native-%3E%3D%200.46-lightgrey.svg) [![CircleCI Status](https://img.shields.io/circleci/project/github/timfpark/react-native-location/master.svg)](https://circleci.com/gh/timfpark/workflows/react-native-location/tree/master)
 
-Native GPS location support for React Native.
-
-You might decide to use this library over the [built-in geolocation](https://facebook.github.io/react-native/docs/geolocation.html) because it includes some additional features:
+Native GPS location support for React Native. You might decide to use this library over the [built-in geolocation](https://facebook.github.io/react-native/docs/geolocation.html) because it includes some additional features:
 
 * Allows you choose what type of permission to ask for ("when in use" or "always"). The built-in geolocation library will look at your plist file and choose "always" if you have the `NSLocationAlwaysUsageDescription` property, however, you might have a usecase where you want to start by asking the user for "while in use" permission and later upgrade the permission to "always" when they turn on a feature which requires background location.
 * Ability to check the current permission status (`RNLocation.getCurrentPermission`).
 * Allows you to monitor the device heading.
-
-**This is a prerelease version of the library which changes the API and adds Android support. For the previous version, please see the [master branch](https://github.com/timfpark/react-native-location/tree/master).**
 
 ## Installation
 Install the library using either Yarn:
