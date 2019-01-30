@@ -31,7 +31,7 @@ import com.google.android.gms.tasks.Task;
 import java.lang.ref.WeakReference;
 
 public class RNPlayServicesLocationProvider implements RNLocationProvider {
-    private static final int REQUEST_CHECK_SETTINGS = 12341234;
+    private static final int REQUEST_CHECK_SETTINGS = 1234;
 
     private final ReactApplicationContext context;
     private final FusedLocationProviderClient locationProvider;
