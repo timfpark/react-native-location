@@ -5,12 +5,14 @@ import {
   Subscription,
   Location,
   Heading,
-  RNLocationNativeInterface
+  RNLocationNativeInterface,
+  GetLatestLocationOptions
 } from "./types";
 import NativeInterface from "./lib/nativeInterface";
 import Subscriptions from "./lib/subscriptions";
 import Permissions from "./lib/permissions";
 import { EventEmitter } from "react-native";
+import { promiseTimeoutResolveNull } from "./utils";
 
 let {
   /**
@@ -134,6 +136,50 @@ export const subscribeToLocationUpdates = (
 };
 
 /**
+ * Get the latest location. Ensure you have the correct permission before calling this method.
+ *
+ * This will subscribe to location events for you at the unsubscribe when it gets its first valid location. Usually, this method will return very fast with a possibly out of date location, however, in some circumstances it will not return a location. Therefore, this method has a timeout after which the promise will be resovled with `null` value.
+ *
+ * The location provider will respect the settings you have given it, so if you need a location with a certain accuracy, ensure you call `RNLocation.configure` first. If you want *any* location then ensure you call `RNLocation.configure` with no distance filter.
+ *
+ * @param {GetLatestLocationOptions} options The options to use when getting the location.
+ * @returns {Promise<Location | null>} A Promise which will resolve to the latest location, or to `null` if the timeout is reached.
+ */
+export const getLatestLocation = (
+  options: GetLatestLocationOptions = {}
+): Promise<Location | null> => {
+  const locationPromise = new Promise<Location | null>(resolve => {
+    const unsubscribe = subscriptions.subscribeToLocationUpdates(locations => {
+      if (locations.length === 0) {
+        return;
+      }
+
+      // Sort the locations with the most recent first
+      const sortedLocations = locations.sort(
+        (a, b) => b.timestamp.getTime() - a.timestamp.getTime()
+      );
+
+      // Unsubscribe from future updates
+      if (unsubscribe) {
+        unsubscribe();
+      }
+
+      // Resolve the promise with the latest location
+      resolve(sortedLocations[0]);
+    });
+  });
+
+  // The user has explicitly turned off the timeout so return the promise directly
+  if (options.timeout === null) {
+    return locationPromise;
+  }
+
+  // Setup the timeout with a default value if one was not supplied
+  const timeout = options.timeout || 10000;
+  return promiseTimeoutResolveNull(timeout, locationPromise);
+};
+
+/**
  * Subscribe to heading changes with the given listener. Ensure you have the correct permission before calling this method. The location provider will respect the settings you have given it.
  *
  * @param  {LocationCallback} listener The listener which will be called when the heading changes.
@@ -168,6 +214,7 @@ export default {
   getCurrentPermission,
   subscribeToPermissionUpdates,
   subscribeToLocationUpdates,
+  getLatestLocation,
   subscribeToHeadingUpdates,
   subscribeToSignificantLocationUpdates,
   // Internal use only
