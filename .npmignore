@@ -91,3 +91,8 @@ android/.settings
 .circleci
 .eslintignore
 codecov.yml
+.babelrc
+.npmrc
+.gitattributes
+.eslintrc
+.flowconfig
