@@ -21,10 +21,10 @@ or using npm:
 npm install --save react-native-location
 ```
 
-You then need to link the native parts of the library:
+**You then need to link the native parts of the library for the platforms you are using.**
 
 <details>
-<summary>iOS</summary>
+<summary><strong>iOS Installation Instructions</strong></summary>
 
 ### 1a. Automatically link with the CLI tool
 The easiest way to link the library is using the CLI tool by running this command from the root of your project:
@@ -82,7 +82,7 @@ RNLocation.configure({ allowsBackgroundLocationUpdates: true });
 </details>
 
 <details>
-<summary>Android</summary>
+<summary><strong>Android Installation Instructions</strong></summary>
 
 ### 1a. Automatically link the library using the CLI tool
 The easiest way to link the library is using the CLI tool by running this command from the root of your project:
@@ -154,6 +154,9 @@ implementation "com.google.android.gms:play-services-base:16.0.1"
 implementation "com.google.android.gms:play-services-location:16.0.0"
 ```
 </details>
+
+
+You are now ready to get the users location!
 
 ## Example application
 In the [example](https://github.com/timfpark/react-native-location/example) folder is a React Native sample app which you can use as a sample implementation to start from.
