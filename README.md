@@ -212,6 +212,11 @@ RNLocation.configure({
       ios: "best",
       android: "balancedPowerAccuracy"
     },
+    // Android only
+    androidProvider: "auto",
+    interval: 5000, // Milliseconds
+    fastestInterval: 10000, // Milliseconds
+    maxWaitTime: 5000, // Milliseconds
     // iOS Only
     activityType: "other",
     allowsBackgroundLocationUpdates: false,

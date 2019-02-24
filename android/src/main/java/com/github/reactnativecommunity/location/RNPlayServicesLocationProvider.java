@@ -98,6 +98,39 @@ public class RNPlayServicesLocationProvider implements RNLocationProvider {
             }
         }
 
+        // Interval
+        if (options.hasKey("interval")) {
+            if (options.getType("interval") == ReadableType.Number) {
+                Double interval = options.getDouble("interval");
+                locationRequest.setInterval(interval.longValue());
+                hasChanges = true;
+            } else {
+                Utils.emitWarning(context, "interval must be a number", "401");
+            }
+        }
+
+        // Fastest interval
+        if (options.hasKey("fastestInterval")) {
+            if (options.getType("fastestInterval") == ReadableType.Number) {
+                Double fastestInterval = options.getDouble("fastestInterval");
+                locationRequest.setFastestInterval(fastestInterval.longValue());
+                hasChanges = true;
+            } else {
+                Utils.emitWarning(context, "fastestInterval must be a number", "401");
+            }
+        }
+
+        // Max wait time
+        if (options.hasKey("maxWaitTime")) {
+            if (options.getType("maxWaitTime") == ReadableType.Number) {
+                Double maxWaitTime = options.getDouble("maxWaitTime");
+                locationRequest.setMaxWaitTime(maxWaitTime.longValue());
+                hasChanges = true;
+            } else {
+                Utils.emitWarning(context, "maxWaitTime must be a number", "401");
+            }
+        }
+
         // Return early if no changes were made
         if (!hasChanges) {
             promise.resolve(null);

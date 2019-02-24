@@ -152,6 +152,31 @@ export interface ConfigureOptions {
    */
   androidProvider?: AndroidProvider | void;
   /**
+   * The desired interval for active location updates, in milliseconds.
+   * @platform android
+   * @see [Android Docs](https://developers.google.com/android/reference/com/google/android/gms/location/LocationRequest.html#setInterval(long))
+   */
+  interval?: number | void;
+  /**
+   * Explicitly set the fastest interval for location updates, in milliseconds.
+   *
+   * This controls the fastest rate at which your application will receive location updates, which might be faster than `interval` in some situations (for example, if other applications are triggering location updates).
+   *
+   * This allows your application to passively acquire locations at a rate faster than it actively acquires locations, saving power.
+   * @platform android
+   * @see [Android Docs](https://developers.google.com/android/reference/com/google/android/gms/location/LocationRequest.html#setFastestInterval(long))
+   */
+  fastestInterval?: number | void;
+  /**
+   * Sets the maximum wait time in milliseconds for location updates.
+   *
+   * If you pass a value at least 2x larger than the interval specified with setInterval(long), then location delivery may be delayed and multiple locations can be delivered at once.
+   * @platform android
+   * @see [Android Docs](https://developers.google.com/android/reference/com/google/android/gms/location/LocationRequest.html#setMaxWaitTime(long))
+   */
+  maxWaitTime?: number | void;
+
+  /**
    * A Boolean value indicating whether the app should receive location updates when suspended. Requires permissions to always access the users location. Defaults to `false`.
    * @platform ios
    * @see [Apple Docs](https://developer.apple.com/documentation/corelocation/cllocationmanager/1620568-allowsbackgroundlocationupdates)
