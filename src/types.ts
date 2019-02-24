@@ -28,7 +28,7 @@ export type AndroidProvider = "auto" | "fused" | "builtin";
 /**
  * The accuracy of the location responses for Android.
  * @platform android
- * @see [Apple Docs](https://developer.apple.com/documentation/corelocation/cllocationaccuracy?language=objc)
+ * @see [Apple Docs](https://developers.google.com/android/reference/com/google/android/gms/location/LocationRequest#setPriority(int))
  */
 export type LocationPriorityAndroid =
   | "balancedPowerAccuracy"

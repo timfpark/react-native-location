@@ -227,6 +227,144 @@ RNLocation.configure({
 })
 ```
 
+There are the valid configuration options and what they do:
+
+<table>
+   <tr>
+      <th>Option</th>
+      <th>Platforms</th>
+      <th>Description</th>
+      <th>Values</th>
+      <th>Documentation</th>
+   </tr>
+   
+   <tr>
+      <td><code>distanceFilter</code></td>
+      <td>
+         Android
+         iOS
+      </td>
+      <td>The minimum distance in meters that the device location needs to change before the location update callback in your app is called. Defaults to <code>0</code> for no filtering.</td>
+      <td><code>number</code></td>
+      <td>
+        <a href="https://developers.google.com/android/reference/com/google/android/gms/location/LocationRequest.html#setSmallestDisplacement(float)">Android Docs</a>
+        <a href="https://developer.apple.com/documentation/corelocation/cllocationmanager/1423500-distancefilter">Apple Docs</a>
+      </td>
+   </tr>
+
+   <tr>
+      <td><code>desiredAccuracy</code></td>
+      <td>
+         Android
+         iOS
+      </td>
+      <td>
+        <p>The accuracy of the location data. Defaults to <code>best</code> on iOS and <code>balancedPowerAccuracy</code> on Android.</p>
+        <p>Valid options for <code>android</code>: <code>balancedPowerAccuracy</code>, <code>highAccuracy</code>, <code>lowPower</code>, or <code>noPower</code>.</p>
+        <p>Valid options for <code>ios</code>: <code>bestForNavigation</code>, <code>best</code>, <code>nearestTenMeters</code>, <code>hundredMeters</code>, or <code>threeKilometers</code>.</p>
+      </td>
+      <td>
+        <code>{ android: string, ios: string }</code>
+      </td>
+      <td>
+        <a href="https://developers.google.com/android/reference/com/google/android/gms/location/LocationRequest#setPriority(int)">Android Docs</a>
+        <a href="https://developer.apple.com/documentation/corelocation/cllocationaccuracy?language=objc">Apple Docs</a>
+      </td>
+   </tr>
+
+   <tr>
+      <td><code>androidProvider</code></td>
+      <td>Android</td>
+      <td>The provider which is used on Android to get the location. Your app must include the Google Play services dependencies to use the <code>playServices</code> location provider. By default it will choose the <code>playServices</code> location provider if it detects that the dependencies are installed, otherwise, it will use the <code>standard</code> Android version which does not require Google Play Services to be installed. Note that <code>auto</code> only checks that the dependencies are installed, not that the user has the Google Play services APK installed and set up correctly.</td>
+      <td><code>"auto"</code>, <code>"playServices"</code>, or <code>"standard"</code></td>
+      <td></td>
+   </tr>
+
+   <tr>
+      <td><code>interval</code></td>
+      <td>Android</td>
+      <td>
+        <p>Set the desired interval for active location updates, in milliseconds.</p>
+        <p>The location client will actively try to obtain location updates for your application at this interval, so it has a direct influence on the amount of power used by your application. Choose your interval wisely.</p>
+        <p>This interval is inexact. You may not receive updates at all (if no location sources are available), or you may receive them slower than requested. You may also receive them faster than requested (if other applications are requesting location at a faster interval).</p>
+      </td>
+      <td><code>number</code></td>
+      <td><a href="https://developers.google.com/android/reference/com/google/android/gms/location/LocationRequest#setInterval(int)">Android Docs</a></td>
+   </tr>
+
+   <tr>
+      <td><code>fastestInterval</code></td>
+      <td>Android</td>
+      <td>
+        <p>Explicitly set the fastest interval for location updates, in milliseconds.</p>
+        <p>This controls the fastest rate at which your application will receive location updates, which might be faster than `interval` in some situations (for example, if other applications are triggering location updates).</p>
+        <p>This allows your application to passively acquire locations at a rate faster than it actively acquires locations, saving power.</p>
+        <p>By default this is 6x the `interval`.</p>
+      </td>
+      <td><code>number</code></td>
+      <td><a href="https://developers.google.com/android/reference/com/google/android/gms/location/LocationRequest#setFastestInterval(int)">Android Docs</a></td>
+   </tr>
+   
+   <tr>
+      <td><code>maxWaitTime</code></td>
+      <td>Android</td>
+      <td>
+        <p>Sets the maximum wait time in milliseconds for location updates.</p>
+        <p>If you pass a value at least 2x larger than the interval specified with setInterval(long), then location delivery may be delayed and multiple locations can be delivered at once.</p>
+      </td>
+      <td><code>number</code></td>
+      <td><a href="https://developers.google.com/android/reference/com/google/android/gms/location/LocationRequest#setMaxWaitTime(int)">Android Docs</a></td>
+   </tr>
+
+   <tr>
+      <td><code>allowsBackgroundLocationUpdates</code></td>
+      <td>iOS</td>
+      <td>A Boolean value indicating whether the app should receive location updates when suspended. Requires permissions to always access the users location. Defaults to <code>false</code>.</td>
+      <td><code>boolean</code></td>
+      <td><a href="https://developer.apple.com/documentation/corelocation/cllocationmanager/1620568-allowsbackgroundlocationupdates">Apple Docs</a></td>
+   </tr>
+
+   <tr>
+      <td><code>activityType</code></td>
+      <td>iOS</td>
+      <td>The type of user activity associated with the location updates. Defaults to <code>other</code>.</td>
+      <td><code>"other"</code>, <code>"automotiveNavigation"</code>, <code>"fitness"</code>, <code>"otherNavigation"</code>, or <code>"airborne"</code></td>
+      <td><a href="https://developer.apple.com/documentation/corelocation/cllocationmanager/1620567-activitytype">Apple Docs</a></td>
+   </tr>
+
+   <tr>
+      <td><code>headingFilter</code></td>
+      <td>iOS</td>
+      <td>The minimum angle in degrees that the device heading needs to change before the heading update callback in your app is called. Defaults to <code>0</code> for no filtering.</td>
+      <td><code>number</code></td>
+      <td></td>
+   </tr>
+
+   <tr>
+      <td><code>headingOrientation</code></td>
+      <td>iOS</td>
+      <td>The device orientation to use when computing heading values. Defaults to <code>portrait</code>.</td>
+      <td><code>"portrait"</code>, <code>"portraitUpsideDown"</code>, <code>"landscapeLeft"</code>, or <code>"landscapeRight"</code></td>
+      <td><a href="https://developer.apple.com/documentation/corelocation/cllocationmanager/1620556-headingorientation">Apple Docs</a></td>
+   </tr>
+
+   <tr>
+      <td><code>pausesLocationUpdatesAutomatically</code></td>
+      <td>iOS</td>
+      <td>A Boolean value indicating whether the location manager object may pause location updates. Defaults to <code>true</code>.</td>
+      <td><code>boolean</code></td>
+      <td><a href="https://developer.apple.com/documentation/corelocation/cllocationmanager/1620553-pauseslocationupdatesautomatical">Apple Docs</a></td>
+   </tr>
+
+   <tr>
+      <td><code>showsBackgroundLocationIndicator</code></td>
+      <td>iOS</td>
+      <td>A Boolean indicating whether the status bar changes its appearance when location services are used in the background. Defaults to <code>false</code>. Only works on iOS 11+ and is ignored for earlier versions of iOS.</td>
+      <td><code>boolean</code></td>
+      <td><a href="https://developer.apple.com/documentation/corelocation/cllocationmanager/2923541-showsbackgroundlocationindicator">Apple Docs</a></td>
+   </tr>
+</table>
+
 ### Permissions
 Correctly managing permissions is key to working with the users location in mobile apps.
 
