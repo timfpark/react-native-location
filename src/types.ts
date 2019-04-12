@@ -62,7 +62,7 @@ export interface Location {
    * The time that the device was at this location.
    * @platform android ios
    */
-  timestamp: Date;
+  timestamp: number;
   /**
    * The latitude of the location.
    * @platform android ios

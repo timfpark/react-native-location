@@ -156,7 +156,7 @@ export const getLatestLocation = (
 
       // Sort the locations with the most recent first
       const sortedLocations = locations.sort(
-        (a, b) => b.timestamp.getTime() - a.timestamp.getTime()
+        (a, b) => b.timestamp - a.timestamp
       );
 
       // Unsubscribe from future updates
