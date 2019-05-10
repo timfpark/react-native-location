@@ -92,6 +92,9 @@ export default class Permissions {
     switch (Platform.OS) {
       // iOS Permissions
       case "ios": {
+        if (!options.ios) {
+          return false;
+        }
         const currentPermission = await this.nativeInterface.getAuthorizationStatus();
         if (options.ios === "always") {
           return currentPermission === "authorizedAlways";
