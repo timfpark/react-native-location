@@ -46,8 +46,13 @@ public class RNPlayServicesLocationProvider implements RNLocationProvider {
 
     public RNPlayServicesLocationProvider(Activity activity, ReactApplicationContext context) {
         this.context = context;
-        locationProvider = LocationServices.getFusedLocationProviderClient(activity);
-        locationSettingsClient = LocationServices.getSettingsClient(activity);
+        if (activity != null) {
+            locationProvider = LocationServices.getFusedLocationProviderClient(activity);
+            locationSettingsClient = LocationServices.getSettingsClient(activity);
+        } else {
+            locationProvider = LocationServices.getFusedLocationProviderClient(context);
+            locationSettingsClient = LocationServices.getSettingsClient(context);
+        }
     }
 
     // Public interface
