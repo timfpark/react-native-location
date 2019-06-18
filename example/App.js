@@ -24,9 +24,7 @@ export default class App extends React.PureComponent {
   componentWillMount() {
     RNLocation.configure({
       distanceFilter: 5.0
-    });
-
-    RNLocation.requestPermission({
+    }).then(() => RNLocation.requestPermission({
       ios: "whenInUse",
       android: {
         detail: "fine",
@@ -37,7 +35,7 @@ export default class App extends React.PureComponent {
           buttonNegative: "Cancel"
         }
       }
-    }).then(granted => {
+    })).then(granted => {
       if (granted) {
         this._startUpdatingLocation();
       }
