@@ -64,16 +64,17 @@ export default class Permissions {
         return await this.nativeInterface.getAuthorizationStatus();
       // Android permissions
       case "android": {
-        const fine = await PermissionsAndroid.check(
-          PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
-        );
-        const coarse = await PermissionsAndroid.check(
-          PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION
-        );
-
-        if (fine) {
+        const results = await Promise.all([
+          PermissionsAndroid.check(
+            PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION
+          ),
+          PermissionsAndroid.check(
+            PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION
+          )
+        ])
+        if (results[0]) {
           return "authorizedFine";
-        } else if (coarse) {
+        } else if (results[1]) {
           return "authorizedCoarse";
         } else {
           return "notDetermined";
@@ -92,6 +93,9 @@ export default class Permissions {
     switch (Platform.OS) {
       // iOS Permissions
       case "ios": {
+        if (!options.ios) {
+          return false;
+        }
         const currentPermission = await this.nativeInterface.getAuthorizationStatus();
         if (options.ios === "always") {
           return currentPermission === "authorizedAlways";
