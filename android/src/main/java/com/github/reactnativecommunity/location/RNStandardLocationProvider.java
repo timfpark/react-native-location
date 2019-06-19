@@ -33,6 +33,7 @@ public class RNStandardLocationProvider implements RNLocationProvider {
         if (watchedProvider != null) {
             setupListening();
         }
+        promise.resolve(null);
     }
 
     @Override
