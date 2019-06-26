@@ -65,10 +65,10 @@ _configureHelpers(nativeInterface, eventEmitter);
  * You can call `configure` multiple times at it will only change the setting which you pass to it. For example, if you only want to change `activityType`, you can call `configure` with just that property present.
  *
  * @param {ConfigureOptions} options The configuration options.
- * @returns {void}
+ * @returns {Promise<void>} A Promise which resolves when the configuration is completed.
  */
-export const configure = (options: ConfigureOptions): void => {
-  nativeInterface.configure(options);
+export const configure = (options: ConfigureOptions): Promise<void> => {
+  return nativeInterface.configure(options);
 };
 
 /**
