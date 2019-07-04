@@ -71,7 +71,7 @@ export default class Permissions {
           PermissionsAndroid.check(
             PermissionsAndroid.PERMISSIONS.ACCESS_COARSE_LOCATION
           )
-        ])
+        ]);
         if (results[0]) {
           return "authorizedFine";
         } else if (results[1]) {
