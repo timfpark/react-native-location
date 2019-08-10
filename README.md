@@ -188,7 +188,8 @@ RNLocation.requestPermission({
           altitude: 0,
           altitudeAccuracy: -1
           floor: 0
-          timestamp: 1446007304457.029
+          timestamp: 1446007304457.029,
+          fromMockProvider: false
         }
         */
       })

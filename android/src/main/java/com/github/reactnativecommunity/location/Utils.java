@@ -49,6 +49,7 @@ public class Utils {
             map.putDouble("speedAccuracy", 0.0);
         }
         map.putDouble("timestamp", location.getTime());
+        map.putBoolean("fromMockProvider", location.isFromMockProvider());
 
         return map;
     }
