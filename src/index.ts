@@ -223,6 +223,9 @@ export default {
   _eventEmitter: eventEmitter
 };
 
+// Export the types
+export * from "./types";
+
 /**
  * @callback LocationPermissionStatusCallback
  * @param {LocationPermissionStatus} status The new permission status.
