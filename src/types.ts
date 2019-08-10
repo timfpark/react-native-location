@@ -126,6 +126,12 @@ export interface Location {
    * @see [Apple Docs](https://developer.apple.com/documentation/corelocation/cllocation/1616762-floor?language=objc)
    */
   floor?: number;
+  /**
+   * If the location comes from a mock provider.
+   * @platform android
+   * @see [Android Docs](https://developer.android.com/reference/android/location/Location.html#isFromMockProvider())
+   */
+  fromMockProvider?: boolean;
 }
 export interface Heading {
   heading: number;
