@@ -24,7 +24,9 @@ export default class App extends React.PureComponent {
   componentWillMount() {
     RNLocation.configure({
       distanceFilter: 5.0
-    }).then(() => RNLocation.requestPermission({
+    });
+    
+    RNLocation.requestPermission({
       ios: "whenInUse",
       android: {
         detail: "fine",
