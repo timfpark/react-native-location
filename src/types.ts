@@ -24,7 +24,7 @@ export type LocationActivityType =
  * The location provider to use for Android.
  * @platform android
  */
-export type AndroidProvider = "auto" | "fused" | "builtin";
+export type AndroidProvider = "auto" | "playServices" | "standard";
 /**
  * The accuracy of the location responses for Android.
  * @platform android
