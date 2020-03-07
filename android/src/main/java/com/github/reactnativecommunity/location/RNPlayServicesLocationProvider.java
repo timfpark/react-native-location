@@ -161,7 +161,7 @@ public class RNPlayServicesLocationProvider implements RNLocationProvider {
         task.addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                if (e instanceof ResolvableApiException) {
+                if (e instanceof ResolvableApiException && activity != null) {
                     // Location settings are not satisfied, but this can be fixed
                     // by showing the user a dialog.
                     try {
