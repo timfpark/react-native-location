@@ -156,7 +156,7 @@ implementation "com.google.android.gms:play-services-location:16.0.0"
 </details>
 
 ## Example application
-In the [example](https://github.com/timfpark/react-native-location/example) folder is a React Native sample app which you can use as a sample implementation to start from.
+In the [example](https://github.com/timfpark/react-native-location/tree/master/example) folder is a React Native sample app which you can use as a sample implementation to start from.
 
 The app requests permissions, takes reading every 5 distance and starts immediately. To use in the iOS simulator, look on the `Debug -> Location` menu for sample trips that will show you updating location such as City Bycicle Ride, City Run, and Freeway Drive.
 
