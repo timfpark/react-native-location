@@ -6,7 +6,8 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import androidx.annotation.NonNull; //<- Add this
+//import androidx.annotation.NonNull; //<- Add this
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat; // <- Add this
 
 import com.facebook.react.bridge.Arguments;
