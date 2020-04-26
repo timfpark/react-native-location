@@ -2,6 +2,8 @@ package com.github.reactnativecommunity.location;
 
 import android.app.Activity;
 import android.content.Intent;
+import androidx.annotation.NonNull; //<- Add this
+import androidx.core.app.ActivityCompat; // <- Add this
 
 import com.facebook.react.bridge.ActivityEventListener;
 import com.facebook.react.bridge.BaseActivityEventListener;
