@@ -1,5 +1,7 @@
 package com.github.reactnativecommunity.location;
 
+import androidx.annotation.NonNull; //<- Add this
+import androidx.core.app.ActivityCompat; // <- Add this
 import android.app.Activity;
 import android.content.Context;
 import android.location.Location;
