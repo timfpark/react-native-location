@@ -40,8 +40,8 @@ android {
 dependencies {
   def googlePlayServicesVersion = rootProject.hasProperty('googlePlayServicesVersion') ? rootProject.googlePlayServicesVersion : DEFAULT_GOOGLE_PLAY_SERVICES_VERSION
 
-  compileOnly 'androidx.appcompat:appcompat:1.0.2'
-  compileOnly 'androidx.legacy:legacy-support-v4:1.0.0'
+  implementation 'androidx.appcompat:appcompat:1.0.2'
+  implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
   compileOnly "com.facebook.react:react-native:+"
   compileOnly "com.google.android.gms:play-services-base:$googlePlayServicesVersion"
