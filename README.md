@@ -448,7 +448,7 @@ This will subscribe to location events for you at the unsubscribe when it gets i
 The location provider will respect the settings you have given it, so if you need a location with a certain accuracy, ensure you call `RNLocation.configure` first. If you want *any* location then ensure you call `RNLocation.configure` with no distance filter.
 
 ```javascript
-RNLocation.configure({ distanceFilter: null });
+RNLocation.configure({ distanceFilter: 0 });
 RNLocation.getLatestLocation({ timeout: 60000 })
   .then(latestLocation => {
     // Use the location here
