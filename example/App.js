@@ -37,7 +37,7 @@ export default class App extends React.PureComponent {
           buttonNegative: "Cancel"
         }
       }
-    })).then(granted => {
+    }).then(granted => {
       if (granted) {
         this._startUpdatingLocation();
       }
