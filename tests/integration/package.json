@@ -35,7 +35,7 @@
     "babel-jest": "23.6.0",
     "babel-plugin-istanbul": "^5.1.0",
     "jest": "23.6.0",
-    "lodash": "^4.17.13",
+    "lodash": "^4.17.21",
     "metro-react-native-babel-preset": "0.49.2",
     "nyc": "^13.1.0",
     "react-test-renderer": "16.6.1",
