@@ -29,8 +29,18 @@ public class RNLocationModule extends ReactContextBaseJavaModule {
         return NAME;
     }
 
-    // React interface
+    // Required for rn built in EventEmitter Calls.
+    @ReactMethod
+    public void addListener(String eventName) {
 
+    }
+
+    @ReactMethod
+    public void removeListeners(Integer count) {
+
+    }
+
+    // React interface
     @ReactMethod
     @SuppressWarnings("unused")
     public void configure(ReadableMap options, final Promise promise) {
