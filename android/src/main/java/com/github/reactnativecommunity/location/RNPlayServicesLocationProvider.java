@@ -6,8 +6,8 @@ import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
+import androidx.annotation.NonNull; //<- Add this
+import androidx.core.app.ActivityCompat; // <- Add this
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.Promise;
@@ -39,6 +39,7 @@ public class RNPlayServicesLocationProvider implements RNLocationProvider {
 
     private LocationRequest locationRequest = new LocationRequest();
     private boolean isUpdatingLocation = false;
+    private boolean isGPSRequested = false;
 
     private WeakReference<Activity> pendingConfigureActivity = null;
     private ReadableMap pendingConfigureOptions = null;
@@ -153,7 +154,13 @@ public class RNPlayServicesLocationProvider implements RNLocationProvider {
             @Override
             public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
                 reSetUpLocationListeners();
-                promise.resolve(null);
+                if(isGPSRequested){
+                    isGPSRequested = false;
+                    promise.resolve(true); //we can send strings code too
+                }else{
+                    promise.resolve(null);
+                }
+
             }
         });
 
@@ -208,9 +215,11 @@ public class RNPlayServicesLocationProvider implements RNLocationProvider {
                 && pendingConfigurePromise != null)
         {
             // If the resolution was ok, try to configure again
+            isGPSRequested= true;
             configure(pendingConfigureActivity.get(), pendingConfigureOptions, pendingConfigurePromise);
         } else if (pendingConfigurePromise != null) {
             // If not, we reject the promise
+            isGPSRequested = false;
             pendingConfigurePromise.reject("500", "Error configuring react-native-location");
         }
 
