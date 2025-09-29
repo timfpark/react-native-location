@@ -2,7 +2,7 @@ package com.github.reactnativecommunity.location;
 
 import android.location.Location;
 import android.os.Build;
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.facebook.react.bridge.Arguments;
 import com.facebook.react.bridge.ReactApplicationContext;
