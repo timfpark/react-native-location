@@ -55,13 +55,16 @@ function locationText(loc: Location | null): string {
     return 'null（超时未获取到位置）';
   }
   return [
-    '定位时间 timestamp : ' + formatTimestamp(loc.timestamp),
-    '纬度 latitude      : ' + loc.latitude,
-    '经度 longitude     : ' + loc.longitude,
-    '水平精度 accuracy  : ' + loc.accuracy + ' m（定位误差半径，值越小越准）',
-    '海拔 altitude      : ' + loc.altitude + ' m（垂直精度 ±' + loc.altitudeAccuracy + '）',
-    '方向 course        : ' + loc.course + '°（0-360 正北基准顺时针；静止时可能为 0）',
-    '速度 speed         : ' + loc.speed + ' m/s（速度精度 ±' + (loc.speedAccuracy ?? 0) + '）',
+    '定位时间 timestamp       : ' + formatTimestamp(loc.timestamp),
+    '纬度 latitude            : ' + loc.latitude,
+    '经度 longitude           : ' + loc.longitude,
+    '水平精度 accuracy        : ' + loc.accuracy + ' m（定位误差半径，值越小越准）',
+    '海拔 altitude            : ' + loc.altitude + ' m',
+    '垂直精度 altitudeAccuracy: ±' + loc.altitudeAccuracy + ' m',
+    '方向 course              : ' + loc.course + '°（0-360 正北基准顺时针；静止时可能为 0）',
+    '方向精度 courseAccuracy  : ±' + (loc.courseAccuracy ?? 0) + '°',
+    '速度 speed               : ' + loc.speed + ' m/s',
+    '速度精度 speedAccuracy   : ±' + (loc.speedAccuracy ?? 0) + ' m/s',
   ].join('\n');
 }
 
@@ -384,19 +387,16 @@ function App(): JSX.Element {
             行为，非 bug；需后台定位请在 app 侧自行接入长时任务。
           </Text>
           <Text style={styles.dim}>
-            2. 原生默认 distanceFilter=100m：不点 configure 直接订阅，走 5m 不回调是预期行为。
-          </Text>
-          <Text style={styles.dim}>
-            3. 定位 fix 来源二选一：GNSS（室外/窗边见天）或 网络定位（WLAN/基站，需联网）。
+            2. 定位 fix 来源二选一：GNSS（室外/窗边见天）或 网络定位（WLAN/基站，需联网）。
             室内且断网时两者皆无→注册成功但永不回调、无任何告警（真机实测：联网后恢复）。
             可用「distanceFilter=0(实时)」验证回调链路是否正常。
           </Text>
           <Text style={styles.dim}>
-            4. timeout:null 为源库语义（等到首个位置为止）：定位开关关闭时原生立刻告警，
+            3. timeout:null 为源库语义（等到首个位置为止）：定位开关关闭时原生立刻告警，
             本 demo 会自动终止等待并复位按钮；但该次调用不会自动恢复，需重新触发订阅。
           </Text>
           <Text style={styles.dim}>
-            5. 排查顺序：先看「onWarning 原生告警」卡片，再看持续定位回调计数；真机日志：
+            4. 排查顺序：先看「onWarning 原生告警」卡片，再看持续定位回调计数；真机日志：
             hdc shell hilog | findstr RNLocation。
           </Text>
         </View>
@@ -480,7 +480,7 @@ function App(): JSX.Element {
         {/* ⑤ configure */}
         <View style={styles.card}>
           <Text style={styles.cardTitle}>⑤ configure（定位参数，单参数逐项设置，多次点击自动合并）</Text>
-          <Text style={styles.mono}>当前生效：{configSummary}（原生默认 distanceFilter=100m、interval=0 即系统最小间隔）</Text>
+          <Text style={styles.mono}>当前生效：{configSummary}（原生默认 interval=0 即系统最小间隔）</Text>
           <Text style={styles.dim}>
             单参数设计：每个按钮只改一个参数，便于单变量对比；多次点击自动合并（只改传入项）——
             例如"高精度+实时"= 依次点 highAccuracy 与 distanceFilter:0。订阅运行中点击会按
@@ -489,19 +489,16 @@ function App(): JSX.Element {
           </Text>
           <Text style={styles.label}>
             distanceFilter 距离过滤（米，触发回调的最小位移变化）—— 当前：
-            {currentConfig.distanceFilter === null ? '100（原生默认）' : currentConfig.distanceFilter + ' m'}：
+            {currentConfig.distanceFilter === null ? '原生默认' : currentConfig.distanceFilter + ' m'}：
           </Text>
           <View style={styles.row}>
             <Btn title="configure({distanceFilter:0})" selected={currentConfig.distanceFilter === 0} onPress={() =>
               doConfigure('distanceFilter=0', { distanceFilter: 0 })} />
             <Btn title="configure({distanceFilter:5})" selected={currentConfig.distanceFilter === 5} onPress={() =>
               doConfigure('distanceFilter=5', { distanceFilter: 5 })} />
-            <Btn title="configure({distanceFilter:100})" selected={currentConfig.distanceFilter === 100} onPress={() =>
-              doConfigure('distanceFilter=100', { distanceFilter: 100 })} />
           </View>
           <Text style={styles.dim}>
-            0=不做距离过滤（每个间隔周期必回调，验证回调链路）；5=移动超 5m 才回调；
-            100=原生默认，位移 &lt;100m 不回调。
+            0=不做距离过滤（每个间隔周期必回调，验证回调链路）；5=移动超 5m 才回调。
           </Text>
           <Text style={styles.label}>
             interval 时间间隔（毫秒，系统下限 GNSS 1s / 网络定位 20s）—— 当前：
@@ -529,11 +526,10 @@ function App(): JSX.Element {
           <Text style={styles.dim}>
             能力关系：highAccuracy 的数据源覆盖网络定位（室内 GNSS 不可用会自动回退），
             即包含 lowPower 的定位能力且更准，代价是功耗高；lowPower 的价值在省电与强制
-            纯网络通道。对比法：固定其他参数切这两档，看 accuracy 与定位来源变化
-            （室外 highAccuracy 约 5~30m vs lowPower 约 100m）。
+            纯网络通道。
           </Text>
           <Text style={styles.dim}>
-            highAccuracy=GNSS 精度优先；lowPower=低功耗纯网络定位（室内可用，20~100m，
+            highAccuracy=GNSS 精度优先；lowPower=低功耗纯网络定位（室内可用，
             必须联网）。balancedPowerAccuracy/noPower 鸿蒙不支持（静默忽略）。
           </Text>
           <View style={styles.row}>
@@ -575,8 +571,8 @@ function App(): JSX.Element {
           </Text>
           <Text style={styles.dim}>
             现象速查：订阅后 1~2 秒内的首帧是系统缓存的历史位置（getLastLocation 立即回报，
-            对齐 Android），时间戳偏旧属预期；默认 distanceFilter=100m，静止不回调属预期——
-            配合 ⑤ configure 调参观察（订阅中改配置立即按新参数重启）；无权限订阅收 403、
+            对齐 Android），时间戳偏旧属预期；配合 ⑤ configure 调参观察（订阅中改配置立即按
+            新参数重启）；无权限订阅收 403、
             总开关关闭收 500（onWarning 卡可见）；退订后计数停止、原生 off 释放资源。
           </Text>
         </View>
@@ -606,8 +602,7 @@ function App(): JSX.Element {
             按钮、不取消订阅）。测完建议重启 App 清理残留订阅。
           </Text>
           <Text style={styles.dim}>
-            网络要求：与 ⑥ 相同——室内取位必须联网；断网+室内时超时后返回 null（可故意
-            断网验证超时路径，对应 TC-GLL-04）。
+            网络要求：与 ⑥ 相同——室内取位必须联网；断网+室内时超时后返回 null
           </Text>
         </View>
 
