@@ -1,0 +1,20 @@
+{
+  "root": true,
+  "extends": [
+    "@react-native"
+  ],
+  "rules": {
+    "react-hooks/rules-of-hooks": "error",
+    "react-hooks/exhaustive-deps": "warn",
+    "no-console": "off",
+    "@typescript-eslint/no-unused-vars": "off",
+    "prettier/prettier": "off"
+  },
+  "ignorePatterns": [
+    "node_modules/",
+    "harmony/",
+    "__tests__/",
+    "*.js",
+    "*.d.ts"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "license": "MIT",
+  "devDependencies": {
+
+  },
+  "author": "",
+  "name": "@react-native-ohos/react-native-location",
+  "description": "Please describe the basic information.",
+  "main": "index.ets",
+  "version": "1.0.0-beta.1",
+  "dependencies": {
+    "@rnoh/react-native-openharmony": "file:../react_native_openharmony_release.har"
+  }
+}

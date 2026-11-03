@@ -1,0 +1,10 @@
+{
+  "modelVersion": "6.0.1",
+  "name": "react-native-location-harmony",
+  "version": "1.0.0",
+  "description": "Root project wrapper for building location.har",
+  "main": "",
+  "author": "",
+  "license": "MIT",
+  "dependencies": {}
+}

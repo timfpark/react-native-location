@@ -1,485 +1,421 @@
-# `react-native-location`
+> 文档模板：v0.4.2
 
-![MIT License](https://img.shields.io/npm/l/react-native-location.svg) ![Supports Android and iOS](https://img.shields.io/badge/platforms-android%20|%20ios-lightgrey.svg) ![Supports React Native >= 0.46](https://img.shields.io/badge/react%20native-%3E%3D%200.46-lightgrey.svg) [![CircleCI Status](https://img.shields.io/circleci/project/github/timfpark/react-native-location/master.svg)](https://circleci.com/gh/timfpark/workflows/react-native-location/tree/master)
+<p align="center">
+<h1 align="center"> <code>react-native-location</code> </h1>
+ </p>
 
-Native GPS location support for React Native. You might decide to use this library over the [built-in geolocation](https://facebook.github.io/react-native/docs/geolocation.html) because it includes some additional features:
+本项目基于 [react-native-location](https://github.com/timfpark/react-native-location) 开发，为 React Native 鸿蒙（OpenHarmony/HarmonyOS）适配版本。
 
-* Allows you choose what type of permission to ask for ("when in use" or "always"). The built-in geolocation library will look at your plist file and choose "always" if you have the `NSLocationAlwaysUsageDescription` property, however, you might have a usecase where you want to start by asking the user for "while in use" permission and later upgrade the permission to "always" when they turn on a feature which requires background location.
-* Ability to check the current permission status (`RNLocation.getCurrentPermission`).
-* Allows you to monitor the device heading.
+该三方库适配后支持直接从 npm 下载，新的包名为：`@react-native-ohos/react-native-location`，版本所属关系如下：
 
-## Installation
-Install the library using either Yarn:
+| 三方库名称 | 三方库版本（npm地址） | 发布信息 | 支持RN版本 | Autolink | 编译API版本 | 社区基线版本 | 源码地址 |
+| ------------ | ------------ | ------------------------------ | ------------- | ------------- |------------------------ | ------------- | ------------- |
+| @react-native-ohos/react-native-location | [~1.0.0(开发中)](https://www.npmjs.com/package/@react-native-ohos/react-native-location) | 见发布记录 | 0.72.*/ 0.77.*/ 0.82.*/ 0.84.*/ | 是 | API12+ | 2.5.0 | [master](https://github.com/timfpark/react-native-location) |
 
+## 简介
+
+react-native-location 为 React Native 应用提供原生 GPS 定位能力，封装了 iOS `CLLocationManager` 与 Android `FusedLocationProvider`/标准定位服务，并提供跨平台的权限管理 API。
+
+鸿蒙适配版本基于下列系统能力实现，API 面与原库 2.5.0 对齐（以 TurboModule + RNOH codegen 实现）：
+
+- 定位：`@kit.LocationKit` 的 `geoLocationManager`（持续定位 `on/off('locationChange')`、`getLastLocation` 最后已知位置）
+- 航向：`@kit.SensorServiceKit` 的方向传感器（`SensorId.ORIENTATION`）
+- 权限：`@kit.AbilityKit` 的 `abilityAccessCtrl`（动态申请与状态查询）
+
+## 下载安装
+
+进入到工程目录并输入以下命令：
+
+#### **npm**
+
+```bash
+npm install @react-native-ohos/react-native-location
 ```
-yarn add react-native-location
+
+#### **yarn**
+
+```bash
+yarn add @react-native-ohos/react-native-location
 ```
 
-or using npm:
+## Link
 
-```
-npm install --save react-native-location
-```
+|  | 是否支持autolink | RN框架版本 |
+|--------------------------------------|-----------------|------------|
+| ~1.0.0(开发中) | Yes | 0.72/0.77/0.82/0.84 |
 
-You then need to link the native parts of the library for the platforms you are using. Click on the arrow to show the steps for each platform.
+使用AutoLink的工程需要根据该文档配置，Autolink框架指导文档：https://gitcode.com/CPF-RN/ohos_react_native/blob/master/docs/zh-cn/Autolinking.md
+
+如您使用的版本支持 Autolink，并且工程已接入 Autolink，可跳过ManualLink配置。
 
 <details>
-<summary><strong>iOS Installation Instructions</strong></summary>
+  <summary>ManualLink: 此步骤为手动配置原生依赖项的指导</summary>
 
-### 1a. Automatically link with the CLI tool
-The easiest way to link the library is using the CLI tool by running this command from the root of your project:
+首先需要使用 DevEco Studio 打开项目里的 HarmonyOS 工程 `harmony`。
 
-```
-react-native link react-native-location
-```
+### 1. Overrides RN SDK
 
-### 1b. Install with Cocoapods
-You can also link the library using Cocoapods by adding this line to your `Podfile`:
+为了让工程依赖同一个版本的 RN SDK，需要在工程根目录的 `oh-package.json5` 添加 overrides 字段，指向工程需要使用的 RN SDK 版本。替换的版本既可以是一个具体的版本号，也可以是一个模糊版本，还可以是本地存在的 HAR 包或源码目录。
 
-```ruby
-pod 'react-native-location', :path => '../node_modules/react-native-location/react-native-location.podspec'
-```
+关于该字段的作用请阅读[官方说明](https://developer.huawei.com/consumer/cn/doc/harmonyos-guides-V5/ide-oh-package-json5-V5#zh-cn_topic_0000001792256137_overrides)
 
-### 1c. Or manually link the library
-If you can't or don't want to use the CLI tool, you can also manually link the library using the [intructions in the React NAtive documentation](https://facebook.github.io/react-native/docs/linking-libraries-ios#manual-linking).
-
-### 2. Ensure you have the CoreLocation library linked
-*This is not required if you have installed using Cocoapods.*
-
-You then need to make sure you have the iOS CoreLocation library linked to your project.
-
-To do this, click on the your project in XCode (the name of your project at the top of the left panel), select your apps build target, go to the `Build Phases` tab then in the `Link Binary With Libraries` section add `CoreLocation.framework`.
-
-### 3. Info.plist usage descriptions
-Finally, you then need to make sure you have the correct usage discriptions inside your `Info.plist` file. The message will show in the Alert box when your app requests permissions and lets the user know why you are asking for that permissions. They are also part of the App Store review process.
-
-If you are only requesting "when in use" (foreground) location access you just need to make sure you have the `NSLocationWhenInUseUsageDescription` item in your Plist.
-
-If you are requesting "always" (background) permission you will *also* need to add `NSLocationAlwaysAndWhenInUseUsageDescription` and `NSLocationAlwaysUsageDescription` into your PList file.
-
-The easiest way to add these is to find your `Info.plist` in Xcode, right click on it, and then choose "edit as source code". You can then enter the items you need into the file:
-
-```xml
-<key>NSLocationWhenInUseUsageDescription</key>
-<string>This is the plist item for NSLocationWhenInUseUsageDescription</string>
-<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-<string>This is the plist item for NSLocationAlwaysAndWhenInUseUsageDescription</string>
-<key>NSLocationAlwaysUsageDescription</key>
-<string>This is the plist item for NSLocationAlwaysUsageDescription</string>
-```
-
-### 4. Background mode setup (optional)
-For background location to work, a few things need to be configured:
-
-1. In the Xcode project, go to Capabilities, switch on "Background Modes" and check "Location updates".
-2. Set `NSLocationAlwaysAndWhenInUseUsageDescription` and `NSLocationAlwaysUsageDescription` in your `Info.plist` file.
-3. For iOS 9+, set [`allowsBackgroundLocationUpdates`](https://developer.apple.com/reference/corelocation/cllocationmanager/1620568-allowsbackgroundlocationupdates) to true when configuring the library in your Javascript code. Like this:
-
-```javascript
-RNLocation.configure({ allowsBackgroundLocationUpdates: true });
-```
-
-</details>
-
-<details>
-<summary><strong>Android Installation Instructions</strong></summary>
-
-### 1a. Automatically link the library using the CLI tool
-The easiest way to link the library is using the CLI tool by running this command from the root of your project:
-
-```
-react-native link react-native-location
-```
-
-### 1b. Manually link the library
-If you can't or don't want to use the CLI tool, you can manually link the library by making the following changes (click on the arrow to show the steps):
-
-<details>
-<summary><strong>Steps to manually link the library</strong></summary>
-   
-#### `android/settings.gradle`
-```groovy
-include ':react-native-location'
-project(':react-native-location').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-location/android')
-```
-
-#### `android/app/build.gradle`
-```groovy
-dependencies {
-   ...
-   implementation project(':react-native-location')
+```json
+{
+  "overrides": {
+    "@rnoh/react-native-openharmony": "file:../node_modules/@react-native-oh/react-native-harmony/react_native_openharmony_release.har"
+  }
 }
 ```
 
-#### `android/app/src/main/.../MainApplication.java`
-On top, where imports are:
+### 2. 引入原生端代码
 
-```java
-import com.github.reactnativecommunity.location.RNLocationPackage;
+> [!TIP] har 包位于三方库安装路径的 `harmony` 文件夹下。
+
+打开 `entry/oh-package.json5`，添加以下依赖：
+
+```json
+"dependencies": {
+    "@react-native-ohos/react-native-location": "file:../../node_modules/@react-native-ohos/react-native-location/harmony/location.har"
+  }
 ```
 
-Add the `RNLocationPackage` class to your list of exported packages.
+点击右上角的 `sync` 按钮
 
-```java
-@Override
-protected List<ReactPackage> getPackages() {
-    return Arrays.asList(
-            new MainReactPackage(),
-            new RNLocationPackage()
-    );
+或者在终端执行：
+
+```bash
+cd entry
+ohpm install
+```
+
+### 3. 配置 CMakeLists
+
+打开 `entry/src/main/cpp/CMakeLists.txt`，添加：
+
+```cmake
+set(OH_MODULES "${CMAKE_CURRENT_SOURCE_DIR}/../../../oh_modules")
+
+add_subdirectory("${OH_MODULES}/@react-native-ohos/react-native-location/src/main/cpp" ./location)
+
+target_link_libraries(rnoh_app PUBLIC location)
+```
+
+### 4. 注册 Package（C++ 侧）
+
+打开 `entry/src/main/cpp/PackageProvider.cpp`，添加：
+
+```cpp
+#include "LocationPackage.h"
+
+std::vector<std::shared_ptr<Package>> PackageProvider::getPackages(Package::Context ctx) {
+    return {
+        std::make_shared<LocationPackage>(ctx),
+    };
 }
 ```
+
+### 5. 注册 Package（ETS 侧）
+
+打开 `entry/src/main/ets/RNPackagesFactory.ets`，添加：
+
+```typescript
+import { LocationPackage } from '@react-native-ohos/react-native-location/ts';
+
+export function createRNPackages(ctx: RNPackageContext): RNPackage[] {
+  return [
+    new LocationPackage(ctx),
+  ];
+}
+```
+
 </details>
 
-### 2. Android manifest permissions
-You need to ensure that your `AndroidManifest.xml` contains this line:
+### 权限配置（必做）
 
-```xml
-<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+在宿主工程 `entry/src/main/module.json5` 的 `module` 中声明定位权限（user_grant，运行时经 `requestPermission` 动态申请）：
+
+```json
+"requestPermissions": [
+  { "name": "ohos.permission.LOCATION", "reason": "$string:location_reason", "usedScene": { "abilities": ["EntryAbility"], "when": "inuse" } },
+  { "name": "ohos.permission.APPROXIMATELY_LOCATION", "reason": "$string:location_reason", "usedScene": { "abilities": ["EntryAbility"], "when": "inuse" } },
+  { "name": "ohos.permission.LOCATION_IN_BACKGROUND", "reason": "$string:location_reason", "usedScene": { "abilities": ["EntryAbility"], "when": "always" } }
+]
 ```
 
-If you want to access fine location then you should also include:
+> [!TIP] 前台定位需 `LOCATION` + `APPROXIMATELY_LOCATION` 两项；仅后台定位场景需要 `LOCATION_IN_BACKGROUND`。同时在 `string.json` 中补齐 `location_reason` 文案。
 
-```xml
-<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+### 运行
+
+点击右上角的 `sync` 按钮
+
+或者在命令行终端执行：
+
+```bash
+cd entry
+ohpm install
 ```
 
-### 3. Install the Google Fused Location provider dependency (optional)
-The library provides two methods of getting the location on Android. The default is the builtin location manager, however, you can optionally choose to install the Fused Location library which provides more accurate and faster results. The downside is that it will only work on devices with Google Play Services installed and configured (which is most Android devices in the west, but not Kindle devices or Asian markets).
+然后编译、运行即可。
 
-If you would like to use the Google Play Services Fused Location provider, then you need to add these dependencies to your `android/app/build.gradle` file:
+## 约束与限制
 
-```groovy
-implementation "com.google.android.gms:play-services-base:16.0.1"
-implementation "com.google.android.gms:play-services-location:16.0.0"
+### 兼容性
+
+本文档内容基于以下版本验证通过：
+1. RNOH: 0.72.139; SDK: HarmonyOS 5.0.1 Release SDK (API13, targetSdk 6.0.1(21)); IDE: DevEco Studio 6.0.1 Release; ROM: 6.0.0;
+2. RNOH: 0.77.18; SDK: HarmonyOS 6.0.0 Release SDK; IDE: DevEco Studio 6.0.0.858; ROM: 6.0.0.112;
+3. RNOH: 0.82.7; SDK: HarmonyOS 6.0.0 Release SDK; IDE: DevEco Studio 6.0.0.858; ROM: 6.0.0.112 SP12;
+4. RNOH: 0.84.1; SDK: HarmonyOS 6.0.2 Release SDK; IDE: 6.0.2 Release; ROM:7.0.0.100 SP9;
+
+### 使用限制
+
+- 真机需开启系统「位置信息」总开关；开关关闭时定位请求报 3301100，映射为 `onWarning`（type 500）
+- `onWarning` 为库内部订阅的告警通道（经 `console.warn` 输出，业务无需自行监听），type 取值：401 参数错误 / 403 无权限 / 500 定位服务异常（含系统定位总开关关闭）/ 502 航向传感器不可用
+- 鸿蒙 GNSS 定位最小时间间隔 1 秒、网络定位最小 20 秒，`interval` 低于最小值时按系统最小值生效；`fastestInterval`/`maxWaitTime` 为 Android 调度语义，鸿蒙无对应机制、静默忽略
+- **后台定位申请顺序**（鸿蒙限制）：`LOCATION_IN_BACKGROUND` 不能与前台定位权限合并到同一次申请——适配层采用两步串行：先申请前台组合（LOCATION + APPROXIMATELY_LOCATION），授权成功后再单独发起后台权限申请（该调用在鸿蒙不弹窗、不授予，仅探测后台授权状态）；运行时弹窗仅有「本次使用允许/仅使用期间允许/不允许」三个选项，**「始终允许」只能由用户在系统设置中手动开启**（后台定位的唯一授予路径，代码无法授予）
+- **验证后台权限是否已授予**：`getCurrentPermission()` 返回 `authorizedAlways` 即含后台；也可用命令 `hdc shell atm dump -t -b <bundleName>` 查看 `LOCATION_IN_BACKGROUND` 的 `grantStatus`（0=已授予，-1=未授予）
+- **后台持续定位还需长时任务**：仅获得后台定位权限不足以保证后台运行，应用退后台后可能被系统挂起。需后台定位的业务应自行申请长时任务（`continuousTask`，定位导航类型），申请后通知栏会显示常驻提示
+
+## 使用示例
+下面的代码展示了这个库的基本使用场景：
+
+> [!WARNING] 使用时 import 的库名不变（使用 `react-native-location`，由 RNOH alias 自动映射到鸿蒙适配包）。
+
+#### 基本使用（配置 → 权限 → 持续订阅）
+
+```tsx
+import React, { useEffect } from 'react';
+import { Text, Button, View } from 'react-native';
+import RNLocation, { Location, LocationPermissionStatus } from 'react-native-location';
+
+export function locationTest() {
+  let unsub: (() => void) | null = null;
+
+  async function start() {
+    // 1. 配置定位参数（可多次调用，只改传入项）
+    await RNLocation.configure({
+      distanceFilter: 5,                                // 米
+      interval: 10000,                                  // 毫秒
+      desiredAccuracy: { android: 'highAccuracy' },     // 鸿蒙映射为精度优先
+    });
+
+    // 2. 申请权限（whenInUse 档 = 前台组合权限；always 档另含后台定位）
+    const granted = await RNLocation.requestPermission({
+      ios: 'whenInUse',
+      android: { detail: 'fine' },
+    });
+
+    // 3. 持续订阅位置更新（负载为 Location[] 数组，取最新一条）
+    if (granted) {
+      unsub = RNLocation.subscribeToLocationUpdates((locations: Location[]) => {
+        const latest = locations[0];
+        console.log(latest.latitude, latest.longitude, latest.accuracy);
+      });
+    }
+  }
+
+  function stop() {
+    unsub?.(); // 退订并释放原生定位资源
+  }
+
+  return (
+    <View>
+      <Button title="start location" onPress={start} />
+      <Button title="stop location" onPress={stop} />
+    </View>
+  );
+}
 ```
-</details>
 
-## Example application
-In the [example](https://github.com/timfpark/react-native-location/example) folder is a React Native sample app which you can use as a sample implementation to start from.
+#### 单次获取最新位置
 
-The app requests permissions, takes reading every 5 distance and starts immediately. To use in the iOS simulator, look on the `Debug -> Location` menu for sample trips that will show you updating location such as City Bycicle Ride, City Run, and Freeway Drive.
-
-![Example App](./screenshots/example.gif)
-
-## Usage
-```javascript
+```js
 import RNLocation from 'react-native-location';
 
-RNLocation.configure({
-  distanceFilter: 5.0
-})
-
-RNLocation.requestPermission({
-  ios: "whenInUse",
-  android: {
-    detail: "coarse"
-  }
-}).then(granted => {
-    if (granted) {
-      this.locationSubscription = RNLocation.subscribeToLocationUpdates(locations => {
-        /* Example location returned
-        {
-          speed: -1,
-          longitude: -0.1337,
-          latitude: 51.50998,
-          accuracy: 5,
-          heading: -1,
-          altitude: 0,
-          altitudeAccuracy: -1
-          floor: 0
-          timestamp: 1446007304457.029,
-          fromMockProvider: false
-        }
-        */
-      })
-    }
-  })
+// 超时（默认 10s，可配）未获取到位置时 resolve 为 null
+const location = await RNLocation.getLatestLocation({ timeout: 15000 });
+if (location) {
+  console.log(location.timestamp, location.latitude, location.longitude);
+}
 ```
 
-## Methods
-To access the methods, you need import the `react-native-location` module. This is done through `import RNLocation from 'react-native-location'`.
+#### 权限状态查询与订阅
 
-### Configuration
-#### `RNLocation.configure`
-This is used to configure the location provider. You can use this to enable background mode, filter location updates to a certain distance change, and ensure you have the power settings set correctly for your use case.
+```js
+import RNLocation from 'react-native-location';
 
-You can call `configure` multiple times at it will only change the setting which you pass to it. For example if you only want to change `activityType`, you can call `configure` with just that property present.
+const status = await RNLocation.getCurrentPermission();          // 'authorizedFine' 等
+const ok = await RNLocation.checkPermission({ ios: 'always' }); // 校验权限档位
 
-```javascript
-RNLocation.configure({
-    distanceFilter: 100, // Meters
-    desiredAccuracy: {
-      ios: "best",
-      android: "balancedPowerAccuracy"
-    },
-    // Android only
-    androidProvider: "auto",
-    interval: 5000, // Milliseconds
-    fastestInterval: 10000, // Milliseconds
-    maxWaitTime: 5000, // Milliseconds
-    // iOS Only
-    activityType: "other",
-    allowsBackgroundLocationUpdates: false,
-    headingFilter: 1, // Degrees
-    headingOrientation: "portrait",
-    pausesLocationUpdatesAutomatically: false,
-    showsBackgroundLocationIndicator: false,
-})
+const unsubscribe = RNLocation.subscribeToPermissionUpdates((status) => {
+  console.log('permission changed:', status); // 权限状态变化时触发
+});
+// unsubscribe() 取消订阅
 ```
 
-There are the valid configuration options and what they do:
+#### 航向与显著位置变化
 
-<table>
-   <tr>
-      <th>Option</th>
-      <th>Platforms</th>
-      <th>Description</th>
-      <th>Values</th>
-      <th>Documentation</th>
-   </tr>
-   
-   <tr>
-      <td><code>distanceFilter</code></td>
-      <td>
-         Android
-         iOS
-      </td>
-      <td>The minimum distance in meters that the device location needs to change before the location update callback in your app is called. Defaults to <code>0</code> for no filtering.</td>
-      <td><code>number</code></td>
-      <td>
-        <a href="https://developers.google.com/android/reference/com/google/android/gms/location/LocationRequest.html#setSmallestDisplacement(float)">Android Docs</a>
-        <a href="https://developer.apple.com/documentation/corelocation/cllocationmanager/1423500-distancefilter">Apple Docs</a>
-      </td>
-   </tr>
+```js
+import RNLocation from 'react-native-location';
 
-   <tr>
-      <td><code>desiredAccuracy</code></td>
-      <td>
-         Android
-         iOS
-      </td>
-      <td>
-        <p>The accuracy of the location data. Defaults to <code>best</code> on iOS and <code>balancedPowerAccuracy</code> on Android.</p>
-        <p>Valid options for <code>android</code>: <code>balancedPowerAccuracy</code>, <code>highAccuracy</code>, <code>lowPower</code>, or <code>noPower</code>.</p>
-        <p>Valid options for <code>ios</code>: <code>bestForNavigation</code>, <code>best</code>, <code>nearestTenMeters</code>, <code>hundredMeters</code>, or <code>threeKilometers</code>.</p>
-      </td>
-      <td>
-        <code>{ android: string, ios: string }</code>
-      </td>
-      <td>
-        <a href="https://developers.google.com/android/reference/com/google/android/gms/location/LocationRequest#setPriority(int)">Android Docs</a>
-        <a href="https://developer.apple.com/documentation/corelocation/cllocationaccuracy?language=objc">Apple Docs</a>
-      </td>
-   </tr>
+// 航向：方向传感器 alpha 角（0-360，绕 Z 轴），headingFilter 为角度阈值
+await RNLocation.configure({ headingFilter: 10 });
+const unsubHeading = RNLocation.subscribeToHeadingUpdates((h) => {
+  console.log('heading:', h.heading);
+});
 
-   <tr>
-      <td><code>androidProvider</code></td>
-      <td>Android</td>
-      <td>The provider which is used on Android to get the location. Your app must include the Google Play services dependencies to use the <code>playServices</code> location provider. By default it will choose the <code>playServices</code> location provider if it detects that the dependencies are installed, otherwise, it will use the <code>standard</code> Android version which does not require Google Play Services to be installed. Note that <code>auto</code> only checks that the dependencies are installed, not that the user has the Google Play services APK installed and set up correctly.</td>
-      <td><code>"auto"</code>, <code>"playServices"</code>, or <code>"standard"</code></td>
-      <td></td>
-   </tr>
-
-   <tr>
-      <td><code>interval</code></td>
-      <td>Android</td>
-      <td>
-        <p>Set the desired interval for active location updates, in milliseconds.</p>
-        <p>The location client will actively try to obtain location updates for your application at this interval, so it has a direct influence on the amount of power used by your application. Choose your interval wisely.</p>
-        <p>This interval is inexact. You may not receive updates at all (if no location sources are available), or you may receive them slower than requested. You may also receive them faster than requested (if other applications are requesting location at a faster interval).</p>
-      </td>
-      <td><code>number</code></td>
-      <td><a href="https://developers.google.com/android/reference/com/google/android/gms/location/LocationRequest#setInterval(int)">Android Docs</a></td>
-   </tr>
-
-   <tr>
-      <td><code>fastestInterval</code></td>
-      <td>Android</td>
-      <td>
-        <p>Explicitly set the fastest interval for location updates, in milliseconds.</p>
-        <p>This controls the fastest rate at which your application will receive location updates, which might be faster than `interval` in some situations (for example, if other applications are triggering location updates).</p>
-        <p>This allows your application to passively acquire locations at a rate faster than it actively acquires locations, saving power.</p>
-        <p>By default this is 6x the `interval`.</p>
-      </td>
-      <td><code>number</code></td>
-      <td><a href="https://developers.google.com/android/reference/com/google/android/gms/location/LocationRequest#setFastestInterval(int)">Android Docs</a></td>
-   </tr>
-   
-   <tr>
-      <td><code>maxWaitTime</code></td>
-      <td>Android</td>
-      <td>
-        <p>Sets the maximum wait time in milliseconds for location updates.</p>
-        <p>If you pass a value at least 2x larger than the interval specified with setInterval(long), then location delivery may be delayed and multiple locations can be delivered at once.</p>
-      </td>
-      <td><code>number</code></td>
-      <td><a href="https://developers.google.com/android/reference/com/google/android/gms/location/LocationRequest#setMaxWaitTime(int)">Android Docs</a></td>
-   </tr>
-
-   <tr>
-      <td><code>allowsBackgroundLocationUpdates</code></td>
-      <td>iOS</td>
-      <td>A Boolean value indicating whether the app should receive location updates when suspended. Requires permissions to always access the users location. Defaults to <code>false</code>.</td>
-      <td><code>boolean</code></td>
-      <td><a href="https://developer.apple.com/documentation/corelocation/cllocationmanager/1620568-allowsbackgroundlocationupdates">Apple Docs</a></td>
-   </tr>
-
-   <tr>
-      <td><code>activityType</code></td>
-      <td>iOS</td>
-      <td>The type of user activity associated with the location updates. Defaults to <code>other</code>.</td>
-      <td><code>"other"</code>, <code>"automotiveNavigation"</code>, <code>"fitness"</code>, <code>"otherNavigation"</code>, or <code>"airborne"</code></td>
-      <td><a href="https://developer.apple.com/documentation/corelocation/cllocationmanager/1620567-activitytype">Apple Docs</a></td>
-   </tr>
-
-   <tr>
-      <td><code>headingFilter</code></td>
-      <td>iOS</td>
-      <td>The minimum angle in degrees that the device heading needs to change before the heading update callback in your app is called. Defaults to <code>0</code> for no filtering.</td>
-      <td><code>number</code></td>
-      <td></td>
-   </tr>
-
-   <tr>
-      <td><code>headingOrientation</code></td>
-      <td>iOS</td>
-      <td>The device orientation to use when computing heading values. Defaults to <code>portrait</code>.</td>
-      <td><code>"portrait"</code>, <code>"portraitUpsideDown"</code>, <code>"landscapeLeft"</code>, or <code>"landscapeRight"</code></td>
-      <td><a href="https://developer.apple.com/documentation/corelocation/cllocationmanager/1620556-headingorientation">Apple Docs</a></td>
-   </tr>
-
-   <tr>
-      <td><code>pausesLocationUpdatesAutomatically</code></td>
-      <td>iOS</td>
-      <td>A Boolean value indicating whether the location manager object may pause location updates. Defaults to <code>true</code>.</td>
-      <td><code>boolean</code></td>
-      <td><a href="https://developer.apple.com/documentation/corelocation/cllocationmanager/1620553-pauseslocationupdatesautomatical">Apple Docs</a></td>
-   </tr>
-
-   <tr>
-      <td><code>showsBackgroundLocationIndicator</code></td>
-      <td>iOS</td>
-      <td>A Boolean indicating whether the status bar changes its appearance when location services are used in the background. Defaults to <code>false</code>. Only works on iOS 11+ and is ignored for earlier versions of iOS.</td>
-      <td><code>boolean</code></td>
-      <td><a href="https://developer.apple.com/documentation/corelocation/cllocationmanager/2923541-showsbackgroundlocationindicator">Apple Docs</a></td>
-   </tr>
-</table>
-
-### Permissions
-Correctly managing permissions is key to working with the users location in mobile apps.
-
-* Ask for the lowest level of permissions you can. You'll almost always only need `whenInUse` (foreground) permission rather than background.
-* On iOS you only get one chance to ask for permission. If the user requests it the first time this method will always resolves to `false`.
-* If you ask for `always` permission then the user gets the chance to accept, but only give you `whenInUse` permission. The Promise will still resolve to `false`, however, if you call `RNLocation.getCurrentPermission` you can check if they actually accepted the lesser permission.
-* You should monitor the permissions and respond to it correctly. The user is able to go to their phone setting and revoke or downgrade permissions at any time.
-
-#### `RNLocation.requestPermission`
-This method should be called before subscribing to location updates. You need to pass in the type of permission you want for each platform. You can choose not to ignore a platform and it will be ignored. The method returns a promise which resolves to `true` if the permission was granted and `false` if not. For Android you can optionally provide a `rationale` which will be displayed if you ask the user for permission a 2nd time after they have denied permission once.
-
-```javascript
-RNLocation.requestPermission({
-  ios: 'whenInUse', // or 'always'
-  android: {
-    detail: 'coarse', // or 'fine'
-    rationale: {
-      title: "We need to access your location",
-      message: "We use your location to show where you are on the map",
-      buttonPositive: "OK",
-      buttonNegative: "Cancel"
-    }
-  }
+// 显著位置变化：鸿蒙以低功耗网络定位 + 1000m 距离间隔的独立请求近似实现
+const unsubSig = RNLocation.subscribeToSignificantLocationUpdates((locations) => {
+  console.log('significant:', locations[0]);
 });
 ```
 
-#### `RNLocation.checkPermission`
-Checks if the currently granted permissions match the given options. You can call this before `requestPermission` to check if you already have the permission level you would like. This is especially useful if you want to display a message to the user about not having the correct permissions before actually requesting them.
+## 接口说明
 
-```javascript
-RNLocation.checkPermission({
-  ios: 'whenInUse', // or 'always'
-  android: {
-    detail: 'coarse' // or 'fine'
-  }
-});
+> [!TIP] "Platform"列表示该属性在原三方库上支持的平台。
+
+> [!TIP] "HarmonyOS平台支持"列为 Yes 表示 HarmonyOS平台支持该属性；No 则表示不支持（静默忽略或不产出）；partially 表示部分支持。使用方法跨平台一致，效果对标 iOS 或 Android 的效果。
+
+> [!TIP] "HarmonyOS平台支持"为 No / partially 的项，具体差异与原因统一在下方「遗留问题」章节说明。
+
+### API
+| 名称 | 类型 | 参数类型 | 返回值 | 必填 | 平台 | HarmonyOS平台支持 | 描述 |
+|--------|---------|-----|-------|-------|--------|-----|-----------------|
+| configure | function | options: ConfigureOptions | Promise\<void\> | Yes | iOS/Android | Yes | 配置定位参数，可多次调用只改传入项；配置后运行中的订阅按新参数重启 |
+| requestPermission | function | options: RequestPermissionOptions | Promise\<boolean\> | Yes | iOS/Android | partially | 申请定位权限。鸿蒙端前台档为 LOCATION + APPROXIMATELY_LOCATION 组合申请；`always` 档额外含后台定位，但后台权限仅能由用户在系统设置中手动开启，未开启时返回 `false` 属预期（详见「使用限制」） |
+| checkPermission | function | options: RequestPermissionOptions | Promise\<boolean\> | No | iOS/Android | Yes | 校验当前权限是否满足指定档位（fine/coarse/whenInUse/always） |
+| getCurrentPermission | function | / | Promise\<LocationPermissionStatus\> | No | iOS/Android | partially | 查询当前权限状态。鸿蒙端无法区分「从未申请」与「用户拒绝」，未授权时统一返回 `denied` |
+| subscribeToPermissionUpdates | function | listener: (status: LocationPermissionStatus) => void | Subscription | No | iOS | partially | 订阅权限状态变化（鸿蒙端在每次权限查询/申请后触发） |
+| subscribeToLocationUpdates | function | listener: (locations: Location[]) => void | Subscription | Yes | iOS/Android | Yes | 持续订阅位置更新；开始订阅时会先回报一次最后已知位置 |
+| getLatestLocation | function | options?: GetLatestLocationOptions | Promise\<Location \| null\> | No | iOS/Android | Yes | 单次获取最新位置，超时 resolve 为 `null`（默认 10s，`timeout: null` 表示不超时） |
+| subscribeToHeadingUpdates | function | listener: (heading: Heading) => void | Subscription | No | iOS | partially | 订阅航向变化。鸿蒙端为方向传感器航向角（0-360°），无 trueHeading/magneticHeading 之分 |
+| subscribeToSignificantLocationUpdates | function | listener: (locations: Location[]) => void | Subscription | No | iOS | partially | 订阅显著位置变化。鸿蒙端为低功耗近似实现，粒度粗于 iOS，不受 configure 的 distanceFilter 影响 |
+
+> 返回值 `Subscription` 为退订函数 `() => void`，调用即解除订阅并释放原生资源。
+
+---
+
+### ConfigureOptions
+| 名称 | 参数类型 | 默认值 | 必填 | 平台 | HarmonyOS平台支持 | 描述 |
+|---|---|---|---|---|---|---|
+| distanceFilter | number \| void | 100 | No | iOS, Android | Yes | 触发位置更新回调的最小距离变化（米）。鸿蒙映射为 `distanceInterval` |
+| interval | number \| void | / | No | Android | Yes | 主动定位的期望间隔（毫秒）。鸿蒙映射为 `timeInterval`（秒），低于系统下限（GNSS 1s / 网络定位 20s）时按下限生效 |
+| fastestInterval | number \| void | / | No | Android | No | 最快更新间隔（毫秒，Android"限速"语义）。鸿蒙 `timeInterval` 单槽位、无对应调度机制，静默忽略（仅 interval 生效） |
+| maxWaitTime | number \| void | / | No | Android | No | 后台攒批最大等待时间（毫秒，Android"延迟"语义）。鸿蒙无攒批机制，静默忽略（仅 interval 生效） |
+| desiredAccuracy.ios | LocationAccuracyIOS \| void | / | No | iOS | No | iOS 定位精度档位，鸿蒙无对应，静默忽略 |
+| desiredAccuracy.android | LocationPriorityAndroid \| void | / | No | Android | partially | Android 功耗优先级。鸿蒙端仅 `highAccuracy`（精度优先）与 `lowPower`（低功耗网络定位）语义对应；`balancedPowerAccuracy`（平衡档）与 `noPower`（不主动定位）为 Android 调度语义、鸿蒙无对应机制，静默忽略（优先级保持不变）。不传时使用系统默认 |
+| activityType | LocationActivityType \| void | 'other' | No | iOS | No | 用户活动类型，鸿蒙无对应，静默忽略 |
+| androidProvider | AndroidProvider \| void | 'auto' | No | Android | No | Android 定位 provider 选择（auto/playServices/standard），鸿蒙单一系统定位服务，静默忽略 |
+| allowsBackgroundLocationUpdates | boolean \| void | false | No | iOS | No | iOS 后台定位开关。鸿蒙后台定位由 LOCATION_IN_BACKGROUND 权限控制，该配置静默忽略 |
+| pausesLocationUpdatesAutomatically | boolean \| void | true | No | iOS | No | iOS 自动暂停定位，鸿蒙无对应，静默忽略 |
+| showsBackgroundLocationIndicator | boolean \| void | false | No | iOS | No | iOS 后台定位指示器，鸿蒙无对应，静默忽略 |
+| headingFilter | number \| void | 0 | No | iOS | Yes | 航向变化阈值（度），变化小于该值不触发回调；0 表示不过滤 |
+| headingOrientation | HeadingOrientation \| void | 'portrait' | No | iOS | No | 航向参考设备方向，鸿蒙无对应，静默忽略 |
+
+---
+
+### RequestPermissionOptions
+| 名称 | 参数类型 | 默认值 | 必填 | 平台 | HarmonyOS平台支持 | 描述 |
+|---|---|---|---|---|---|---|
+| ios | `'whenInUse' \| 'always' \| void` | / | No | iOS | Yes | iOS 权限档位。鸿蒙端：whenInUse → 前台组合权限；always → 前台组合 + 后台定位权限 |
+| android | `{ detail: 'fine' \| 'coarse', rationale?: {...} } \| void` | / | No | Android | partially | Android 权限档位与弹窗说明文案。鸿蒙端 detail 参与档位判定；rationale 静默忽略 |
+
+---
+
+### GetLatestLocationOptions
+| 名称 | 参数类型 | 默认值 | 必填 | 平台 | HarmonyOS平台支持 | 描述 |
+|---|---|---|---|---|---|---|
+| timeout | number \| null \| void | 10000 | No | iOS, Android | Yes | 超时毫秒数，超时 resolve 为 `null`；传 `null` 表示不设超时，一直等到首个位置 |
+
+---
+
+### Location
+| 名称 | 参数类型 | 平台 | HarmonyOS平台支持 | 描述 |
+|---|---|---|---|---|
+| timestamp | number | iOS, Android | Yes | 位置时间戳（UTC 毫秒） |
+| latitude | number | iOS, Android | Yes | 纬度 |
+| longitude | number | iOS, Android | Yes | 经度 |
+| accuracy | number | iOS, Android | Yes | 水平精度半径（米），对应鸿蒙 `accuracy` |
+| altitude | number | iOS, Android | Yes | 海拔（米），对应鸿蒙 `altitude` |
+| altitudeAccuracy | number | iOS, Android | Yes | 垂直精度（米），对应鸿蒙 `altitudeAccuracy`（API12+ 可选字段，缺省 0） |
+| course | number | iOS, Android | Yes | 运动方向（度，0-360 正北基准），对应鸿蒙 `direction` |
+| courseAccuracy | number | iOS, Android | Yes | 方向精度，对应鸿蒙 `directionAccuracy`（可选字段，缺省 0） |
+| speed | number | iOS, Android | Yes | 瞬时速度（m/s），对应鸿蒙 `speed` |
+| speedAccuracy | number | iOS, Android | Yes | 速度精度（m/s），对应鸿蒙 `speedAccuracy`（可选字段，缺省 0） |
+| floor | number | iOS | No | 室内楼层，鸿蒙无对应，负载中不产出 |
+| fromMockProvider | boolean | Android | No | 是否来自模拟位置，鸿蒙无对应语义，负载中不产出 |
+
+---
+
+### Heading
+| 名称 | 参数类型 | 平台 | HarmonyOS平台支持 | 描述 |
+|---|---|---|---|---|
+| heading | number | iOS | Yes | 航向角（度，0-360，绕 Z 轴）。鸿蒙以方向传感器 `OrientationResponse.alpha` 近似，与罗盘方向一致（北 0 / 东 90） |
+
+---
+
+### LocationPermissionStatus
+| 取值 | 平台 | HarmonyOS平台支持 | 描述 |
+|---|---|---|---|
+| authorizedAlways | iOS, Android | Yes | 精确+模糊+后台定位权限均已授权（LOCATION + APPROXIMATELY_LOCATION + LOCATION_IN_BACKGROUND） |
+| authorizedWhenInUse | iOS | No | 鸿蒙无该中间态：前台精确权限返回 `authorizedFine` |
+| authorizedFine | Android | Yes | 前台精确权限（LOCATION + APPROXIMATELY_LOCATION 均授权） |
+| authorizedCoarse | Android | Yes | 仅模糊权限（仅 APPROXIMATELY_LOCATION 授权） |
+| denied | iOS, Android | partially | 未授权。鸿蒙端无法区分「从未申请」与「用户拒绝」，统一返回该值 |
+| restricted | iOS, Android | Yes | 权限状态查询异常时返回 |
+| notDetermined | iOS | No | 鸿蒙无法区分该状态（与 denied 合并），不返回 |
+
+## 遗留问题
+
+以下汇总「接口说明」中 HarmonyOS 平台支持为 No / partially 的项及原因（多为鸿蒙系统能力与 iOS/Android 机制差异所致，非缺陷）：
+
+1. `AndroidProvider` 类型取值与官方 npm 2.5.0 包（`"auto" | "fused" | "builtin"`）存在命名差异（本包为 `"auto" | "playServices" | "standard"`，取自原库 GitHub master 分支命名）。该配置仅 Android 平台使用且鸿蒙端运行时忽略，不影响功能；如业务代码按官方 npm 2.5.0 类型传 `fused`/`builtin`，TS 编译会报错，属已知类型层差异。
+2. **权限状态粒度受限**（`getCurrentPermission` / `LocationPermissionStatus` 为 partially / No 的原因）：鸿蒙权限层无法区分「从未申请」「用户拒绝」「待定」三种状态，未授权时统一返回 `denied`；`notDetermined`、`authorizedWhenInUse` 两个取值在鸿蒙端不会返回。
+3. **`requestPermission` 行为差异**（partially 的原因）：`always` 档中的后台定位权限（`LOCATION_IN_BACKGROUND`）按鸿蒙限制无法经代码授予，仅能由用户在系统设置中手动开启；代码申请时不弹窗、不授予，用户未开启时返回 `false` 属预期（详见「使用限制」）。`android.rationale` 弹窗文案参数在鸿蒙端静默忽略。
+4. **权限变更订阅时机不同**（`subscribeToPermissionUpdates` 为 partially 的原因）：原库 iOS 为系统授权状态变化时回调；鸿蒙无系统级变更通知，仅在每次调用权限查询/申请接口后触发一次。
+5. **部分 ConfigureOptions 配置静默忽略**（No 项）：`fastestInterval`、`maxWaitTime`（Android 调度/攒批语义，鸿蒙 `timeInterval` 单槽位，仅 `interval` 生效）、`desiredAccuracy.ios`（iOS 精度档）、`activityType`、`androidProvider`、`allowsBackgroundLocationUpdates`（鸿蒙后台定位由 `LOCATION_IN_BACKGROUND` 权限控制）、`pausesLocationUpdatesAutomatically`、`showsBackgroundLocationIndicator`、`headingOrientation` —— 传入后均不报错、不生效。
+6. **`desiredAccuracy.android` 部分档位无对应**（partially 的原因）：仅 `highAccuracy`（→ `ACCURACY`）与 `lowPower`（→ `LOW_POWER`）语义对应；`balancedPowerAccuracy`、`noPower` 为 Android 调度语义，静默忽略（优先级保持不变）；不传时使用系统默认 `FIRST_FIX`。
+7. **Location 负载缺失 2 个字段**（No 项）：`floor`（iOS 室内楼层）、`fromMockProvider`（Android 模拟位置标记）鸿蒙无对应能力，负载中不产出，业务代码不应依赖这两个字段。
+8. **航向为方向传感器近似**（`subscribeToHeadingUpdates` 为 partially 的原因）：鸿蒙以方向传感器 `OrientationResponse.alpha` 近似罗盘航向，无 `trueHeading`/`magneticHeading` 之分（`headingOrientation` 配置不生效，见第 5 条）。
+9. **显著位置变化为近似实现**（`subscribeToSignificantLocationUpdates` 为 partially 的原因）：鸿蒙以低功耗网络定位 + 1000m 距离间隔的独立请求近似实现，粒度粗于 iOS，且不受 configure 的 `distanceFilter` 影响。
+
+## 其它
+1. 模拟器无方向传感器/无 GNSS：订阅航向会收到 `onWarning`（502）降级不崩溃；定位无结果时 `getLatestLocation` 按超时返回 `null`。定位相关用例请优先在真机验证。
+2. 开始订阅位置更新后的首条回调可能是 `getLastLocation()` 返回的历史位置（对齐 Android `getLastKnownLocation` 立即回报行为），非缺陷。
+
+## 目录结构
+```
+/ohos-location              # 项目根目录
+├── src/                    # RN JS 代码
+│    └─ index.ts            # 入口文件（9 个公开 API）
+│    └─ types.ts            # 类型定义（ConfigureOptions/Location 等）
+│    └─ utils.ts            # 工具函数
+│    └─ lib/                # nativeInterface / permissions / subscriptions
+│    └─ specs/v1/           # TurboModule codegen 规范（NativeRNLocation.ts）
+├── harmony/                # 鸿蒙适配代码
+│    └─ location.har        # har 包
+│    └─ location/           # 鸿蒙适配核心代码
+│         └─ index.ets      # 鸿蒙适配代码入口
+│         └─ src/main/ets/  # ArkTS 实现
+│              └─ RNLocationTurboModule.ets        # 定位/航向/权限 TurboModule 实现
+│              └─ LocationTurboModulesFactory.ets  # Package 注册
+│              └─ generated/                       # codegen 生成代码
+│         └─ src/main/cpp/  # C++ 侧注册
+│              └─ LocationPackage.h
+│              └─ generated/
+├── dist/                   # JS 构建产物（commonjs/module/typescript）
+├── example/                # 示例工程
+│    └─ App.tsx             # Demo（覆盖全部 API 与配置项）
+│    └─ harmony/            # 鸿蒙示例工程
+├── package.json
+├── README.md               # 中文安装使用方法
+└── README_en.md            # 英文安装使用方法
 ```
 
-#### `RNLocation.getCurrentPermission`
-Gets the current permission status. Note that the values will be different on Android and iOS as the permission systems are different. It's usually best to use `RNLocation.checkPermission` instead of checking the permission status yourself to avoid re-implementing the logic.
+## 贡献代码
 
-```javascript
-RNLocation.getCurrentPermission()
-  .then(currentPermission => {
-    ...
-  })
-```
+使用过程中发现任何问题都可以提交 [Issue](https://github.com/cbd1020819393/react-native-location/issues)，当然，也非常欢迎提交 [PR](https://github.com/cbd1020819393/react-native-location/pulls) 。
 
-#### `RNLocation.subscribeToPermissionUpdates`
-Monitor the permission status for changes.
+## 开源协议
 
-```javascript
-// Subscribe
-const unsubscribe = RNLocation.subscribeToPermissionUpdates(currentPermission => {
-  ...
-})
-
-// Unsubscribe
-unsubscribe();
-```
-
-### `RNLocation.subscribeToLocationUpdates`
-Subscribe to location changes with the given listener. Ensure you have the correct permission before calling this method. The location provider will respect the settings you have given it. Each event may return an array with more than one location. This is because the OS might batch location updates together and deliver them all at once. Take a look at the `timestamp` to find the latest.
-
-```javascript
-// Subscribe
-const unsubscribe = RNLocation.subscribeToLocationUpdates(locations => {
-  ...
-})
-
-// Unsubscribe
-unsubscribe();
-```
-
-### `RNLocation.getLatestLocation`
-Get the latest location. Ensure you have the correct permission before calling this method.
-
-This will subscribe to location events for you at the unsubscribe when it gets its first valid location. Usually, this method will return very fast with a possibly out of date location, however, in some circumstances it will not return a location. Therefore, this method has a timeout after which the promise will be resovled with `null` value.
-
-The location provider will respect the settings you have given it, so if you need a location with a certain accuracy, ensure you call `RNLocation.configure` first. If you want *any* location then ensure you call `RNLocation.configure` with no distance filter.
-
-```javascript
-RNLocation.configure({ distanceFilter: null });
-RNLocation.getLatestLocation({ timeout: 60000 })
-  .then(latestLocation => {
-    // Use the location here
-  })
-```
-
-### `RNLocation.subscribeToSignificantLocationUpdates` (iOS only)
-Subscribe to significant updates to the users location with the given listener. *This method does not take into account the `distanceFilter` which you configured RNLocation with.* In most cases, you should call `RNLocation.configure` with the correct settings and then use `RNLocation.subscribeToLocationUpdates` to subscribe to the location updates. This will allow you to support both Android and iOS with the same code. For more details, take a look at [Apple's documentation](https://developer.apple.com/documentation/corelocation/cllocationmanager/1423531-startmonitoringsignificantlocati?language=objc). 
-
-```javascript
-// Subscribe
-const unsubscribe = RNLocation.subscribeToSignificantLocationUpdates(locations => {
-  ...
-})
-
-// Unsubscribe
-unsubscribe();
-```
-
-### `RNLocation.subscribeToHeadingUpdates` (iOS only)
-Subscribe to heading changes with the given listener. Ensure you have the correct permission before calling this method. The location provider will respect the settings you have given it.
-
-```javascript
-// Subscribe
-const unsubscribe = RNLocation.subscribeToHeadingUpdates(heading => {
-  ...
-})
-
-// Unsubscribe
-unsubscribe();
-```
-
-## License
-The library is released under the MIT licence. For more information see `LICENSE`.
+本项目基于 [MIT License (MIT)](https://github.com/cbd1020819393/react-native-location/blob/master/LICENSE) ，请自由地享受和参与开源。

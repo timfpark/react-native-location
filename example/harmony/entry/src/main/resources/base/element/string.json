@@ -1,0 +1,24 @@
+{
+  "string": [
+    {
+      "name": "module_desc",
+      "value": "module description"
+    },
+    {
+      "name": "EntryAbility_desc",
+      "value": "description"
+    },
+    {
+      "name": "EntryAbility_label",
+      "value": "label"
+    },
+    {
+      "name": "location_permission_reason",
+      "value": "定位功能需要获取设备位置信息"
+    },
+    {
+      "name": "background_location_permission_reason",
+      "value": "后台持续定位需要后台位置权限"
+    }
+  ]
+}

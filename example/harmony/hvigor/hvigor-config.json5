@@ -1,0 +1,26 @@
+{
+  "modelVersion": "6.0.1",
+  "dependencies": {
+    // 短路径(file:./)：tgz 由 rnohos.py build hap 自动拷进 hvigor/(见 _provision_hvigor_plugin)，
+    // 避免长 file:../../node_modules/... 路径撑爆 hvigor pnpm 缓存键(ENAMETOOLONG / Win MAX_PATH)。
+    "@rnoh/hvigor-plugin": "file:./rnoh-hvigor-plugin-0.3.0.tgz"
+  },
+  "execution": {
+    // "analyze": "normal",                     /* Define the build analyze mode. Value: [ "normal" | "advanced" | "ultrafine" | false ]. Default: "normal" */
+    // "daemon": true,                          /* Enable daemon compilation. Value: [ true | false ]. Default: true */
+    // "incremental": true,                     /* Enable incremental compilation. Value: [ true | false ]. Default: true */
+    // "parallel": true,                        /* Enable parallel compilation. Value: [ true | false ]. Default: true */
+    // "typeCheck": false,                      /* Enable typeCheck. Value: [ true | false ]. Default: false */
+    // "optimizationStrategy": "memory"         /* Define the optimization strategy. Value: [ "memory" | "performance" ]. Default: "memory" */
+  },
+  "logging": {
+    // "level": "info"                          /* Define the log level. Value: [ "debug" | "info" | "warn" | "error" ]. Default: "info" */
+  },
+  "debugging": {
+    // "stacktrace": false                      /* Disable stacktrace compilation. Value: [ true | false ]. Default: false */
+  },
+  "nodeOptions": {
+    // "maxOldSpaceSize": 8192                  /* Enable nodeOptions maxOldSpaceSize compilation. Unit M. Used for the daemon process. Default: 8192*/
+    // "exposeGC": true                         /* Enable to trigger garbage collection explicitly. Default: true*/
+  }
+}

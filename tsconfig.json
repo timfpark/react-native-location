@@ -1,17 +1,42 @@
 {
+  "extends": "@react-native/typescript-config/tsconfig.json",
   "compilerOptions": {
-    "target": "es5",
-    "module": "commonjs",
+    "noEmit": false,
+    "declaration": true,
     "jsx": "react",
     "sourceMap": true,
-    "declaration": true,
-    "strict": true,
-    "outDir": "./dist",
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true,
-    "lib": ["es2015", "es2016", "esnext"],
-    "types": ["react", "react-native"],
-  }
+    "removeComments": false,
+    "allowImportingTsExtensions": false,
+    "baseUrl": ".",
+    "paths": {
+      "react-native": [
+        "./typings/rn-harmony.d.ts"
+      ]
+    }
+  },
+  "include": [
+    "src",
+    "typings"
+  ],
+  "exclude": [
+    "node_modules",
+    "**/__tests__/*",
+    "node_modules/**",
+    "oh_modules/**",
+    "example*/**",
+    "harmony*/**",
+    "android/**",
+    "ios/**",
+    "windows/**",
+    "macos/**",
+    "linux/**",
+    "dist/**",
+    "build/**",
+    "out/**",
+    "lib/**",
+    "**/.*/**",
+    "__tests__/**",
+    "**/*.test.*",
+    "**/*.spec.*"
+  ]
 }

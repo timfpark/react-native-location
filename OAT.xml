@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+	<oatconfig>
+	<licensefile>LICENSE</licensefile>
+		<filefilterlist>
+			<filefilter name="copyrightPolicyFilter" desc="Filters for compatibility，license header policies">
+				<filteritem type="filename" name="hvigorfile.ts" desc="hvigor构建脚本，DevEco Studio自动生成，不需要添加版权头"/>
+				<filteritem type="filename" name="*.json5" desc="hvigor工程配置文件，DevEco Studio自动生成，不需要添加版权头"/>
+				<filteritem type="filename" name="*.proto" desc="资源文件，不需要添加版权头"/>
+				<filteritem type="filename" name="*.json" desc="资源文件，不需要添加版权头"/>
+				<filteritem type="filepath" name="hvigorw" desc="工程模板，不修改版权头，以防有修改版权风险"/>
+				<filteritem type="filepath" name="hvigorw.bat" desc="工程模板，不修改版权头，以防有修改版权风险"/>
+				<filteritem type="filepath" name="hvigor/hvigor-wrapper.js" desc="工程模板，不修改版权头，以防有修改版权风险"/>
+                <filteritem type="filename" name="LICENSE" desc="工程文件，不修改版权头"/>
+				<filteritem type="filepath" name="tests/.*" desc="原库集成测试工程，上游开源代码保持原样，不添加版权头"/>
+				<filteritem type="filename" name=".eslintrc" desc="原库工程配置文件，上游开源代码保持原样，不添加版权头"/>
+				<filteritem type="filename" name=".flowconfig" desc="原库工程配置文件，上游开源代码保持原样，不添加版权头"/>
+				<filteritem type="filename" name=".npmignore" desc="原库发布配置文件，上游开源代码保持原样，不添加版权头"/>
+				<filteritem type="filename" name=".npmrc" desc="原库npm配置文件，上游开源代码保持原样，不添加版权头"/>
+				<filteritem type="filename" name="yarn.lock" desc="原库依赖锁定文件，自动生成，保持原样"/>
+				<filteritem type="filename" name="babel.config.js" desc="原库构建配置文件，上游开源代码保持原样，不添加版权头"/>
+				<filteritem type="filename" name="metro.config.js" desc="原库构建配置文件，上游开源代码保持原样，不添加版权头"/>
+				<filteritem type="filename" name="react-native-location.podspec" desc="原库podspec文件，含原库License声明，保持原样"/>
+				<filteritem type="filepath" name="src/index.ts" desc="原库源码文件，上游开源代码保持原样，不添加版权头"/>
+				<filteritem type="filepath" name="src/types.ts" desc="原库源码文件，上游开源代码保持原样，不添加版权头"/>
+				<filteritem type="filepath" name="src/utils.ts" desc="原库源码文件，上游开源代码保持原样，不添加版权头"/>
+				<filteritem type="filepath" name="src/lib/.*" desc="原库源码目录，上游开源代码保持原样，不添加版权头"/>
+				<filteritem type="filepath" name="example/harmony/.*" desc="DevEco Studio工程模板与RNOH codegen自动生成文件，不需要添加版权头"/>
+				<filteritem type="filepath" name="harmony/location/src/main/ets/generated/.*" desc="RNOH codegen自动生成文件，不需要添加版权头"/>
+				<filteritem type="filepath" name="harmony/location/src/main/cpp/generated/.*" desc="RNOH codegen自动生成文件，不需要添加版权头"/>
+			</filefilter>
+			<filefilter name="defaultPolicyFilter" desc="Filters for compatibility，license header policies">
+				<filteritem type="filename" name="hvigorfile.ts" desc="hvigor构建脚本，DevEco Studio自动生成，不需要添加许可证头"/>
+				<filteritem type="filename" name="*.json5" desc="hvigor工程配置文件，DevEco Studio自动生成，不需要添加许可证头"/>
+				<filteritem type="filename" name="LICENSE" desc="原三方库证书文件无需更改，因此添加过滤"/>
+				<filteritem type="filename" name="*.proto" desc="资源文件，不需要添加许可证头"/>
+				<filteritem type="filename" name="*.json" desc="资源文件，不需要添加许可证头"/>
+				<filteritem type="filepath" name="hvigorw" desc="工程模板，不修改版权头，以防有修改版权风险"/>
+				<filteritem type="filepath" name="hvigorw.bat" desc="工程模板，不修改版权头，以防有修改版权风险"/>
+				<filteritem type="filepath" name="hvigor/hvigor-wrapper.js" desc="工程模板，不修改版权头，以防有修改版权风险"/>
+				<filteritem type="filepath" name="tests/.*" desc="原库集成测试工程，上游开源代码保持原样，不添加许可证头"/>
+				<filteritem type="filename" name=".eslintrc" desc="原库工程配置文件，上游开源代码保持原样，不添加许可证头"/>
+				<filteritem type="filename" name=".flowconfig" desc="原库工程配置文件，上游开源代码保持原样，不添加许可证头"/>
+				<filteritem type="filename" name=".npmignore" desc="原库发布配置文件，上游开源代码保持原样，不添加许可证头"/>
+				<filteritem type="filename" name=".npmrc" desc="原库npm配置文件，上游开源代码保持原样，不添加许可证头"/>
+				<filteritem type="filename" name="yarn.lock" desc="原库依赖锁定文件，自动生成，保持原样"/>
+				<filteritem type="filename" name="babel.config.js" desc="原库构建配置文件，上游开源代码保持原样，不添加许可证头"/>
+				<filteritem type="filename" name="metro.config.js" desc="原库构建配置文件，上游开源代码保持原样，不添加许可证头"/>
+				<filteritem type="filename" name="react-native-location.podspec" desc="原库podspec文件，含原库License声明，保持原样"/>
+				<filteritem type="filepath" name="src/index.ts" desc="原库源码文件，上游开源代码保持原样，不添加许可证头"/>
+				<filteritem type="filepath" name="src/types.ts" desc="原库源码文件，上游开源代码保持原样，不添加许可证头"/>
+				<filteritem type="filepath" name="src/utils.ts" desc="原库源码文件，上游开源代码保持原样，不添加许可证头"/>
+				<filteritem type="filepath" name="src/lib/.*" desc="原库源码目录，上游开源代码保持原样，不添加许可证头"/>
+				<filteritem type="filepath" name="example/harmony/.*" desc="DevEco Studio工程模板与RNOH codegen自动生成文件，不需要添加许可证头"/>
+				<filteritem type="filepath" name="harmony/location/src/main/ets/generated/.*" desc="RNOH codegen自动生成文件，不需要添加许可证头"/>
+				<filteritem type="filepath" name="harmony/location/src/main/cpp/generated/.*" desc="RNOH codegen自动生成文件，不需要添加许可证头"/>
+			</filefilter>
+			<filefilter name="binaryFileTypePolicyFilter" desc="Filters for resources files policies">
+				<filteritem type="filename" name="icon.png" desc="应用图标"/>
+				<filteritem type="filename" name="app_icon.png" desc="应用图标"/>
+				<filteritem type="filename" name="warn.png" desc="页面展示图标"/>
+				<filteritem type="filepath" name="tests/.*" desc="资源文件"/>
+				<filteritem type="filepath" name="example/.*" desc="资源文件"/>
+				<filteritem type="filename" name="*.har" desc="构建产物har包，二进制归档文件"/>
+				<filteritem type="filepath" name="screenshots/.*" desc="原库截图资源，二进制文件"/>
+				<filteritem type="filepath" name="harmony/location/src/main/ets/RNLocationTurboModule.ets" desc="本库新增源码文件，含中文注释被工具误判为二进制文件，实际为文本源码"/>
+				<filteritem type="filepath" name="harmony/location/src/main/ets/LocationTurboModulesFactory.ets" desc="本库新增源码文件，含中文注释被工具误判为二进制文件，实际为文本源码"/>
+				<filteritem type="filepath" name="src/specs/v1/NativeRNLocation.ts" desc="本库新增codegen Spec文件，被工具误判为二进制文件，实际为文本源码"/>
+			</filefilter>
+		</filefilterlist>
+        <policylist>
+            <policy name="projectPolicy" desc="">
+                <policyitem type="license" name="MIT" path="*.*" desc="license under the MIT"/>
+            </policy>
+        </policylist>
+	</oatconfig>
+</configuration>

@@ -62,7 +62,7 @@ build/
 *.xcworkspace
 !default.xcworkspace
 xcuserdata
-profile
+/profile
 *.moved-aside
 DerivedData
 
@@ -73,3 +73,19 @@ android/local.properties
 
 # Pods - for those of you who use CocoaPods
 Pods
+
+# HarmonyOS (harmony port)
+harmony/location/build/
+harmony/location/.cxx/
+harmony/location/.hvigor/
+harmony/location/oh_modules/
+**/oh_modules/
+**/.hvigor/
+**/.cxx/
+**/.idea/
+.rn-build/
+*.tgz
+!example/harmony/hvigor/*.tgz
+harmony/react_native_openharmony_release.har
+oh-package-lock.json5
+example/harmony/entry/src/main/resources/rawfile/

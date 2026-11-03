@@ -1,0 +1,16 @@
+{
+  "string": [
+    {
+      "name": "module_test_desc",
+      "value": "Example instrument test module"
+    },
+    {
+      "name": "TestAbility_desc",
+      "value": "Hypium onDeviceTest entry"
+    },
+    {
+      "name": "TestAbility_label",
+      "value": "Device Test"
+    }
+  ]
+}
