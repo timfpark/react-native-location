@@ -10,7 +10,7 @@ The adapted third-party library supports direct download from npm under the new 
 
 | Name | Version(Npm Address) | Release Information | Supported RN Version | Supported Autolink | Compile API Version | Community Baseline Version | Source code address |
 | --------------| -------------- | ------------------------------ | ------------- | ------------- |------------------------ | ------------- | ------------- |
-| @react-native-ohos/react-native-location | [1.0.0-beta.1](https://www.npmjs.com/package/@react-native-ohos/react-native-location) | See release notes | 0.72.* | Yes | API12+ | 2.5.0 | [master](https://github.com/timfpark/react-native-location) |
+| @react-native-ohos/react-native-location | [~1.0.0(In development)](https://www.npmjs.com/package/@react-native-ohos/react-native-location) | See release notes | 0.72.*/ 0.77.*/ 0.82.*/ 0.84.*/ | Yes | API12+ | 2.5.0 | [master](https://github.com/timfpark/react-native-location) |
 
 ## Introduction
 
@@ -42,7 +42,7 @@ yarn add @react-native-ohos/react-native-location
 
 |  | Supported Autolink | Supported RN Version |
 |--------------------------------------|-----------------|------------|
-| 1.0.0-beta.1 | Yes | 0.72 |
+| ~1.0.0(In development) | Yes | 0.72/0.77/0.82/0.84 |
 
 Projects using AutoLink need to be configured according to the Autolink framework guide: https://gitcode.com/CPF-RN/ohos_react_native/blob/master/docs/zh-cn/Autolinking.md
 
@@ -162,7 +162,10 @@ Then build and run.
 ### Compatibility
 
 The content of this document has been verified with the following versions:
-1. RNOH: 0.72.139; SDK: HarmonyOS 5.0.1 Release SDK (API13, targetSdk 6.0.1(21)); IDE: DevEco Studio 6.0.1 Release; ROM: 6.0.0 real device;
+1. RNOH: 0.72.139; SDK: HarmonyOS 5.0.1 Release SDK (API13, targetSdk 6.0.1(21)); IDE: DevEco Studio 6.0.1 Release; ROM: 6.0.0;
+2. RNOH: 0.77.18; SDK: HarmonyOS 6.0.0 Release SDK; IDE: DevEco Studio 6.0.0.858; ROM: 6.0.0.112;
+3. RNOH: 0.82.7; SDK: HarmonyOS 6.0.0 Release SDK; IDE: DevEco Studio 6.0.0.858; ROM: 6.0.0.112 SP12;
+4. RNOH: 0.84.1; SDK: HarmonyOS 6.0.2 Release SDK; IDE: 6.0.2 Release; ROM:7.0.0.100 SP9;
 
 ### Usage Restrictions
 

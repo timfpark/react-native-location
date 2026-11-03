@@ -10,7 +10,7 @@
 
 | 三方库名称 | 三方库版本（npm地址） | 发布信息 | 支持RN版本 | Autolink | 编译API版本 | 社区基线版本 | 源码地址 |
 | ------------ | ------------ | ------------------------------ | ------------- | ------------- |------------------------ | ------------- | ------------- |
-| @react-native-ohos/react-native-location | [1.0.0-beta.1](https://www.npmjs.com/package/@react-native-ohos/react-native-location) | 见发布记录 | 0.72.* | 是 | API12+ | 2.5.0 | [master](https://github.com/timfpark/react-native-location) |
+| @react-native-ohos/react-native-location | [~1.0.0(开发中)](https://www.npmjs.com/package/@react-native-ohos/react-native-location) | 见发布记录 | 0.72.*/ 0.77.*/ 0.82.*/ 0.84.*/ | 是 | API12+ | 2.5.0 | [master](https://github.com/timfpark/react-native-location) |
 
 ## 简介
 
@@ -42,7 +42,7 @@ yarn add @react-native-ohos/react-native-location
 
 |  | 是否支持autolink | RN框架版本 |
 |--------------------------------------|-----------------|------------|
-| 1.0.0-beta.1 | Yes | 0.72 |
+| ~1.0.0(开发中) | Yes | 0.72/0.77/0.82/0.84 |
 
 使用AutoLink的工程需要根据该文档配置，Autolink框架指导文档：https://gitcode.com/CPF-RN/ohos_react_native/blob/master/docs/zh-cn/Autolinking.md
 
@@ -162,7 +162,10 @@ ohpm install
 ### 兼容性
 
 本文档内容基于以下版本验证通过：
-1. RNOH: 0.72.139; SDK: HarmonyOS 5.0.1 Release SDK (API13, targetSdk 6.0.1(21)); IDE: DevEco Studio 6.0.1 Release; ROM: 6.0.0 真机;
+1. RNOH: 0.72.139; SDK: HarmonyOS 5.0.1 Release SDK (API13, targetSdk 6.0.1(21)); IDE: DevEco Studio 6.0.1 Release; ROM: 6.0.0;
+2. RNOH: 0.77.18; SDK: HarmonyOS 6.0.0 Release SDK; IDE: DevEco Studio 6.0.0.858; ROM: 6.0.0.112;
+3. RNOH: 0.82.7; SDK: HarmonyOS 6.0.0 Release SDK; IDE: DevEco Studio 6.0.0.858; ROM: 6.0.0.112 SP12;
+4. RNOH: 0.84.1; SDK: HarmonyOS 6.0.2 Release SDK; IDE: 6.0.2 Release; ROM:7.0.0.100 SP9;
 
 ### 使用限制
 
